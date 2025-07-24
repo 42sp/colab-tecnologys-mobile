@@ -10,7 +10,7 @@
 		"experiments": {
 			"tsconfigPaths": true
 		},
-		"plugins": ["expo-router"],
+		"plugins": ["expo-router", "expo-font"],
 		"orientation": "portrait",
 		"icon": "./src/assets/icon.png",
 		"userInterfaceStyle": "light",

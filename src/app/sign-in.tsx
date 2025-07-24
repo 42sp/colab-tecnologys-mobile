@@ -7,7 +7,7 @@ export default function SignIn() {
 
 	return (
 		<SafeAreaView>
-			<Text className="flex self-center text-xl">Sign-in</Text>
+			<Text className="self-center text-xl">Sign-in</Text>
 			<View className="h-full items-center justify-center">
 				<Button title="Go to Main" onPress={() => router.navigate('/main')} />
 			</View>

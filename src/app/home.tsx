@@ -1,14 +1,23 @@
 import { useRouter } from 'expo-router'
 import { Button, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { Input } from '@/components/ui/input'
 
 export default function Home() {
 	const router = useRouter()
 
 	return (
-		<SafeAreaView>
+		<SafeAreaView className="bg-white">
 			<Text className="flex self-center text-xl">Home</Text>
-			<View className="h-full items-center justify-center">
+			<Input
+				placeholder="Password"
+				IconLeft={'mail'}
+				IconRight={'mail'}
+				iconPress={() => console.log('ICONE PRESS')}
+				className="self-center"
+			/>
+
+			<View className=" h-full items-center justify-center gap-2">
 				<Button title="Go to Sign-in" onPress={() => router.navigate('/sign-in')} />
 			</View>
 		</SafeAreaView>
