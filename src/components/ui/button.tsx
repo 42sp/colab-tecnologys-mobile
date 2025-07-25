@@ -2,7 +2,7 @@ import { Text, TouchableOpacity, TouchableOpacityProps } from 'react-native'
 
 type ButtonVariant = 'default' | 'outline' | 'red'
 
-const defaultStyle = 'h-16 w-96 items-center justify-center rounded-lg flex-row'
+const defaultStyle = 'h-16 w-full items-center justify-center rounded-xl flex-row'
 
 const buttonVariants: Record<ButtonVariant, { container: string; text: string }> = {
 	default: {

@@ -1,9 +1,8 @@
 import { useRouter } from 'expo-router'
-import { Image, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Feather } from '@expo/vector-icons'
 
 export default function Home() {
 	const router = useRouter()
