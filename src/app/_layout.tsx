@@ -1,4 +1,6 @@
 import { Stack } from 'expo-router'
+import { LinearGradient } from 'expo-linear-gradient'
+import { Feather } from '@expo/vector-icons'
 import {
 	useFonts,
 	Inter_400Regular,
@@ -16,13 +18,25 @@ export default function Layout() {
 	if (!fontsLoaded) return
 
 	return (
+
 		<Stack
 			screenOptions={{
 				headerShown: false,
+				
 			}}
 		>
 			<Stack.Screen name="home" options={{}} />
 			<Stack.Screen name="sign-in" options={{}} />
+			<Stack.Screen name="sign-up" options={{headerShown: true, headerTintColor: '#fff', headerTitleAlign: 'center', title: 'Nova Conta', headerLeft: () => (
+				<Feather name="chevron-left" size={24} color={'#fff'}/>
+			), headerBackground: () => (
+				<LinearGradient
+				colors={['#B73131', '#EAA233']}
+				start={{x:0, y:0.5}}
+				end={{x:1, y: 0.5}}
+				style={{flex: 1}}
+				></LinearGradient>
+			)}} />
 		</Stack>
 	)
 }
