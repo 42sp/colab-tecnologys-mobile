@@ -19,10 +19,10 @@ export default function SignUp() {
   const [value, setValue] = useState(null)
 
     return (
-        <SafeAreaView className='pb-24'>
-            <View className="h-full items-center justify-between gap-4">
+        <SafeAreaView className='my-5 gap 5 p-10'>
+            <View className="h-full items-center justify-between" >
                 <View>
-                    <Text className='text-sm'>Nome completo</Text>
+                    <Text>Nome completo</Text>
                     <Input
                         placeholder="Seu nome completo"
                         IconLeft={'user'}
@@ -30,7 +30,7 @@ export default function SignUp() {
                     />
                 </View>
                 <View>
-                    <Text className='text-sm'>E-mail</Text>
+                    <Text>E-mail</Text>
                     <Input
                         placeholder="seu-email@email.com"
                         IconLeft={'mail'}
@@ -38,7 +38,7 @@ export default function SignUp() {
                     />
                 </View>
                 <View>
-                    <Text className='text-sm'>CPF</Text>
+                    <Text>CPF</Text>
                     <Input
                         placeholder="000.000.000-00"
                         IconLeft={'file'}
@@ -46,7 +46,7 @@ export default function SignUp() {
                     />
                 </View>
                 <View>
-                    <Text className='text-sm'>Telefone</Text>
+                    <Text>Telefone</Text>
                     <Input
                         placeholder="(00) 00000 0000"
                         IconLeft={'phone'}
@@ -54,7 +54,7 @@ export default function SignUp() {
                     />
                 </View>
                 <View>
-                    <Text className='text-sm'>Função</Text>
+                    <Text>Função</Text>
                     <View className='flex h-14 w-96 flex-row items-center justify-between gap-3 rounded-lg border border-neutral-300 px-4 text-neutral-700'>
                     <Dropdown
                         placeholder='Selecione sua função'
@@ -69,7 +69,7 @@ export default function SignUp() {
                     </View>
                 </View>
                 <View>
-                    <Text className='text-sm'>Senha</Text>
+                    <Text>Senha</Text>
                     <Input
                         placeholder="Digite sua senha"
                         IconLeft={'lock'}
@@ -78,7 +78,7 @@ export default function SignUp() {
                     />
                 </View>
                 <View>
-                    <Text className='text-sm'>Confirmar senha</Text>
+                    <Text>Confirmar senha</Text>
                     <Input
                         placeholder="Confirme sua senha"
                         IconLeft={'lock'}
@@ -87,11 +87,14 @@ export default function SignUp() {
                     />
                 </View>
                 <View>
-                    <Button title="Criar conta" onPress={() => router.navigate('/main')} variant='default'/>
+                    <Button
+                    title="Criar conta"
+                    onPress={() => router.navigate('/sign-in')}
+                    className="my-5"/>
                 </View>
                 <View>
-                    <Text className='text-sm'>Já tem uma conta? 
-                            <Text onPress={() => router.navigate('sign-in')}className='text-blue-500'> Entrar</Text>
+                    <Text>Já tem uma conta? 
+                            <Text onPress={() => router.navigate('sign-in')}className='font-inter-bold text-blue-500'> Entrar</Text>
                     </Text>
                 </View>
             </View>
