@@ -18,7 +18,7 @@ export function Input({
 }: InputProps) {
 	return (
 		<View
-			className={`flex h-14 w-96 flex-row items-center justify-between gap-3 rounded-lg border border-neutral-300 px-4 text-neutral-700 ${className}`}
+			className={`flex h-14 w-full flex-row items-center justify-between gap-3 rounded-lg border border-neutral-300 px-4 text-neutral-700 ${className}`}
 		>
 			{IconLeft && <Feather name={IconLeft} size={20} color={iconColor ? iconColor : '#d4d4d4'} />}
 
