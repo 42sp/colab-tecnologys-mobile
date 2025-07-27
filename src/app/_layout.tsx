@@ -23,6 +23,7 @@ export default function Layout() {
 		>
 			<Stack.Screen name="home" options={{}} />
 			<Stack.Screen name="sign-in" options={{}} />
+			<Stack.Screen name="main" options={{}} />
 		</Stack>
 	)
 }
