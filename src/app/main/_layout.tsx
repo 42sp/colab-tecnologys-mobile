@@ -22,6 +22,12 @@ export default function Layout() {
 						drawerLabel: 'Profile',
 					}}
 				/>
+				<Drawer.Screen
+					name="forgot-password"
+					options={{
+						drawerLabel: 'Forgot Password',
+					}}
+				/>
 			</Drawer>
 		</GestureHandlerRootView>
 	)
