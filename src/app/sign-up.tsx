@@ -2,42 +2,43 @@ import { useRouter } from 'expo-router'
 import { Text, View } from 'react-native'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
-//import { Dropdown } from '../components/ui/dropdown'
-import { Dropdown } from 'react-native-element-dropdown'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import React, { useState } from 'react'
+import { Dropdown } from '../components/ui/dropdown'
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
+import { ScrollView } from 'react-native-gesture-handler'
 
-const data = [
-    { label: 'Item 1' },
-    { label: 'Item 2' },
-    { label: 'Item 3' },
-    { label: 'Item 4' },
-]
+
+ const data = [
+     { label: 'Item 1' },
+     { label: 'Item 2' },
+     { label: 'Item 3' },
+     { label: 'Item 4' },
+ ]
 
 export default function SignUp() {
   const router = useRouter()
-  const [value, setValue] = useState(null)
 
     return (
-        <SafeAreaView className='my-5 gap 5 p-10'>
-            <View className="h-full items-center justify-between" >
-                <View>
-                    <Text>Nome completo</Text>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false} className="bg-white">
+        <SafeAreaProvider>
+        <SafeAreaView className='my-5 p-10 bg-white'>
+            <View className="h-full items-center justify-between gap-5 " >
+                <View className='gap-1'>
+                    <Text>Full name</Text>
                     <Input
-                        placeholder="Seu nome completo"
+                        placeholder="Type your full name"
                         IconLeft={'user'}
                         className="self-center"
                     />
                 </View>
-                <View>
+                <View className='gap-1'>
                     <Text>E-mail</Text>
                     <Input
-                        placeholder="seu-email@email.com"
+                        placeholder="your-email@email.com"
                         IconLeft={'mail'}
                         className="self-center"
                     />
                 </View>
-                <View>
+                <View className='gap-1'>
                     <Text>CPF</Text>
                     <Input
                         placeholder="000.000.000-00"
@@ -45,60 +46,57 @@ export default function SignUp() {
                         className="self-center"
                     />
                 </View>
-                <View>
-                    <Text>Telefone</Text>
+                <View className='gap-1'>
+                    <Text>Phone number</Text>
                     <Input
                         placeholder="(00) 00000 0000"
                         IconLeft={'phone'}
                         className="self-center"
                     />
                 </View>
-                <View>
-                    <Text>Função</Text>
-                    <View className='flex h-14 w-96 flex-row items-center justify-between gap-3 rounded-lg border border-neutral-300 px-4 text-neutral-700'>
+                <View className='gap-1'>
+                    <Text>Job title</Text>
                     <Dropdown
-                        placeholder='Selecione sua função'
-                        data={data}
-                        labelField="label"
-                        valueField="value"
-                        value={value}
-                        onChange={item => {
-                            setValue(item.value);
-                        }}
+                        IconLeft={'briefcase'}
+                        IconRight={'chevron-down'}
+                        className="self-center"
+                        options={data}
+                        variant='outline'
+                        placeholder='Select an option'
+
                     />
-                    </View>
                 </View>
-                <View>
-                    <Text>Senha</Text>
+                <View className='gap-1'>
+                    <Text>Password</Text>
                     <Input
-                        placeholder="Digite sua senha"
+                        placeholder="Type your password"
                         IconLeft={'lock'}
                         IconRight={'eye'}
                         className="self-center"
                     />
                 </View>
-                <View>
-                    <Text>Confirmar senha</Text>
+                <View className='gap-1'>
+                    <Text>Confirm password</Text>
                     <Input
-                        placeholder="Confirme sua senha"
+                        placeholder="Confirm your password"
                         IconLeft={'lock'}
                         IconRight={'eye'}
                         className="self-center"
                     />
                 </View>
-                <View>
+              
                     <Button
-                    title="Criar conta"
+                    title="Create account"
                     onPress={() => router.navigate('/sign-in')}
                     className="my-5"/>
-                </View>
-                <View>
-                    <Text>Já tem uma conta? 
-                            <Text onPress={() => router.navigate('sign-in')}className='font-inter-bold text-blue-500'> Entrar</Text>
+               <View className='py-5'>
+                    <Text>Already have an account? 
+                        <Text onPress={() => router.navigate('sign-in')}className='font-inter-bold text-blue-500'> Sign in</Text>
                     </Text>
                 </View>
             </View>
-            
-      </SafeAreaView>
+            </SafeAreaView>
+            </SafeAreaProvider>
+        </ScrollView>
     )
 }
