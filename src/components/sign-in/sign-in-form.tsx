@@ -24,7 +24,7 @@ export function SignInForm() {
 
 			<View className=" items-center">
 				<View className="flex-row">
-					<Text className="font-inter">Don't have an account? </Text>
+					<Text className="font-inter">Don&rsquo;t have an account? </Text>
 					<TouchableOpacity activeOpacity={0.5}>
 						<Text className="font-inter-bold text-blue-500">Sign Up</Text>
 					</TouchableOpacity>
