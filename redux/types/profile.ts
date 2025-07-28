@@ -1,15 +1,15 @@
 interface ProfileState {
-      name: string | null;
-      age: number | null;
-    }
+	name: string | null
+	age: number | null
+}
 
 interface ProfileType {
-    name: string;
-    reducers: {
-      setName: (state: ProfileState, action: { payload: ProfileState['name'] }) => void;
-      setAge: (state: ProfileState, action: { payload: ProfileState['age'] }) => void;
-    };
+	name: string
+	reducers: {
+		setName: (state: ProfileState, action: { payload: ProfileState['name'] }) => void
+		setAge: (state: ProfileState, action: { payload: ProfileState['age'] }) => void
+	}
 
-  initialState: ProfileState;
+	initialState: ProfileState
 }
-export type { ProfileType, ProfileState };
+export type { ProfileType, ProfileState }

@@ -1,10 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./App.{js,ts,tsx}', './components/**/*.{js,ts,tsx}'],
-
-  presets: [require('nativewind/preset')],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-};
+	content: ['./src/**/*.{js,jsx,ts,tsx}'],
+	presets: [require('nativewind/preset')],
+	theme: {
+		extend: {
+			fontFamily: {
+				inter: ['Inter_400Regular'],
+				'inter-medium': ['Inter_500Medium'],
+				'inter-bold': ['Inter_700Bold'],
+			},
+		},
+	},
+	plugins: [],
+}
