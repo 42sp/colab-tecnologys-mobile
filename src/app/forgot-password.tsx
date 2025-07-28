@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 
 export default function ForgotPassword() {
 	return (
-		<SafeAreaView className='flex-1 bg-white px-[20px]'>
+		<SafeAreaView className='flex-1 bg-white p-10'>
 
 			<Image
 				source={require('@/assets/tecnologys-logo.png')}
