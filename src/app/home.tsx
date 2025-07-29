@@ -28,7 +28,11 @@ export default function Home() {
 					variant="outline"
 				/>
 
-				<Button title="Forgot password" onPress={() => router.navigate('/forgot-password')} variant="red" />
+				<Button
+					title="Forgot password"
+					onPress={() => router.navigate('/forgot-password')}
+					variant="red"
+				/>
 
 				<Button title="Go to Sign-in" onPress={() => router.navigate('/sign-in')} />
 			</View>
