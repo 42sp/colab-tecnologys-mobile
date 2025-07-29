@@ -1,5 +1,14 @@
 import { Feather } from '@expo/vector-icons'
-import { Pressable, TextInputProps, View, Text, TouchableOpacity, TouchableOpacityProps,  Modal, FlatList } from 'react-native'
+import {
+	Pressable,
+	TextInputProps,
+	View,
+	Text,
+	TouchableOpacity,
+	TouchableOpacityProps,
+	Modal,
+	FlatList,
+} from 'react-native'
 import React, { useState } from 'react'
 import { ScrollView } from 'react-native-gesture-handler'
 
@@ -23,61 +32,71 @@ const dropdownVariants: Record<DropdownVariant, { container: string; text: strin
 }
 
 interface DropdownProps extends TextInputProps {
-  IconLeft?: keyof typeof Feather.glyphMap
-  IconRight?: keyof typeof Feather.glyphMap
-  iconColor?: string
-  className?: string
-  placeholder?: string
-  options: { label: string }[]
-  variant?: DropdownVariant
+	IconLeft?: keyof typeof Feather.glyphMap
+	IconRight?: keyof typeof Feather.glyphMap
+	iconColor?: string
+	className?: string
+	placeholder?: string
+	options: { label: string }[]
+	variant?: DropdownVariant
 }
 
 export function Dropdown({
-  IconLeft,
-  IconRight,
-  iconColor,
-  className,
-  options,
-  placeholder,
-  variant,
+	IconLeft,
+	IconRight,
+	iconColor,
+	className,
+	options,
+	placeholder,
+	variant,
 }: DropdownProps) {
-  const [open, setOpen] = useState(false)
+	const [open, setOpen] = useState(false)
 
-  const [selected, setSelected] = useState("")
+	const [selected, setSelected] = useState('')
 
-  return (
-    <Pressable onPress={() => open === true ? setOpen(false):setOpen(true)} className={`w-full ${className}`}>
-		<View className={`h-14 w-full flex-row items-center justify-between gap-3 rounded-lg border border-neutral-300 px-4 text-neutral-700 ${className}`}>
-		
-			{IconLeft && <Feather name={IconLeft} size={20} color={iconColor ? iconColor : '#d4d4d4'} />}
+	return (
+		<Pressable
+			onPress={() => (open === true ? setOpen(false) : setOpen(true))}
+			className={`w-full ${className}`}
+		>
+			<View
+				className={`h-14 w-full flex-row items-center justify-between gap-3 rounded-lg border border-neutral-300 px-4 text-neutral-700 ${className}`}
+			>
+				{IconLeft && (
+					<Feather name={IconLeft} size={20} color={iconColor ? iconColor : '#d4d4d4'} />
+				)}
 
-			<Text className={` flex-1 ${variant ? dropdownVariants[variant].text : dropdownVariants['default'].text} + ${className}`}>
-          		{selected || placeholder}
-        	</Text>
+				<Text
+					className={` flex-1 ${variant ? dropdownVariants[variant].text : dropdownVariants['default'].text} + ${className}`}
+				>
+					{selected || placeholder}
+				</Text>
 
-			{IconRight && (
+				{IconRight && (
 					<Feather name={IconRight} size={20} color={iconColor ? iconColor : '#d4d4d4'} />
-			)}
-		</View>
+				)}
+			</View>
 
-		{open && (
-			<ScrollView
-      		showsVerticalScrollIndicator={false}
-      		contentContainerStyle={{ paddingVertical: 4 }}
-			className="border border-neutral-300 rounded-lg"
-    		>
-      		{options.map((item) => (
-        	<TouchableOpacity
-          	key={item.label}
-          	className="w-full px-4 py-3 bg-white hover:bg-neutral-100"
-          	onPress={() => {
-				setSelected(item.label)
-            	setOpen(false);
-          	}} >
-         	<Text className="text-base text-neutral-800">{item.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-    )}
-  </Pressable>
-)}
+			{open && (
+				<ScrollView
+					showsVerticalScrollIndicator={false}
+					contentContainerStyle={{ paddingVertical: 4 }}
+					className="rounded-lg border border-neutral-300"
+				>
+					{options.map((item) => (
+						<TouchableOpacity
+							key={item.label}
+							className="w-full bg-white px-4 py-3 hover:bg-neutral-100"
+							onPress={() => {
+								setSelected(item.label)
+								setOpen(false)
+							}}
+						>
+							<Text className="text-base text-neutral-800">{item.label}</Text>
+						</TouchableOpacity>
+					))}
+				</ScrollView>
+			)}
+		</Pressable>
+	)
+}

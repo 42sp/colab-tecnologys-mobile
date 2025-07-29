@@ -25,34 +25,32 @@ const buttonVariants: Record<ButtonVariant, { container: string; text: string }>
 }
 
 type ButtonProps = {
-	title: string
+	title?: string
 	onPress: () => void
 	variant?: ButtonVariant
 	className?: string
 } & TouchableOpacityProps
 
 export function Button({ title, onPress, variant, className, children, ...rest }: ButtonProps) {
-if (variant === 'gradient') {
-    return (
-      <TouchableOpacity
-        onPress={onPress}
-        className={`${buttonVariants.gradient.container} ${className}`}
-        {...rest}
-      >
-        <LinearGradient
-          colors={['#B73131', '#EAA233']}
-          start={{ x: 0, y: 0.5 }}
-          end={{ x: 1, y: 0.5 }}
-          className="w-full h-full items-center justify-center"
-        >
-          {children}
-          <Text className={buttonVariants.gradient.text}>
-						{title}
-		  		</Text>
-        </LinearGradient>
-      </TouchableOpacity>
-    )
-  }
+	if (variant === 'gradient') {
+		return (
+			<TouchableOpacity
+				onPress={onPress}
+				className={`${buttonVariants.gradient.container} ${className}`}
+				{...rest}
+			>
+				<LinearGradient
+					colors={['#B73131', '#EAA233']}
+					start={{ x: 0, y: 0.5 }}
+					end={{ x: 1, y: 0.5 }}
+					className="h-full w-full items-center justify-center"
+				>
+					{children}
+					<Text className={buttonVariants.gradient.text}>{title}</Text>
+				</LinearGradient>
+			</TouchableOpacity>
+		)
+	}
 	return (
 		<TouchableOpacity
 			onPress={onPress}
