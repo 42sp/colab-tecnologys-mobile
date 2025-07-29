@@ -3,8 +3,8 @@ import { Text, View } from 'react-native'
 import { EditScreenInfo } from './EditScreenInfo'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { setAge } from 'redux/slices/profileSlice'
-import { ProfileState } from 'redux/types/profile'
+import { setAge } from '@/libs/redux/slices/profileSlice'
+import { ProfileState } from '@/libs/redux/types/profile'
 
 type ScreenContentProps = {
 	title: string
