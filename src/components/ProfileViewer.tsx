@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TextInput, StyleSheet } from 'react-native'
+import { View, Text } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { setName, setAge } from '@/libs/redux/slices/profileSlice'
 import type { RootState } from '@/libs/redux/store'
