@@ -1,6 +1,7 @@
 import { Text, TouchableOpacity, TouchableOpacityProps } from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
 
-type ButtonVariant = 'default' | 'outline' | 'red'
+type ButtonVariant = 'default' | 'outline' | 'red' | 'gradient'
 
 const defaultStyle = 'h-16 w-full items-center justify-center rounded-xl flex-row'
 
@@ -17,6 +18,10 @@ const buttonVariants: Record<ButtonVariant, { container: string; text: string }>
 		container: `${defaultStyle} bg-red-50`,
 		text: 'text-red-500 text-xl font-inter-medium',
 	},
+	gradient: {
+		container: `${defaultStyle} overflow-hidden`,
+		text: 'text-white text-xl font-inter-medium',
+	},
 }
 
 type ButtonProps = {
@@ -27,6 +32,27 @@ type ButtonProps = {
 } & TouchableOpacityProps
 
 export function Button({ title, onPress, variant, className, children, ...rest }: ButtonProps) {
+if (variant === 'gradient') {
+    return (
+      <TouchableOpacity
+        onPress={onPress}
+        className={`${buttonVariants.gradient.container} ${className}`}
+        {...rest}
+      >
+        <LinearGradient
+          colors={['#B73131', '#EAA233']}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          className="w-full h-full items-center justify-center"
+        >
+          {children}
+          <Text className={buttonVariants.gradient.text}>
+						{title}
+		  		</Text>
+        </LinearGradient>
+      </TouchableOpacity>
+    )
+  }
 	return (
 		<TouchableOpacity
 			onPress={onPress}
