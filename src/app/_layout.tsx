@@ -45,6 +45,8 @@ export default function Layout() {
 				></LinearGradient>
 				</SafeAreaView>
 			)}} />
+			<Stack.Screen name="main" options={{}} />
+			<Stack.Screen name="forgot-password" options={{}} />
 		</Stack>
 		   </GestureHandlerRootView>
 	)
