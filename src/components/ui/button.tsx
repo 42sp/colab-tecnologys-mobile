@@ -1,73 +1,84 @@
+import React from 'react'
 import { Text, TouchableOpacity, TouchableOpacityProps } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 
 type ButtonVariant = 'default' | 'outline' | 'red' | 'gradient'
 
-const defaultStyle = 'h-16 w-full items-center justify-center rounded-xl flex-row'
+const baseStyle = `rounded-xl h-16 w-full items-center justify-center flex-row`
 
 const buttonVariants: Record<ButtonVariant, { container: string; text: string }> = {
 	default: {
-		container: `${defaultStyle} bg-black`,
+		container: `${baseStyle} bg-black`,
 		text: 'text-neutral-100 text-xl font-inter-medium',
 	},
 	outline: {
-		container: `${defaultStyle} bg-transparent border-2 border-gray-200 outline-solid`,
-		text: 'text-xl font-inter-medium',
+		container: `${baseStyle} bg-transparent border-2 border-gray-200`,
+		text: 'text-black text-xl font-inter-medium',
 	},
 	red: {
-		container: `${defaultStyle} bg-red-50`,
+		container: `${baseStyle} bg-red-50`,
 		text: 'text-red-500 text-xl font-inter-medium',
 	},
 	gradient: {
-		container: `${defaultStyle} overflow-hidden`,
+		container: `${baseStyle}`,
 		text: 'text-white text-xl font-inter-medium',
 	},
 }
 
 type ButtonProps = {
 	title?: string
-	onPress: () => void
 	variant?: ButtonVariant
-	className?: string
+	textClassName?: string
+	gradientColors?: [string, string]
+	gradientStart?: { x: number; y: number }
+	gradientEnd?: { x: number; y: number }
 } & TouchableOpacityProps
 
-export function Button({ title, onPress, variant, className, children, ...rest }: ButtonProps) {
+export function Button({
+	title,
+	onPress,
+	variant = 'default',
+	className,
+	textClassName,
+	children,
+	gradientColors = ['#B73131', '#EAA233'],
+	gradientStart = { x: 0, y: 0.5 },
+	gradientEnd = { x: 1, y: 0.5 },
+	disabled,
+	...rest
+}: ButtonProps) {
 	if (variant === 'gradient') {
 		return (
 			<TouchableOpacity
 				onPress={onPress}
-				className={`${buttonVariants.gradient.container} ${className}`}
+				className={`overflow-hidden rounded-xl ${disabled ? 'opacity-80' : ''} ${className}`}
+				activeOpacity={0.8}
 				{...rest}
 			>
 				<LinearGradient
-					colors={['#B73131', '#EAA233']}
-					start={{ x: 0, y: 0.5 }}
-					end={{ x: 1, y: 0.5 }}
-					className="h-full w-full items-center justify-center"
+					colors={gradientColors}
+					start={gradientStart}
+					end={gradientEnd}
+					className={buttonVariants.gradient.container}
 				>
 					{children}
-					<Text className={buttonVariants.gradient.text}>{title}</Text>
+					{title && (
+						<Text className={`${buttonVariants.gradient.text} ${textClassName}`}>{title}</Text>
+					)}
 				</LinearGradient>
 			</TouchableOpacity>
 		)
 	}
+
 	return (
 		<TouchableOpacity
 			onPress={onPress}
-			className={
-				`${variant ? buttonVariants[variant].container : buttonVariants['default'].container}` +
-				` ${className}`
-			}
+			className={`${buttonVariants[variant].container} ${disabled ? 'opacity-80' : ''} ${className}`}
+			activeOpacity={0.8}
 			{...rest}
 		>
 			{children}
-			<Text
-				className={
-					variant ? `${buttonVariants[variant].text}` : `${buttonVariants['default'].text}`
-				}
-			>
-				{title}
-			</Text>
+			{title && <Text className={`${buttonVariants[variant].text} ${textClassName}`}>{title}</Text>}
 		</TouchableOpacity>
 	)
 }

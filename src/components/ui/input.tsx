@@ -26,7 +26,12 @@ export function Input({
 
 			{IconRight && (
 				<Pressable onPress={iconPress}>
-					<Feather name={IconRight} size={20} color={iconColor ? iconColor : '#d4d4d4'} />
+					<Feather
+						name={IconRight}
+						size={20}
+						color={iconColor ? iconColor : '#d4d4d4'}
+						className="p-4"
+					/>
 				</Pressable>
 			)}
 		</View>

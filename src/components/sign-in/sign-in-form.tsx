@@ -2,25 +2,85 @@ import { Text, TouchableOpacity, View } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'expo-router'
+import { z } from 'zod'
+import { Controller, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
+
+const signInSchema = z.object({
+	email: z.email().nonempty(),
+	password: z.string().nonempty(),
+})
+
+type SignInType = z.infer<typeof signInSchema>
 
 export function SignInForm() {
 	const router = useRouter()
 
+	const [hidePassword, setHidePassword] = useState(true)
+
+	const {
+		control,
+		handleSubmit,
+		formState: { errors, isSubmitting },
+	} = useForm<SignInType>({
+		resolver: zodResolver(signInSchema),
+	})
+
+	async function onSubmit(data: SignInType) {
+		console.log('Dados do Login', JSON.stringify(data))
+		await new Promise((resolve) => setTimeout(resolve, 1000))
+	}
+
 	return (
 		<View className="my-5 gap-5">
-			<Input placeholder="Email address" />
-			<Input placeholder="Password" IconRight="eye" />
+			<Controller
+				control={control}
+				name="email"
+				render={({ field: { onChange, onBlur, value } }) => (
+					<View>
+						<Input
+							keyboardType="email-address"
+							autoCapitalize="none"
+							placeholder="Email address"
+							onBlur={onBlur}
+							onChangeText={onChange}
+							value={value}
+						/>
+						{errors.email && <Text className="text-red-500">{errors.email.message}</Text>}
+					</View>
+				)}
+			/>
+
+			<Controller
+				control={control}
+				name="password"
+				render={({ field: { onChange, onBlur, value } }) => (
+					<View>
+						<Input
+							placeholder="Password"
+							IconRight="eye"
+							iconPress={() => (hidePassword ? setHidePassword(false) : setHidePassword(true))}
+							secureTextEntry={hidePassword}
+							onChangeText={onChange}
+							onBlur={onBlur}
+							value={value}
+						/>
+						{errors.password && <Text className="text-red-500">{errors.password.message}</Text>}
+					</View>
+				)}
+			/>
+
 			<TouchableOpacity activeOpacity={0.5} onPress={() => router.navigate('/forgot-password')}>
 				<Text className="self-end font-inter-bold text-blue-500">Forgot Password</Text>
 			</TouchableOpacity>
 
 			<Button
 				title="Sign In"
-				onPress={() => {
-					router.navigate('/main')
-				}}
+				onPress={handleSubmit(onSubmit)}
 				className="my-5"
-			></Button>
+				disabled={isSubmitting}
+			/>
 
 			<View className=" items-center">
 				<View className="flex-row">

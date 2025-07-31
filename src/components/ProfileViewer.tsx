@@ -5,9 +5,10 @@ import { setName, setAge } from '@/libs/redux/slices/profileSlice'
 import type { RootState } from '@/libs/redux/store'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { Feather } from '@expo/vector-icons'
 
 const ProfileViewer = () => {
-	// Acessa o estado do Redux (note a estrutura profile dentro do state)
 	const { name, age } = useSelector((state: RootState) => state.profile)
 	const dispatch = useDispatch()
 	const [newName, setNewName] = React.useState('')
@@ -29,7 +30,7 @@ const ProfileViewer = () => {
 	}
 
 	return (
-		<View>
+		<SafeAreaView className="w-full">
 			<Text className="self-center">Perfil Atual</Text>
 			<View className="mb-4">
 				<View className="flex-row gap-2">
@@ -43,39 +44,31 @@ const ProfileViewer = () => {
 				</View>
 			</View>
 
-			<View className="mb-2 flex-row items-center gap-2">
-				<Input
-					className="w-[70%]"
-					placeholder="Digite novo nome"
-					value={newName}
-					onChangeText={setNewName}
-					testID="nameInput"
-				/>
-				<Button
-					className="w-16"
-					onPress={handleUpdateName}
-					disabled={!newName.trim()}
-					testID="updateNameButton"
-				/>
+			<View className="mb-4 flex-row items-center">
+				<View className="mr-2 w-[80%]">
+					<Input placeholder="Digite novo nome" onChangeText={setNewName} />
+				</View>
+
+				<Button className="flex-1 rounded-full " onPress={() => handleUpdateName()}>
+					<Feather name={'arrow-right'} size={30} color="#ffff" />
+				</Button>
 			</View>
 
-			<View className="mb-2 flex-row items-center gap-2">
-				<Input
-					className="w-[70%]"
-					placeholder="Digite nova idade"
-					value={newAge}
-					onChangeText={setNewAge}
-					keyboardType="numeric"
-					testID="ageInput"
-				/>
+			<View className="mb-4 flex-row items-center">
+				<View className="mr-2 w-[80%]">
+					<Input placeholder="Digite nova idade" onChangeText={setNewAge} />
+				</View>
+
 				<Button
-					className="w-16"
-					onPress={handleUpdateAge}
-					disabled={!newAge.trim()}
-					testID="updateAgeButton"
-				/>
+					className="flex-1"
+					onPress={() => handleUpdateAge()}
+					variant="gradient"
+					gradientColors={['#4F46E5', '#10B981']}
+				>
+					<Feather name={'arrow-right'} size={30} color="#ffff" />
+				</Button>
 			</View>
-		</View>
+		</SafeAreaView>
 	)
 }
 
