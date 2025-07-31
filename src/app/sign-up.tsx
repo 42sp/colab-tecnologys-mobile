@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router'
-import { Text, View } from 'react-native'
+import { Text, View, KeyboardAvoidingView } from 'react-native'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Dropdown } from '../components/ui/dropdown'
@@ -42,13 +42,13 @@ export default function SignUp() {
 	}
 
 	return (
-		<ScrollView
-			contentContainerStyle={{ flexGrow: 1 }}
-			showsVerticalScrollIndicator={false}
-			className="bg-white"
-		>
-			<SafeAreaProvider>
-				<SafeAreaView className="my-5 bg-white p-10">
+		<SafeAreaProvider>
+			<SafeAreaView className="bg-white p-10">
+				<KeyboardAvoidingView behavior={'height'}>
+					<ScrollView
+					contentContainerStyle={{ flexGrow: 1 }}
+					showsVerticalScrollIndicator={false}
+					>
 					<View className="h-full items-center justify-between gap-5 ">
 						<View className="gap-1">
 							<Text>Full name</Text>
@@ -167,8 +167,9 @@ export default function SignUp() {
 						</View>
 						
 					</View>
-				</SafeAreaView>
-			</SafeAreaProvider>
-		</ScrollView>
+					</ScrollView>
+				</KeyboardAvoidingView>
+			</SafeAreaView>
+		</SafeAreaProvider>
 	)
 }
