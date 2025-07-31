@@ -49,7 +49,7 @@ const ProfileViewer = () => {
 					<Input placeholder="Digite novo nome" onChangeText={setNewName} />
 				</View>
 
-				<Button className="flex-1 rounded-full" onPress={() => handleUpdateName()}>
+				<Button className="flex-1 rounded-full " onPress={() => handleUpdateName()}>
 					<Feather name={'arrow-right'} size={30} color="#ffff" />
 				</Button>
 			</View>
@@ -60,7 +60,7 @@ const ProfileViewer = () => {
 				</View>
 
 				<Button
-					className="flex-1 rounded-full"
+					className="flex-1"
 					onPress={() => handleUpdateAge()}
 					variant="gradient"
 					gradientColors={['#4F46E5', '#10B981']}
