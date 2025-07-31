@@ -16,7 +16,7 @@ const signUpSchema = z.object({
 	email: z.email('Invalid e-mail'),
 	cpf: z.string().min(1, "CPF is required"),
 	phone: z.string().nonempty("Phone number is required"),
-	jobTitle: z.string,
+	jobTitle: z.string().min(1, "Job title is required"),
 	password: z.string().min(6, "Password must be at least 6 characters"),
 	confirmPassword: z.string()
 })
@@ -30,7 +30,10 @@ type SignUpForm = z.infer<typeof signUpSchema>
 export default function SignUp() {
 	const router = useRouter()
 	const { control, handleSubmit, formState: { errors }, setValue} = useForm<SignUpForm>({
-		resolver: zodResolver(signUpSchema)
+		resolver: zodResolver(signUpSchema),
+		defaultValues: {
+			jobTitle: ""
+		}
 	})
 
 	function SignUp(data: any) {

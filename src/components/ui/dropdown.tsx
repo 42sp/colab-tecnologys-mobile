@@ -36,6 +36,8 @@ interface DropdownProps extends TextInputProps {
 	placeholder?: string
 	options: { label: string }[]
 	variant?: DropdownVariant
+	value?: string
+	onChangeText?: (text: string) => void
 }
 
 export function Dropdown({
@@ -46,10 +48,10 @@ export function Dropdown({
 	options,
 	placeholder,
 	variant,
+	value,
+	onChangeText
 }: DropdownProps) {
 	const [open, setOpen] = useState(false)
-
-	const [selected, setSelected] = useState('')
 
 	return (
 		<Pressable
@@ -66,7 +68,7 @@ export function Dropdown({
 				<Text
 					className={` flex-1 ${variant ? dropdownVariants[variant].text : dropdownVariants['default'].text} + ${className}`}
 				>
-					{selected || placeholder}
+					{value || placeholder}
 				</Text>
 
 				{IconRight && (
@@ -85,7 +87,7 @@ export function Dropdown({
 							key={item.label}
 							className="w-full bg-white px-4 py-3 hover:bg-neutral-100"
 							onPress={() => {
-								setSelected(item.label)
+								onChangeText?.(item.label)
 								setOpen(false)
 							}}
 						>
