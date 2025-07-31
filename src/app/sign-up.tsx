@@ -125,8 +125,8 @@ export default function SignUp() {
 									IconRight={'eye'}
 									secureTextEntry
 									className="self-center"
-									onChangeText={onChange}
 									value={value}
+									onChangeText={onChange}
 								/>
 							)}
 							/>
