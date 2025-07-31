@@ -29,7 +29,7 @@ type SignUpForm = z.infer<typeof signUpSchema>
 
 export default function SignUp() {
 	const router = useRouter()
-	const { control, handleSubmit, formState: { errors }, setValue} = useForm<SignUpForm>({
+	const { control, handleSubmit, formState: { errors }} = useForm<SignUpForm>({
 		resolver: zodResolver(signUpSchema),
 		defaultValues: {
 			jobTitle: ""
@@ -98,7 +98,7 @@ export default function SignUp() {
 								<Controller
 								control={control}
 								name="jobTitle"
-								render={({ field }) => (
+								render={({ field: { onChange, value} }) => (
 							<Dropdown
 								IconLeft={'briefcase'}
 								IconRight={'chevron-down'}
@@ -106,7 +106,8 @@ export default function SignUp() {
 								options={items}
 								variant="outline"
 								placeholder="Select an option"
-								onChangeText={selected => setValue('jobTitle', selected)}
+								value={value}
+								onChangeText={onChange}
 							/>
 								)}
 							/>
