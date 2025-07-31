@@ -8,13 +8,16 @@ import { ScrollView } from 'react-native-gesture-handler'
 export default function SignIn() {
 	return (
 		<SafeAreaProvider>
-			<SafeAreaView className={`h-full bg-white p-10`}>
+			<SafeAreaView className="h-full bg-white p-10">
 				<KeyboardAvoidingView behavior={'height'}>
-					<Image source={require('@/assets/tecnologys-logo.png')} className="my-5 self-center" />
 					<ScrollView showsVerticalScrollIndicator={false}>
+						<Image source={require('@/assets/tecnologys-logo.png')} className="mb-5 self-center" />
+
 						<View className="my-5 items-center">
 							<Text className="font-inter-bold text-3xl">Welcome Back</Text>
-							<Text className="mt-2 font-inter text-lg text-neutral-500">Sign in to continue</Text>
+							<Text className="mt-2 text-center font-inter text-lg text-neutral-500">
+								Sign in to continue
+							</Text>
 						</View>
 
 						<Button
