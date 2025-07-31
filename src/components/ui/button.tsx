@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 
 type ButtonVariant = 'default' | 'outline' | 'red' | 'gradient'
 
-const baseStyle = 'h-16 w-full items-center justify-center rounded-xl flex-row'
+const baseStyle = `rounded-xl h-16 w-full items-center justify-center flex-row`
 
 const buttonVariants: Record<ButtonVariant, { container: string; text: string }> = {
 	default: {
@@ -28,7 +28,6 @@ const buttonVariants: Record<ButtonVariant, { container: string; text: string }>
 type ButtonProps = {
 	title?: string
 	variant?: ButtonVariant
-	className?: string
 	textClassName?: string
 	gradientColors?: [string, string]
 	gradientStart?: { x: number; y: number }
@@ -40,18 +39,19 @@ export function Button({
 	onPress,
 	variant = 'default',
 	className,
-	textClassName = '',
+	textClassName,
 	children,
 	gradientColors = ['#B73131', '#EAA233'],
 	gradientStart = { x: 0, y: 0.5 },
 	gradientEnd = { x: 1, y: 0.5 },
+	disabled,
 	...rest
 }: ButtonProps) {
 	if (variant === 'gradient') {
 		return (
 			<TouchableOpacity
 				onPress={onPress}
-				className={`overflow-hidden rounded-xl ${className}`}
+				className={`overflow-hidden rounded-xl ${disabled ? 'opacity-80' : ''} ${className}`}
 				activeOpacity={0.8}
 				{...rest}
 			>
@@ -73,7 +73,7 @@ export function Button({
 	return (
 		<TouchableOpacity
 			onPress={onPress}
-			className={`${buttonVariants[variant].container} ${className}`}
+			className={`${buttonVariants[variant].container} ${disabled ? 'opacity-80' : ''} ${className}`}
 			activeOpacity={0.8}
 			{...rest}
 		>
