@@ -1,11 +1,5 @@
 import { Feather } from '@expo/vector-icons'
-import {
-	Pressable,
-	TextInputProps,
-	View,
-	Text,
-	TouchableOpacity,
-} from 'react-native'
+import { Pressable, TextInputProps, View, Text, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { ScrollView } from 'react-native-gesture-handler'
 
@@ -49,7 +43,7 @@ export function Dropdown({
 	placeholder,
 	variant,
 	value,
-	onChangeText
+	onChangeText,
 }: DropdownProps) {
 	const [open, setOpen] = useState(false)
 

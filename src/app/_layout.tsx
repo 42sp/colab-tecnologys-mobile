@@ -25,7 +25,7 @@ export default function Layout() {
 
 	return (
 		<Provider store={store}>
-			<GestureHandlerRootView style={{ flex: 1 }}>
+			<GestureHandlerRootView >
 				<Stack
 					screenOptions={{
 						headerShown: false,
@@ -37,22 +37,21 @@ export default function Layout() {
 						name="sign-up"
 						options={{
 							headerShown: true,
-							headerTitleStyle: {},
 							headerTintColor: '#fff',
 							headerTitleAlign: 'center',
 							title: 'New Account',
 							headerLeft: () => (
 								<TouchableOpacity onPress={() => router.back()}>
-									<Feather name="chevron-left" size={24} color={'#fff'} />
+									<Feather name="chevron-left" size={24} color={'#fff'} className="p-5" />
 								</TouchableOpacity>
 							),
 							headerBackground: () => (
-								<SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: 'transparent' }}>
+								<SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }} edges={['top']}>
 									<LinearGradient
 										colors={['#B73131', '#EAA233']}
 										start={{ x: 0, y: 0.5 }}
 										end={{ x: 1, y: 0.5 }}
-										style={{ flex: 1 }}
+										style={{ height: '100%' }}
 									></LinearGradient>
 								</SafeAreaView>
 							),
