@@ -13,7 +13,7 @@ export default function Home() {
 				<Text className="flex self-center text-xl">Home</Text>
 				<View className="h-full items-center justify-center gap-2">
 					<ProfileViewer />
-					<Button title="Sign-in" onPress={() => {}} />
+					<Button title="View Profile" onPress={() => router.navigate('main/profile')} />
 
 					<Button
 						title="Sign-in"
