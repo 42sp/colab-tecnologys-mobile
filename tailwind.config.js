@@ -1,5 +1,3 @@
-import gluestackPlugin from '@gluestack-ui/nativewind-utils/tailwind-plugin'
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	content: ['./src/**/*.{js,jsx,ts,tsx}'],
