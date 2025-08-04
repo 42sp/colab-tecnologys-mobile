@@ -1,8 +1,7 @@
-import React from 'react'
 import { Text, TouchableOpacity, TouchableOpacityProps } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 
-type ButtonVariant = 'default' | 'outline' | 'red' | 'gradient'
+type ButtonVariant = 'default' | 'outline' | 'red' | 'gradient' | 'rounded'
 
 const baseStyle = `rounded-xl h-16 w-full items-center justify-center flex-row`
 
@@ -22,6 +21,10 @@ const buttonVariants: Record<ButtonVariant, { container: string; text: string }>
 	gradient: {
 		container: `${baseStyle}`,
 		text: 'text-white text-xl font-inter-medium',
+	},
+	rounded: {
+		container: 'size-14 rounded-full bg-black items-center justify-center',
+		text: '',
 	},
 }
 
