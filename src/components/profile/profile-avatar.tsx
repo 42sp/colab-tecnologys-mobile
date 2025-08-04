@@ -2,8 +2,6 @@ import { Image, Text, View } from 'react-native'
 import { Button } from '../ui/button'
 import { Feather } from '@expo/vector-icons'
 
-import avatarURL from '@/assets/avatar.png'
-
 type ProfileAvatarProps = {
 	avatar: string
 	name: string
@@ -13,8 +11,11 @@ type ProfileAvatarProps = {
 export function ProfileAvatar({ avatar, name, email }: ProfileAvatarProps) {
 	return (
 		<View className="items-center">
-			<View className="size-36 rounded-full bg-white p-1 shadow-2xl">
-				<Image source={avatarURL} className="h-full w-full rounded-full" />
+			<View className="size-36 rounded-full border border-neutral-100 bg-white p-1">
+				<Image
+					source={{ uri: 'https://randomuser.me/portraits/men/1.jpg' }}
+					className="h-full w-full rounded-full"
+				/>
 				<Button variant="rounded" className="mt-[-35px] h-10 w-10 self-end">
 					<Feather
 						name="edit"
