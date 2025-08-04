@@ -15,7 +15,7 @@ export function ProfileAvatar({ avatar, name, email }: ProfileAvatarProps) {
 		<View className="items-center">
 			<View className="size-36 rounded-full bg-white p-1 shadow-2xl">
 				<Image source={avatarURL} className="h-full w-full rounded-full" />
-				<Button variant="rounded" className="mt-[-35px] size-10 self-end">
+				<Button variant="rounded" className="mt-[-35px] h-10 w-10 self-end">
 					<Feather
 						name="edit"
 						color={'#ffff'}
