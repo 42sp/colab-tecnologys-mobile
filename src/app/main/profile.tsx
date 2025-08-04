@@ -29,8 +29,8 @@ export default function Profile() {
 								value="Rua das Flores, 123 - São Paulo"
 								icon="map-pin"
 							/>
-							<Card.Footer className="mt-5">
-								<TouchableOpacity activeOpacity={0.8}>
+							<Card.Footer className="mt-4">
+								<TouchableOpacity activeOpacity={0.8} className="p-2">
 									<Text className="self-center font-inter-bold text-lg text-blue-500">
 										Edit Information
 									</Text>
