@@ -1,3 +1,4 @@
+import { ProfileAvatar } from '@/components/profile/profile-avatar'
 import Card from '@/components/ui/card'
 import { Text } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
@@ -5,7 +6,8 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 export default function Profile() {
 	return (
 		<SafeAreaProvider>
-			<SafeAreaView className=" p-5">
+			<SafeAreaView className="flex-1 bg-[#F9FAFB] p-5">
+				<ProfileAvatar avatar="" name={'João Silva'} email={'joaosilva@gmail.com'} />
 				<Text className="flex self-center text-xl">Profile</Text>
 				<Card>
 					<Card.Header>
