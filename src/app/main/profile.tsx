@@ -13,12 +13,17 @@ export default function Profile() {
 		<SafeAreaProvider>
 			<ScrollView showsVerticalScrollIndicator={false}>
 				<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] p-5">
-					<ProfileAvatar avatar="" name={'João Silva'} email={'joaosilva@gmail.com'} />
+					<ProfileAvatar
+						avatar="https://randomuser.me/portraits/men/1.jpg"
+						name={'João Silva'}
+						email={'joaosilva@gmail.com'}
+					/>
 
 					<Card className="flex-1">
 						<Card.Header>
 							<Text className="font-inter-bold text-xl">Personal Information</Text>
 						</Card.Header>
+
 						<Card.Body className="gap-4">
 							<ProfileInfoItem label="Full Name" value="João Antônio Silva" icon="user" />
 							<ProfileInfoItem label="E-mail" value="joaosilva@email.com" icon="mail" />
@@ -29,6 +34,7 @@ export default function Profile() {
 								value="Rua das Flores, 123 - São Paulo"
 								icon="map-pin"
 							/>
+
 							<Card.Footer className="mt-4">
 								<TouchableOpacity activeOpacity={0.8} className="p-2">
 									<Text className="self-center font-inter-bold text-lg text-blue-500">
