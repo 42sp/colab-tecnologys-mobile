@@ -57,8 +57,14 @@ export default function DrawerLayout() {
 				}}
 			>
 				<Drawer.Screen name="profile" options={{ drawerLabel: 'Profile', title: 'Profile' }} />
-				<Drawer.Screen name="edit-profile" options={{ drawerLabel: 'Edit Profile', title: 'Edit Profile' }} />
-				<Drawer.Screen name="safety" options={{ drawerLabel: 'Safety', title: 'Safety' }} />
+				<Drawer.Screen
+					name="edit-profile"
+					options={{ drawerLabel: 'Edit Profile', title: 'Edit Profile' }}
+				/>
+				<Drawer.Screen
+					name="security-settings"
+					options={{ drawerLabel: 'Security settings', title: 'Security settings' }}
+				/>
 			</Drawer>
 		</GestureHandlerRootView>
 	)
