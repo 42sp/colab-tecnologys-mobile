@@ -12,10 +12,7 @@ export function ProfileAvatar({ avatar, name, email }: ProfileAvatarProps) {
 	return (
 		<View className="items-center">
 			<View className="size-36 rounded-full border border-neutral-100 bg-white p-1">
-				<Image
-					source={{ uri: 'https://randomuser.me/portraits/men/1.jpg' }}
-					className="h-full w-full rounded-full"
-				/>
+				<Image source={{ uri: avatar }} className="h-full w-full rounded-full" />
 				<Button variant="rounded" className="mt-[-35px] h-10 w-10 self-end">
 					<Feather
 						name="edit"
