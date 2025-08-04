@@ -13,7 +13,11 @@ type CardComponent = React.FC<CardBaseProps> & {
 }
 
 const Card: CardComponent = ({ children, className }) => {
-	return <View className={`rounded-lg bg-white p-5 ${className}`}>{children}</View>
+	return (
+		<View className={`gap-4 rounded-xl border border-neutral-100 bg-white p-5 ${className}`}>
+			{children}
+		</View>
+	)
 }
 
 Card.Header = ({ children, className }) => <View className={className}>{children}</View>
