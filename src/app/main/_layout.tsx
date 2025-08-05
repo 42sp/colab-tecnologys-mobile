@@ -88,7 +88,7 @@ export default function DrawerLayout() {
 					}}
 				/>
 				<Drawer.Screen
-					name="safety"
+					name="security-settings"
 					options={{
 						drawerLabel: 'Safety',
 						title: 'Safety',
