@@ -10,7 +10,7 @@ export default function Home() {
 
 	return (
 		<SafeAreaProvider>
-			<SafeAreaView className="w-full bg-[#b5c6e9] p-10">
+			<SafeAreaView className="w-full bg-white p-10">
 				<Text className="flex self-center text-xl">Home</Text>
 				<View className="h-full items-center justify-center gap-2">
 					<ProfileViewer />

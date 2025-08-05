@@ -9,6 +9,7 @@ import {
 	View,
 	TouchableOpacity,
 	KeyboardAvoidingView,
+	Platform,
 } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
@@ -41,7 +42,7 @@ export default function ForgotPassword() {
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView className="h-full bg-white p-10">
-				<KeyboardAvoidingView behavior={'height'}>
+				<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
 					<ScrollView showsVerticalScrollIndicator={false}>
 						<Image source={require('@/assets/tecnologys-logo.png')} className="mb-5 self-center" />
 						<View className="my-5 items-center">
