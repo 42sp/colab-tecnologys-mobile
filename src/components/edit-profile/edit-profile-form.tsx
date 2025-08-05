@@ -30,7 +30,7 @@ export function EditProfileForm() {
 	}
 
 	return (
-		<View className=" mb-20 mt-6 gap-5 px-10">
+		<View className=" mb-20 mt-6 gap-5 px-10  ">
 			<Text className="text-lg font-medium">Personal Information</Text>
 			<View className="gap-1">
 				<Text>Full name</Text>

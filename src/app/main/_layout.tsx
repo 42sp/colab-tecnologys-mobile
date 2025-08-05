@@ -5,6 +5,8 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { Feather } from '@expo/vector-icons'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { CustomDrawerContent } from '@/components/custom-drawer-content/custom-drawer-content'
+
 import {
 	useFonts,
 	Inter_400Regular,
@@ -30,6 +32,7 @@ export default function DrawerLayout() {
 	return (
 		<GestureHandlerRootView>
 			<Drawer
+				drawerContent={(props) => <CustomDrawerContent {...props} />}
 				screenOptions={{
 					headerShown: true,
 					headerStyle: {
@@ -39,6 +42,10 @@ export default function DrawerLayout() {
 					headerTitleAlign: 'center',
 					drawerPosition: 'right',
 					drawerHideStatusBarOnOpen: true,
+					drawerStyle:{
+						width: '80%'
+					},
+					drawerActiveTintColor: '#000',
 					headerLeft: () => (
 						<TouchableOpacity onPress={() => router.back()} style={{ paddingLeft: 35 }}>
 							<Feather name="chevron-left" size={24} color="#fff" />
@@ -56,14 +63,37 @@ export default function DrawerLayout() {
 					),
 				}}
 			>
-				<Drawer.Screen name="profile" options={{ drawerLabel: 'Profile', title: 'Profile' }} />
 				<Drawer.Screen
-					name="edit-profile"
-					options={{ drawerLabel: 'Edit Profile', title: 'Edit Profile' }}
+					name="home"
+					options={{
+						drawerLabel: 'Home',
+						title: 'Home',
+						drawerIcon: ({ color, size }) => <Feather name="home" color={color} size={size} />,
+					}}
 				/>
 				<Drawer.Screen
-					name="security-settings"
-					options={{ drawerLabel: 'Security settings', title: 'Security settings' }}
+					name="profile"
+					options={{
+						drawerLabel: 'Profile',
+						title: 'Profile',
+						drawerIcon: ({ color, size }) => <Feather name="user" color={color} size={size} />,
+					}}
+				/>
+				<Drawer.Screen
+					name="edit-profile"
+					options={{
+						drawerLabel: 'Edit Profile',
+						title: 'Edit Profile',
+						drawerIcon: ({ color, size }) => <Feather name="edit" color={color} size={size} />,
+					}}
+				/>
+				<Drawer.Screen
+					name="safety"
+					options={{
+						drawerLabel: 'Safety',
+						title: 'Safety',
+						drawerIcon: ({ color, size }) => <Feather name="shield" color={color} size={size} />,
+					}}
 				/>
 			</Drawer>
 		</GestureHandlerRootView>
