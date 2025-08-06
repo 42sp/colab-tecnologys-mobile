@@ -4,10 +4,10 @@ import { Feather } from '@expo/vector-icons'
 export function Avatar() {
 	return (
 		<View className="items-center gap-3 py-6">
-			<View className="relative">
+			<View className="relative size-36 rounded-full border border-neutral-100 bg-white p-1">
 				<Image
 					source={{ uri: 'https://randomuser.me/portraits/men/1.jpg' }}
-					className=" h-36 w-36 rounded-full"
+					className=" h-full w-full rounded-full"
 					resizeMode="cover"
 				/>
 				<View className="absolute bottom-0 right-0 rounded-full bg-black p-2">

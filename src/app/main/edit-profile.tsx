@@ -7,7 +7,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 export default function Home() {
 	return (
 		<SafeAreaProvider>
-			<SafeAreaView className="bg-white">
+			<SafeAreaView className="bg-[#F9FAFB] ">
 				<KeyboardAvoidingView behavior={'height'}>
 					<ScrollView showsVerticalScrollIndicator={false}>
 						<Avatar />
