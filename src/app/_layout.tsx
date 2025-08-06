@@ -1,9 +1,8 @@
 import { Stack, useRouter } from 'expo-router'
-import { TouchableOpacity } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Feather } from '@expo/vector-icons'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import store from '@/libs/redux/store'
 import {
@@ -25,7 +24,7 @@ export default function Layout() {
 
 	return (
 		<Provider store={store}>
-			<GestureHandlerRootView >
+			<GestureHandlerRootView>
 				<Stack
 					screenOptions={{
 						headerShown: false,
@@ -40,20 +39,21 @@ export default function Layout() {
 							headerTintColor: '#fff',
 							headerTitleAlign: 'center',
 							title: 'New Account',
+
 							headerLeft: () => (
 								<TouchableOpacity onPress={() => router.back()}>
-									<Feather name="chevron-left" size={24} color={'#fff'} className="p-5" />
+									<Feather name="chevron-left" size={24} color={'#fff'} className="m-2" />
 								</TouchableOpacity>
 							),
 							headerBackground: () => (
-								<SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }} edges={['top']}>
+								<View className="flex-1 bg-transparent">
 									<LinearGradient
 										colors={['#B73131', '#EAA233']}
 										start={{ x: 0, y: 0.5 }}
 										end={{ x: 1, y: 0.5 }}
 										style={{ height: '100%' }}
 									></LinearGradient>
-								</SafeAreaView>
+								</View>
 							),
 						}}
 					/>
