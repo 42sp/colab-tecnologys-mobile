@@ -90,8 +90,8 @@ export default function DrawerLayout() {
 				<Drawer.Screen
 					name="security-settings"
 					options={{
-						drawerLabel: 'Safety',
-						title: 'Safety',
+						drawerLabel: 'Security Settings',
+						title: 'Security Settings',
 						drawerIcon: ({ color, size }) => <Feather name="shield" color={color} size={size} />,
 					}}
 				/>
