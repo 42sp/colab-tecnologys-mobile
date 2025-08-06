@@ -1,33 +1,45 @@
 {
-	"expo": {
-		"name": "tecnologys-app",
-		"slug": "tecnologys-app",
-		"version": "1.0.0",
-		"scheme": "tecnologys-app-scheme",
-		"web": {
-			"favicon": "./src/assets/favicon.png"
-		},
-		"experiments": {
-			"tsconfigPaths": true
-		},
-		"plugins": ["expo-router", "expo-font"],
-		"orientation": "portrait",
-		"icon": "./src/assets/icon.png",
-		"userInterfaceStyle": "light",
-		"splash": {
-			"image": "./src/assets/splash.png",
-			"resizeMode": "contain",
-			"backgroundColor": "#ffffff"
-		},
-		"assetBundlePatterns": ["**/*"],
-		"ios": {
-			"supportsTablet": true
-		},
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./src/assets/adaptive-icon.png",
-				"backgroundColor": "#ffffff"
-			}
-		}
-	}
+  "expo": {
+    "name": "tecnologys-app",
+    "slug": "tecnologys-segy",
+    "version": "1.0.0",
+    "scheme": "tecnologys-app-scheme",
+    "web": {
+      "favicon": "./src/assets/favicon.png"
+    },
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
+    "orientation": "portrait",
+    "icon": "./src/assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./src/assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "1dcd2a8a-c510-4526-82fb-f4dbb5c91a8b"
+      }
+    },
+    "owner": "42sp"
+  }
 }

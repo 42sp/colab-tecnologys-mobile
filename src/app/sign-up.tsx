@@ -8,7 +8,11 @@ export default function SignUp() {
 		<SafeAreaProvider>
 			<SafeAreaView className="bg-white px-10">
 				<KeyboardAvoidingView behavior={'height'}>
-					<ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+					<ScrollView
+						className="mt-8"
+						contentContainerStyle={{ flexGrow: 1 }}
+						showsVerticalScrollIndicator={false}
+					>
 						<SignUpForm />
 					</ScrollView>
 				</KeyboardAvoidingView>
