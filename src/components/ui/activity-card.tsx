@@ -41,7 +41,7 @@ interface ActivityCardProps {
 
 export function ActivityCard({ data }: ActivityCardProps) {
 	return (
-		<Card className="">
+		<Card className=" m-1">
 			<Card.Header className="flex-row items-start justify-between ">
 				<View className=" flex-row items-center gap-4">
 					<Button variant="rounded" className="size-10 bg-blue-100">

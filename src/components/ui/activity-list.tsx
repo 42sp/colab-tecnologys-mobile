@@ -31,16 +31,19 @@ interface ActivityListProps {
 export function ActivityList({ data }: ActivityListProps) {
 	return (
 		<View className="">
-			<View className="absolute left-1.5 top-4 h-full w-0.5 bg-gray-400" />
+			{/* vertical line */}
+			<View className="absolute left-1 h-full w-0.5 bg-gray-400" />
+
 			<SectionList
 				className=""
+				scrollEnabled={true}
 				sections={data}
 				renderItem={({ item }) => (
 					<View className="w-full flex-row items-start justify-start">
-						{/* Dot */}
-						<View className={`mt-3 h-3 w-3 rounded-full ${ColorDotVariants[item.jobType].color}`} />
+						{/* dot */}
+						<View className={` mt-4 h-3 w-3 rounded-full ${ColorDotVariants[item.jobType].color}`} />
 
-						<View className="w-full p-2 ">
+						<View className=" w-full p-2 ">
 							<ActivityCard data={item} />
 						</View>
 					</View>

@@ -8,7 +8,6 @@ import HomeScreen from '@/screens/stack/home/home'
 import SignInScreen from '@/screens/stack/sign-in/sign-in'
 import SignUpScreen from '@/screens/stack/sign-up/sign-up'
 import ForgotPasswordScreen from '@/screens/stack/forgot-password/forgot-password'
-import TestListScreen from '@/screens/stack/test-list/test-list'
 import DrawerLayout, { DrawerParamList } from '@/_layouts/drawer'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
 
@@ -17,7 +16,6 @@ export type StackParamList = {
 	signIn: undefined
 	signUp: undefined
 	forgotPassword: undefined
-	testList: undefined
 	drawer: NavigatorScreenParams<DrawerParamList>
 }
 
@@ -56,7 +54,6 @@ export default function StackLayout() {
 				}}
 			/>
 			<Stack.Screen name="forgotPassword" component={ForgotPasswordScreen} options={{}} />
-			<Stack.Screen name="testList" component={TestListScreen} options={{}} />
 			<Stack.Screen name="drawer" component={DrawerLayout} options={{}} />
 		</Stack.Navigator>
 	)
