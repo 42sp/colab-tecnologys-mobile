@@ -59,6 +59,7 @@ export default function Layout() {
 					/>
 					<Stack.Screen name="main" options={{}} />
 					<Stack.Screen name="forgot-password" options={{}} />
+					<Stack.Screen name="test-list" options={{}} />
 				</Stack>
 			</GestureHandlerRootView>
 		</Provider>

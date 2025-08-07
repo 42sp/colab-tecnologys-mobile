@@ -4,49 +4,35 @@ import Card from '@/components/ui/card'
 import { Feather } from '@expo/vector-icons'
 import { Button } from '@/components/ui/button'
 
-// type LocationType = 'unit' | 'building'
-
-// interface ActivityData {
-//   title: string
-//   location: string
-//   locationType: LocationType
-//   employee: string
-//   time: Date
-// }
-
-// interface Props {
-//   data: ActivityData
-// }
-
 type IconLocationVariant = 'unidade' | 'predio'
 
 const IconLocationVariants: Record<IconLocationVariant, { icon: keyof typeof Feather.glyphMap }> = {
 	unidade: {
-		icon: "home"
+		icon: 'home',
 	},
 	predio: {
-		icon: "trello"
+		icon: 'trello',
 	},
 }
 
 type IconJobVariant = 'parede' | 'contrapiso' | 'pintura'
 
 const IconJobVariants: Record<IconJobVariant, { icon: keyof typeof Feather.glyphMap }> = {
-  parede: {
-    icon: "credit-card"
-  },
-  contrapiso: {
-    icon: "plus-square"
-  },
-  pintura: {
-    icon: "droplet"
-  }
+	parede: {
+		icon: 'credit-card',
+	},
+	contrapiso: {
+		icon: 'plus-square',
+	},
+	pintura: {
+		icon: 'droplet',
+	},
 }
 
 interface ActivityCardProps {
 	data: {
 		title: string
-    jobType: IconJobVariant
+		jobType: IconJobVariant
 		location: string
 		locationType: IconLocationVariant
 		employee: string
@@ -56,16 +42,13 @@ interface ActivityCardProps {
 
 export function ActivityCard({ data }: ActivityCardProps) {
 	return (
-		<Card>
+		<Card className="">
 			<Card.Header className="flex-row items-start justify-between ">
-				<View className="flex-1 flex-row items-center gap-4">
-					<Button variant="rounded" className="bg-blue-100 size-10">
-						<Feather
-              name={IconJobVariants[data.jobType].icon}
-              size={14}
-             color={'black'} />
+				<View className=" flex-row items-center gap-4">
+					<Button variant="rounded" className="size-10 bg-blue-100">
+						<Feather name={IconJobVariants[data.jobType].icon} size={14} color={'black'} />
 					</Button>
-					<Text className="font-inter-bold text-md ">{data.title}</Text>
+					<Text className="text-md font-inter-bold ">{data.title}</Text>
 				</View>
 				<View>
 					{data.time ? (
@@ -77,23 +60,15 @@ export function ActivityCard({ data }: ActivityCardProps) {
 					)}
 				</View>
 			</Card.Header>
-			<Card.Body className="border border-white ml-14 gap-1">
-			  <View className="flex-row gap-2">
-          <Feather
-            name={IconLocationVariants[data.locationType].icon}
-            size={14}
-            color="black"
-          />
-          <Text className=" flex-1 text-sm font-inter text-wrap">{data.location}</Text>
-        </View>
-			  <View className="flex-row gap-2">
-          <Feather
-            name={"user"}
-            size={14}
-            color="black"
-          />
-          <Text className="text-sm font-inter text-wrap flex-1">{data.employee}</Text>
-        </View>
+			<Card.Body className="ml-14 border border-white">
+				<View className="flex-row gap-2">
+					<Feather name={IconLocationVariants[data.locationType].icon} size={14} color="black" />
+					<Text className=" flex-1 text-wrap font-inter text-sm">{data.location}</Text>
+				</View>
+				<View className="flex-row gap-2">
+					<Feather name={'user'} size={14} color="black" />
+					<Text className="flex-1 text-wrap font-inter text-sm">{data.employee}</Text>
+				</View>
 			</Card.Body>
 		</Card>
 	)
