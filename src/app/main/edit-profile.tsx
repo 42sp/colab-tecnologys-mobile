@@ -4,7 +4,7 @@ import { Avatar } from '@/components/edit-profile/avatar'
 import { EditProfileForm } from '@/components/edit-profile/edit-profile-form'
 import { ScrollView } from 'react-native-gesture-handler'
 
-export default function Home() {
+export default function EditProfileScreen() {
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView className="bg-[#F9FAFB] ">

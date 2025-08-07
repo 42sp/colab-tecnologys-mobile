@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router'
 import { Text, View } from 'react-native'
 import { z } from 'zod'
 import { useForm, Controller } from 'react-hook-form'
@@ -7,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Dropdown } from '@/components/ui/dropdown'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
+import { useNavigate } from '@/libs/react-navigation/useNavigate'
 
 const items = [{ label: 'Item 1' }, { label: 'Item 2' }, { label: 'Item 3' }, { label: 'Item 4' }]
 
@@ -28,7 +28,7 @@ const signUpSchema = z
 type SignUpType = z.infer<typeof signUpSchema>
 
 export function SignUpForm() {
-	const router = useRouter()
+	const { stack } = useNavigate()
 
 	const [hidePassword, setHidePassword] = useState(true)
 
@@ -45,7 +45,7 @@ export function SignUpForm() {
 
 	function onSubmit(data: any) {
 		console.log('Dados de Registro: ', JSON.stringify(data))
-		router.navigate('/sign-in')
+		stack('signIn')
 	}
 
 	return (
@@ -186,7 +186,9 @@ export function SignUpForm() {
 				<Text>
 					Already have an account?
 					<Text
-						onPress={() => router.navigate('/sign-in')}
+						onPress={() => {
+							stack('signUp')
+						}}
 						className="font-inter-bold text-blue-500"
 					>
 						{' '}

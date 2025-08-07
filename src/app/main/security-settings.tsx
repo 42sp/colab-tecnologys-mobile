@@ -3,7 +3,7 @@ import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { SecuritySettingsForm } from '@/components/security-settings/security-settings-form'
 import { ScrollView } from 'react-native-gesture-handler'
 
-export default function Home() {
+export default function SecuritySettingsScreen() {
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView>

@@ -1,11 +1,11 @@
 import { Text, TouchableOpacity, View } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { useRouter } from 'expo-router'
 import { z } from 'zod'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
+import { useNavigate } from '@/libs/react-navigation/useNavigate'
 
 const signInSchema = z.object({
 	email: z.email().nonempty(),
@@ -15,7 +15,7 @@ const signInSchema = z.object({
 type SignInType = z.infer<typeof signInSchema>
 
 export function SignInForm() {
-	const router = useRouter()
+	const { stack } = useNavigate()
 
 	const [hidePassword, setHidePassword] = useState(true)
 
@@ -71,7 +71,12 @@ export function SignInForm() {
 				)}
 			/>
 
-			<TouchableOpacity activeOpacity={0.5} onPress={() => router.navigate('/forgot-password')}>
+			<TouchableOpacity
+				activeOpacity={0.5}
+				onPress={() => {
+					stack('forgotPassword')
+				}}
+			>
 				<Text className="self-end font-inter-bold text-blue-500">Forgot Password</Text>
 			</TouchableOpacity>
 
@@ -85,7 +90,12 @@ export function SignInForm() {
 			<View className=" items-center">
 				<View className="flex-row">
 					<Text className="font-inter">Don&rsquo;t have an account? </Text>
-					<TouchableOpacity activeOpacity={0.5} onPress={() => router.navigate('/sign-up')}>
+					<TouchableOpacity
+						activeOpacity={0.5}
+						onPress={() => {
+							stack('signUp')
+						}}
+					>
 						<Text className="font-inter-bold text-blue-500">Sign Up</Text>
 					</TouchableOpacity>
 				</View>

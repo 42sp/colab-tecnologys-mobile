@@ -3,7 +3,7 @@ import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { ScrollView } from 'react-native-gesture-handler'
 import { SignUpForm } from '@/components/sign-up/sign-up-form'
 
-export default function SignUp() {
+export default function SignUpScreen() {
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView className="bg-white px-10">

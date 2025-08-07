@@ -1,21 +1,14 @@
 import { z } from 'zod'
-import { useRouter } from 'expo-router'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import {
-	Image,
-	Text,
-	View,
-	TouchableOpacity,
-	KeyboardAvoidingView,
-	Platform,
-} from 'react-native'
+import { Image, Text, View, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useNavigation } from '@react-navigation/native'
 
 const forgotPasswordSchema = z.object({
 	email: z.email('Invalid email address'),
@@ -23,8 +16,8 @@ const forgotPasswordSchema = z.object({
 
 type ForgotPasswordType = z.infer<typeof forgotPasswordSchema>
 
-export default function ForgotPassword() {
-	const router = useRouter()
+export default function ForgotPasswordScreen() {
+	const router = useNavigation()
 
 	const {
 		control,
@@ -68,7 +61,7 @@ export default function ForgotPassword() {
 											value={value}
 										/>
 										{errors.email && (
-											<Text className="mt-1 text-sm text-red-500 font-inter">
+											<Text className="mt-1 font-inter text-sm text-red-500">
 												{errors.email.message}
 											</Text>
 										)}
@@ -80,12 +73,17 @@ export default function ForgotPassword() {
 								We&#39;ll send you a link to reset your password
 							</Text>
 
-							<Button className="mt-8" title="Reset Password" onPress={handleSubmit(onSubmit)} disabled={isSubmitting} />
+							<Button
+								className="mt-8"
+								title="Reset Password"
+								onPress={handleSubmit(onSubmit)}
+								disabled={isSubmitting}
+							/>
 
 							<TouchableOpacity
 								className="mt-6 self-center"
 								activeOpacity={0.5}
-								onPress={() => router.back()}
+								onPress={() => router.goBack()}
 							>
 								<Text className="text-center font-inter-bold text-base leading-6 text-blue-600">
 									Back to Sign In

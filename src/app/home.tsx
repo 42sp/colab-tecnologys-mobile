@@ -1,12 +1,12 @@
-import { useRouter } from 'expo-router'
 import { Text, View } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { Button } from '@/components/ui/button'
 import ProfileViewer from '@/components/ProfileViewer'
 import { SummaryCard } from '@/components/home/summary-card'
+import { useNavigate } from '@/libs/react-navigation/useNavigate'
 
-export default function Home() {
-	const router = useRouter()
+export default function HomeScreen() {
+	const { stack, drawer } = useNavigate()
 
 	return (
 		<SafeAreaProvider>
@@ -14,29 +14,19 @@ export default function Home() {
 				<Text className="flex self-center text-xl">Home</Text>
 				<View className="h-full items-center justify-center gap-2">
 					<ProfileViewer />
-					<Button title="View Profile" onPress={() => router.navigate('main/profile')} />
+					<Button
+						title="View Profile"
+						onPress={() => {
+							drawer('profile')
+						}}
+					/>
 
 					<View className="my-4 flex-row gap-4">
-						<SummaryCard
-							icon="clipboard"
-							SumaryVariant="blue"
-							value="1000"
-							label="Atividades"
-						/>
+						<SummaryCard icon="clipboard" SumaryVariant="blue" value="1000" label="Atividades" />
 
-						<SummaryCard
-							icon="clock"
-							SumaryVariant="orange"
-							value="200"
-							label="Pendentes"
-						/>
+						<SummaryCard icon="clock" SumaryVariant="orange" value="200" label="Pendentes" />
 
-						<SummaryCard
-							icon="bar-chart"
-							SumaryVariant="green"
-							value="75%"
-							label="Produtividade"
-						/>
+						<SummaryCard icon="bar-chart" SumaryVariant="green" value="75%" label="Produtividade" />
 					</View>
 
 					<Button
@@ -47,13 +37,9 @@ export default function Home() {
 						variant="outline"
 					/>
 
-					<Button
-						title="Forgot password"
-						onPress={() => router.navigate('/forgot-password')}
-						variant="red"
-					/>
+					<Button title="Forgot password" onPress={() => stack('forgotPassword')} variant="red" />
 
-					<Button title="Go to Sign-in" onPress={() => router.navigate('/sign-in')} />
+					<Button title="Go to Sign-in" onPress={() => stack('signIn')} />
 				</View>
 			</SafeAreaView>
 		</SafeAreaProvider>

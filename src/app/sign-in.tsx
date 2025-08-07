@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { SignInForm } from '@/components/sign-in/sign-in-form'
 import { ScrollView } from 'react-native-gesture-handler'
 
-export default function SignIn() {
+export default function SignInScreen() {
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView className="h-full bg-white p-10">

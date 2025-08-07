@@ -4,13 +4,14 @@
 		"slug": "tecnologys-app",
 		"version": "1.0.0",
 		"scheme": "tecnologys-app-scheme",
+		"main": "./src/app.tsx",
+		"plugins": ["expo-font"],
 		"web": {
 			"favicon": "./src/assets/favicon.png"
 		},
 		"experiments": {
 			"tsconfigPaths": true
 		},
-		"plugins": ["expo-router", "expo-font"],
 		"orientation": "portrait",
 		"icon": "./src/assets/icon.png",
 		"userInterfaceStyle": "light",

@@ -8,7 +8,7 @@ import { Feather } from '@expo/vector-icons'
 import { ScrollView } from 'react-native-gesture-handler'
 import { ProfileIcon } from '@/components/profile/profile-icon'
 
-export default function Profile() {
+export default function ProfileScreen() {
 	return (
 		<SafeAreaProvider>
 			<ScrollView showsVerticalScrollIndicator={false}>

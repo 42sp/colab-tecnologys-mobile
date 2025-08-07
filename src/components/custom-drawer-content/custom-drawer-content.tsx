@@ -3,12 +3,11 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
 import { Feather } from '@expo/vector-icons'
-import type { Route } from '@react-navigation/native'
-import { useRouter } from 'expo-router'
+import { useNavigation, type Route } from '@react-navigation/native'
 
 export function CustomDrawerContent(props: any) {
 	const { state } = props
-	const router = useRouter()
+	const router = useNavigation()
 
 	return (
 		<SafeAreaProvider>
@@ -78,7 +77,9 @@ export function CustomDrawerContent(props: any) {
 
 					<TouchableOpacity
 						className="mt-8 flex-row gap-3 px-5 py-4"
-						onPress={() => router.navigate('/home')}
+						onPress={() => {
+							/* router.navigate('/home') */
+						}}
 					>
 						<Feather name="log-out" color="#6b7280" size={22} />
 						<Text className="text-lg font-medium text-gray-500">Sair</Text>
