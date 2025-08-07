@@ -69,6 +69,12 @@ export function ActivityCard({ data }: ActivityCardProps) {
 					<Text className="flex-1 text-wrap font-inter text-sm">{data.employee}</Text>
 				</View>
 			</Card.Body>
+			<Card.Footer className='flex-row justify-end hidden'>
+				{/* botao verde para o supervisor aprovar está aqui escondido */}
+			  	<View>
+    				<Button variant="green" title="Aprovar" />
+  				</View>
+			</Card.Footer>
 		</Card>
 	)
 }

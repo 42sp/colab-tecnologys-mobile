@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, TouchableOpacityProps } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 
-type ButtonVariant = 'default' | 'outline' | 'red' | 'gradient' | 'rounded' | 'pill' | 'redPill'
+type ButtonVariant = 'default' | 'outline' | 'red' | 'gradient' | 'rounded' | 'pill' | 'redPill' | 'green'
 
 const baseStyle = `rounded-xl h-16 w-full items-center justify-center flex-row`
 
@@ -34,6 +34,10 @@ const buttonVariants: Record<ButtonVariant, { container: string; text: string }>
 		container: `rounded-full pl-4 pr-1 items-center border border-red-500`,
 		text: '',
 	},
+	green: {
+		container: `rounded-xl h-10 w-full items-center justify-center flex-row bg-green-500`,
+		text: 'text-gray-700 text-xl font-inter-medium',
+	}
 }
 
 type ButtonProps = {
