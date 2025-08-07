@@ -1,4 +1,3 @@
-import React from 'react'
 import { SectionList, View } from 'react-native'
 import { ActivityCard } from '@/components/ui/activity-card'
 

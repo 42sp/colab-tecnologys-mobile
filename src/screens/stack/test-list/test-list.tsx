@@ -1,8 +1,8 @@
-import { useRouter } from 'expo-router'
 import { Text, View } from 'react-native'
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { Button } from '@/components/ui/button'
 import { ActivityList } from '@/components/ui/activity-list'
+import { useNavigate } from '@/libs/react-navigation/useNavigate'
 
 interface ActivityData {
 	title: string
@@ -112,16 +112,14 @@ const mockData: ActivityData[] = [
 	},
 ]
 
-export default function TestList() {
-	const router = useRouter()
+export default function TestListScreen() {
 
+	const { stack } = useNavigate()
 	return (
-		<SafeAreaProvider>
-			{/* mudei do padrão p-10 para p-5 apenas pq fica mais parecido com o design original */}
-			<SafeAreaView className="w-full p-5">
+		<SafeAreaView className="w-full p-10">
+				{/* mudei do padrão p-10 para p-5 apenas pq fica mais parecido com o design do motiff */}
 				<Text className="text-2xl">test list</Text>
 				<View className="items-center gap-2 ">
-					<Button title="home" onPress={() => router.navigate('/home')} />
 					<View className="">
 						<ActivityList
 							data={[
@@ -137,6 +135,5 @@ export default function TestList() {
 					</View>
 				</View>
 			</SafeAreaView>
-		</SafeAreaProvider>
 	)
 }

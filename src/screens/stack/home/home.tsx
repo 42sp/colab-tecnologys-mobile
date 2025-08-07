@@ -12,7 +12,14 @@ export default function HomeScreen() {
 		<SafeAreaView className="w-full bg-white p-10">
 			<Text className="flex self-center text-xl">Home</Text>
 			<View className="h-full items-center justify-center gap-2">
-				<ProfileViewer />
+			<ProfileViewer />
+				<Button
+					title="test list"
+					onPress={() => {
+						stack('testList')
+					}}
+					variant="outline"
+				/>				
 				<Button
 					title="View Profile"
 					onPress={() => {
