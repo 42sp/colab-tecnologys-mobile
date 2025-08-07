@@ -29,12 +29,7 @@ interface SummaryCardProps {
 	label: string
 }
 
-export function SummaryCard({
-	icon,
-	SumaryVariant,
-	value,
-	label,
-}: SummaryCardProps) {
+export function SummaryCard({ icon, SumaryVariant, value, label }: SummaryCardProps) {
 	return (
 		<Card className="flex-1 items-center justify-between p-3">
 			<Card.Header className={sumaryVariants[SumaryVariant].container}>

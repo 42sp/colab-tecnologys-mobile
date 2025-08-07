@@ -1,5 +1,5 @@
 import { Image, Text, View } from 'react-native'
-import { Button } from '../ui/button'
+import { Button } from '@/components/ui/button'
 import { Feather } from '@expo/vector-icons'
 
 type ProfileAvatarProps = {

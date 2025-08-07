@@ -1,7 +1,7 @@
 import { Text, View, Image, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 
-export function Avatar() {
+export function EditProfileAvatar() {
 	return (
 		<View className="items-center gap-3 py-6">
 			<View className="relative size-36 rounded-full border border-neutral-100 bg-white p-1">
