@@ -1,12 +1,12 @@
-import { ProfileAvatar } from '@/components/profile/profile-avatar'
-import { ProfileInfoItem } from '@/components/profile/profile-info-item'
+import { ProfileAvatar } from './profile-avatar'
+import { ProfileInfoItem } from './profile-info-item'
 import { Button } from '@/components/ui/button'
 import Card from '@/components/ui/card'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { Feather } from '@expo/vector-icons'
 import { ScrollView } from 'react-native-gesture-handler'
-import { ProfileIcon } from '@/components/profile/profile-icon'
+import { ProfileIcon } from './profile-icon'
 
 export default function ProfileScreen() {
 	return (

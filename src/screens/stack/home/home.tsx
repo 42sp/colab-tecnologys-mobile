@@ -1,8 +1,8 @@
 import { Text, View } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { Button } from '@/components/ui/button'
-import ProfileViewer from '@/components/ProfileViewer'
-import { SummaryCard } from '@/components/home/summary-card'
+import ProfileViewer from '@/components/redux-profile-viewer'
+import { SummaryCard } from '@/components/summary-card'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
 
 export default function HomeScreen() {

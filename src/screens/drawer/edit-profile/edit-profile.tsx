@@ -1,15 +1,17 @@
 import { KeyboardAvoidingView } from 'react-native'
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
+import { EditProfileAvatar } from './edit-profile-avatar'
+import { EditProfileForm } from './edit-profile-form'
 import { ScrollView } from 'react-native-gesture-handler'
-import { SignUpForm } from '@/components/sign-up/sign-up-form'
 
-export default function SignUpScreen() {
+export default function EditProfileScreen() {
 	return (
 		<SafeAreaProvider>
-			<SafeAreaView className="bg-white px-10">
+			<SafeAreaView className="bg-[#F9FAFB] ">
 				<KeyboardAvoidingView behavior={'height'}>
-					<ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-						<SignUpForm />
+					<ScrollView showsVerticalScrollIndicator={false}>
+						<EditProfileAvatar />
+						<EditProfileForm />
 					</ScrollView>
 				</KeyboardAvoidingView>
 			</SafeAreaView>

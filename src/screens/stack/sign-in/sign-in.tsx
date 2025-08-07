@@ -1,8 +1,8 @@
 import { Image, KeyboardAvoidingView, Text, View } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
-import { SignInDivisor } from '@/components/sign-in/sign-in-divisor'
+import { SignInDivisor } from './sign-in-divisor'
 import { Button } from '@/components/ui/button'
-import { SignInForm } from '@/components/sign-in/sign-in-form'
+import { SignInForm } from './sign-in-form'
 import { ScrollView } from 'react-native-gesture-handler'
 
 export default function SignInScreen() {

@@ -1,5 +1,5 @@
-import { StackParamList } from '@/app/_stack-navigation'
-import { DrawerParamList } from '@/app/main/_drawer-navigation'
+import { DrawerParamList } from '@/_layouts/drawer'
+import { StackParamList } from '@/_layouts/stack'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'

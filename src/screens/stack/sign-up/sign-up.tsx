@@ -1,15 +1,15 @@
 import { KeyboardAvoidingView } from 'react-native'
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
-import { SecuritySettingsForm } from '@/components/security-settings/security-settings-form'
 import { ScrollView } from 'react-native-gesture-handler'
+import { SignUpForm } from './sign-up-form'
 
-export default function SecuritySettingsScreen() {
+export default function SignUpScreen() {
 	return (
 		<SafeAreaProvider>
-			<SafeAreaView>
+			<SafeAreaView className="bg-white px-10">
 				<KeyboardAvoidingView behavior={'height'}>
-					<ScrollView showsVerticalScrollIndicator={false}>
-						<SecuritySettingsForm />
+					<ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+						<SignUpForm />
 					</ScrollView>
 				</KeyboardAvoidingView>
 			</SafeAreaView>

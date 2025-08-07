@@ -11,8 +11,10 @@ import {
 } from '@expo-google-fonts/inter'
 import '@/global.css'
 import { NavigationContainer } from '@react-navigation/native'
-import StackLayout from './app/_stack-navigation'
+import StackLayout from './_layouts/stack'
 import { registerRootComponent } from 'expo'
+
+enableScreens()
 
 export default function App() {
 	const [fontsLoaded] = useFonts({
@@ -33,5 +35,4 @@ export default function App() {
 	)
 }
 
-enableScreens()
 registerRootComponent(App)

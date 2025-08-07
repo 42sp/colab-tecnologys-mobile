@@ -2,12 +2,12 @@ import { Text, View, Image } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Card from '@/components/ui/card'
-import { ToggleButton } from '../ui/toggle-button'
+import { ToggleButton } from '@/components/ui/toggle-button'
 import { z } from 'zod'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigate } from '@/libs/react-navigation/useNavigate'
 
 const SecuritySettingsSchema = z
 	.object({
@@ -34,12 +34,12 @@ export function SecuritySettingsForm() {
 		resolver: zodResolver(SecuritySettingsSchema),
 	})
 
+	const { drawer } = useNavigate()
+
 	function onSubmit(data: SecuritySettingsType) {
 		console.log('Dados de Registro: ', JSON.stringify(data))
-		// router.navigate('./profile')
+		drawer('profile')
 	}
-
-	const router = useNavigation()
 
 	const [hideCurrentPassword, setHideCurrentPassword] = useState(true)
 	const [hideNewPassword, setHideNewPassword] = useState(true)
