@@ -1,15 +1,14 @@
 import { createStackNavigator } from '@react-navigation/stack'
-import { TouchableOpacity } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Feather } from '@expo/vector-icons'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { NavigatorScreenParams } from '@react-navigation/native'
 import HomeScreen from '@/screens/stack/home/home'
 import SignInScreen from '@/screens/stack/sign-in/sign-in'
 import SignUpScreen from '@/screens/stack/sign-up/sign-up'
 import ForgotPasswordScreen from '@/screens/stack/forgot-password/forgot-password'
 import DrawerLayout, { DrawerParamList } from '@/_layouts/drawer'
-import { useNavigate } from '@/libs/react-navigation/useNavigate'
+import { getHeaderTitle } from '@react-navigation/elements'
 
 export type StackParamList = {
 	home: undefined
@@ -22,8 +21,6 @@ export type StackParamList = {
 const Stack = createStackNavigator<StackParamList>()
 
 export default function StackLayout() {
-	const { navigation } = useNavigate()
-
 	return (
 		<Stack.Navigator screenOptions={{ headerShown: false }}>
 			<Stack.Screen name="home" component={HomeScreen} options={{}} />
@@ -33,24 +30,30 @@ export default function StackLayout() {
 				component={SignUpScreen}
 				options={{
 					headerShown: true,
-					headerTintColor: '#fff',
-					headerTitleAlign: 'center',
 					title: 'New Account',
-					headerLeft: () => (
-						<TouchableOpacity onPress={() => navigation.goBack()}>
-							<Feather name="chevron-left" size={24} color={'#fff'} className="p-5" />
-						</TouchableOpacity>
-					),
-					headerBackground: () => (
-						<SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }} edges={['top']}>
-							<LinearGradient
-								colors={['#B73131', '#EAA233']}
-								start={{ x: 0, y: 0.5 }}
-								end={{ x: 1, y: 0.5 }}
-								style={{ height: '100%' }}
-							></LinearGradient>
-						</SafeAreaView>
-					),
+					header: ({ navigation, route, options }) => {
+						const title = getHeaderTitle(options, route.name)
+						return (
+							<View className=" relative h-24 w-full " style={{ backgroundColor: 'transparent' }}>
+								<LinearGradient
+									colors={['#B73131', '#EAA233']}
+									start={{ x: 0, y: 0.5 }}
+									end={{ x: 1, y: 0.5 }}
+									style={{ height: '100%' }}
+								>
+									<View className=" h-full w-full flex-row items-end p-4">
+										<TouchableOpacity
+											className="absolute left-0 p-4"
+											onPress={() => navigation.goBack()}
+										>
+											<Feather name="chevron-left" size={24} color="#fff" />
+										</TouchableOpacity>
+										<Text className=" mx-auto font-inter-bold text-xl text-white">{title}</Text>
+									</View>
+								</LinearGradient>
+							</View>
+						)
+					},
 				}}
 			/>
 			<Stack.Screen name="forgotPassword" component={ForgotPasswordScreen} options={{}} />

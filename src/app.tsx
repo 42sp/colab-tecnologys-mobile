@@ -28,11 +28,11 @@ export default function App() {
 	return (
 		<Provider store={store}>
 			<NavigationContainer>
-				<SafeAreaProvider>
-					<GestureHandlerRootView>
+				<GestureHandlerRootView>
+					<SafeAreaProvider className="m-0 p-0">
 						<StackLayout />
-					</GestureHandlerRootView>
-				</SafeAreaProvider>
+					</SafeAreaProvider>
+				</GestureHandlerRootView>
 			</NavigationContainer>
 		</Provider>
 	)

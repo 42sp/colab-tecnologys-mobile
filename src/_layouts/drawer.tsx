@@ -1,20 +1,14 @@
-import { TouchableOpacity, Platform, StatusBar } from 'react-native'
+import { Text, View, TouchableOpacity, Platform, StatusBar } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Feather } from '@expo/vector-icons'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { CustomDrawerContent } from '@/components/custom-drawer-content'
-
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import ProfileScreen from '@/screens/drawer/profile/profile'
 import SecuritySettingsScreen from '@/screens/drawer/security-settings/security-settings'
 import EditProfileScreen from '@/screens/drawer/edit-profile/edit-profile'
 import HomeScreen from '@/screens/drawer/home/home'
 import RegisterServiceScreen from '@/screens/drawer/register-service/register-service'
-import { useNavigate } from '@/libs/react-navigation/useNavigate'
-
-const NATIVE_HEADER_HEIGHT = Platform.OS === 'ios' ? 44 : 56
-const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 44 : StatusBar.currentHeight || 24
-const HEADER_HEIGHT = NATIVE_HEADER_HEIGHT + STATUS_BAR_HEIGHT
+import { getHeaderTitle } from '@react-navigation/elements'
 
 export type DrawerParamList = {
 	home: undefined
@@ -27,40 +21,36 @@ export type DrawerParamList = {
 const Drawer = createDrawerNavigator<DrawerParamList>()
 
 export default function DrawerLayout() {
-	const { navigation } = useNavigate()
-
 	return (
 		<Drawer.Navigator
 			initialRouteName="home"
 			drawerContent={(props) => <CustomDrawerContent {...props} />}
 			screenOptions={{
 				headerShown: true,
-				headerStyle: {
-					height: HEADER_HEIGHT,
-				},
-				headerTintColor: '#fff',
-				headerTitleAlign: 'center',
 				drawerPosition: 'right',
-				drawerHideStatusBarOnOpen: true,
-				drawerStyle: {
-					width: '80%',
+				header: ({ navigation, route, options }) => {
+					const title = getHeaderTitle(options, route.name)
+					return (
+						<View className=" relative h-24 w-full " style={{ backgroundColor: 'transparent' }}>
+							<LinearGradient
+								colors={['#B73131', '#EAA233']}
+								start={{ x: 0, y: 0.5 }}
+								end={{ x: 1, y: 0.5 }}
+								style={{ height: '100%' }}
+							>
+								<View className=" h-full w-full flex-row items-end justify-between p-4">
+									<TouchableOpacity className="" onPress={() => navigation.goBack()}>
+										<Feather name="chevron-left" size={24} color="#fff" />
+									</TouchableOpacity>
+									<Text className=" font-inter-bold text-xl text-white">{title}</Text>
+									<TouchableOpacity className="" onPress={() => navigation.openDrawer()}>
+										<Feather name="menu" size={24} color="#fff" />
+									</TouchableOpacity>
+								</View>
+							</LinearGradient>
+						</View>
+					)
 				},
-				drawerActiveTintColor: '#000',
-				headerLeft: () => (
-					<TouchableOpacity onPress={() => navigation.goBack()} style={{ paddingLeft: 35 }}>
-						<Feather name="chevron-left" size={24} color="#fff" />
-					</TouchableOpacity>
-				),
-				headerBackground: () => (
-					<SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: 'transparent' }}>
-						<LinearGradient
-							colors={['#B73131', '#EAA233']}
-							start={{ x: 0, y: 0.5 }}
-							end={{ x: 1, y: 0.5 }}
-							style={{ height: NATIVE_HEADER_HEIGHT }}
-						></LinearGradient>
-					</SafeAreaView>
-				),
 			}}
 		>
 			<Drawer.Screen
