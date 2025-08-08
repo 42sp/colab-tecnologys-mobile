@@ -8,6 +8,7 @@ import SecuritySettingsScreen from '@/screens/drawer/security-settings/security-
 import EditProfileScreen from '@/screens/drawer/edit-profile/edit-profile'
 import HomeScreen from '@/screens/drawer/home/home'
 import RegisterServiceScreen from '@/screens/drawer/register-service/register-service'
+import HomeManagerScreen from '@/screens/drawer/home-manager/home-manager'
 import { getHeaderTitle } from '@react-navigation/elements'
 
 export type DrawerParamList = {
@@ -16,6 +17,7 @@ export type DrawerParamList = {
 	security: undefined
 	editProfile: undefined
 	registerService: undefined
+	homeManager: undefined
 }
 
 const Drawer = createDrawerNavigator<DrawerParamList>()
@@ -95,6 +97,15 @@ export default function DrawerLayout() {
 				options={{
 					drawerLabel: 'Register Service',
 					title: 'Register Service',
+					drawerIcon: ({ color, size }) => <Feather name="file-minus" color={color} size={size} />,
+				}}
+			/>
+			<Drawer.Screen
+				name="homeManager"
+				component={HomeManagerScreen}
+				options={{
+					drawerLabel: 'Home Manager',
+					title: 'Home Manager',
 					drawerIcon: ({ color, size }) => <Feather name="file-minus" color={color} size={size} />,
 				}}
 			/>
