@@ -3,7 +3,7 @@ import { Provider } from 'react-redux'
 import store from '@/libs/redux/store'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { NavigationContainer } from '@react-navigation/native'
-import StackLayout from './_layouts/stack'
+import StackLayout from './_layouts/stack/stack'
 import { registerRootComponent } from 'expo'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 

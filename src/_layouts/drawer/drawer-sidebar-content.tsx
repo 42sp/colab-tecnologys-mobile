@@ -1,7 +1,6 @@
 import { DrawerContentScrollView } from '@react-navigation/drawer'
 import { LinearGradient } from 'expo-linear-gradient'
 import { View, Text, Image, TouchableOpacity } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { Feather } from '@expo/vector-icons'
 import { type Route } from '@react-navigation/native'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
@@ -15,12 +14,12 @@ export function CustomDrawerContent(props: any) {
 			{...props}
 			contentContainerStyle={{ paddingTop: 0, paddingEnd: 0, paddingStart: 0 }}
 		>
-			<SafeAreaView>
+			<View className="h-24">
 				<LinearGradient
 					colors={['#B73131', '#EAA233']}
 					start={{ x: 0, y: 0.5 }}
 					end={{ x: 1, y: 0.5 }}
-					className="h-16"
+					style={{ height: '100%' }}
 				></LinearGradient>
 
 				<View className="items-center">
@@ -79,7 +78,7 @@ export function CustomDrawerContent(props: any) {
 					<Feather name="log-out" color="#6b7280" size={22} />
 					<Text className="text-lg font-medium text-gray-500">Sair</Text>
 				</TouchableOpacity>
-			</SafeAreaView>
+			</View>
 		</DrawerContentScrollView>
 	)
 }
