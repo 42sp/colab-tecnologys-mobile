@@ -9,6 +9,8 @@ import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod'
+import { WorkersForm } from '@/screens/drawer/register-service/workers-form'
+import { TypeServiceForm } from './type-service-form'
 
 const registerServiceSchema = z.object({
 	dateOfService: z.string(),
@@ -52,6 +54,9 @@ export default function RegisterServiceScreen() {
 					</Card.Body>
 				</Card>
 				<RegisterServiceForm control={control}></RegisterServiceForm>
+				<WorkersForm control={control}></WorkersForm>
+				<TypeServiceForm control={control}></TypeServiceForm>
+				
 				<Card className="m-6">
 					<Card.Body>
 						<RadioCheckOption
