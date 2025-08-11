@@ -19,7 +19,7 @@ export function DrawerHeader({ navigation, options, route }: DrawerHeaderProps) 
 					<TouchableOpacity className="" onPress={() => navigation.goBack()}>
 						<Feather name="chevron-left" size={24} color="#fff" />
 					</TouchableOpacity>
-					<Text className=" font-inter-bold text-xl text-white">{title}</Text>
+					<Text className="font-inter-bold text-xl text-white">{title}</Text>
 					<TouchableOpacity className="" onPress={() => navigation.openDrawer()}>
 						<Feather name="menu" size={24} color="#fff" />
 					</TouchableOpacity>

@@ -6,7 +6,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 
 export default function EditProfileScreen() {
 	return (
-		<SafeAreaView className="bg-[#F9FAFB] ">
+		<SafeAreaView className="bg-[#F9FAFB]">
 			<KeyboardAvoidingView behavior={'height'}>
 				<ScrollView showsVerticalScrollIndicator={false}>
 					<EditProfileAvatar />

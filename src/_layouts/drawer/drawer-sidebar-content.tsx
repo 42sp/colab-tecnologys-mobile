@@ -20,7 +20,7 @@ export function CustomDrawerContent(props: any) {
 					start={{ x: 0, y: 0.5 }}
 					end={{ x: 1, y: 0.5 }}
 					style={{ height: '100%' }}
-				></LinearGradient>
+				/>
 
 				<View className="items-center">
 					<View className="relative -mt-6 size-36 rounded-full border border-neutral-100 bg-white p-1">
@@ -34,7 +34,6 @@ export function CustomDrawerContent(props: any) {
 					<Text className="text-x mb-8 text-gray-500">ricardo.oliveira@construtech.com</Text>
 				</View>
 
-				{/* <DrawerItemList size={24} {...props} /> */}
 				{state.routes.map((route: Route<string>, index: number) => {
 					const isActive = index === state.index
 
