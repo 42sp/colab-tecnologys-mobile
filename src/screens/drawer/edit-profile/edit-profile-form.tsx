@@ -37,7 +37,7 @@ export function EditProfileForm() {
 			</Card.Header>
 			<Card.Body className="gap-3">
 				<View className="gap-1">
-					<Text>Full name</Text>
+					<Text className="font-inter text-lg">Full name</Text>
 					<Controller
 						control={control}
 						name="name"
@@ -55,7 +55,7 @@ export function EditProfileForm() {
 				</View>
 
 				<View className="gap-1">
-					<Text>E-mail</Text>
+					<Text className="font-inter text-lg">E-mail</Text>
 					<Controller
 						control={control}
 						name="email"
@@ -73,7 +73,7 @@ export function EditProfileForm() {
 				</View>
 
 				<View className="gap-1">
-					<Text>Phone number</Text>
+					<Text className="font-inter text-lg">Phone number</Text>
 					<Controller
 						control={control}
 						name="phone"
@@ -91,7 +91,7 @@ export function EditProfileForm() {
 				</View>
 
 				<View className="gap-1">
-					<Text>Date of Birth</Text>
+					<Text className="font-inter text-lg">Date of Birth</Text>
 					<Controller
 						control={control}
 						name="dateOfBirth"
@@ -108,7 +108,7 @@ export function EditProfileForm() {
 					{errors.dateOfBirth && <Text className="text-red-500">{errors.dateOfBirth.message}</Text>}
 				</View>
 				<View className="gap-1">
-					<Text>Address</Text>
+					<Text className="font-inter text-lg">Address</Text>
 					<Controller
 						control={control}
 						name="address"

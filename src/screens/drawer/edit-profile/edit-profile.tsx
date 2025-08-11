@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView } from 'react-native'
+import { KeyboardAvoidingView, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { EditProfileAvatar } from './edit-profile-avatar'
 import { EditProfileForm } from './edit-profile-form'
@@ -9,8 +9,10 @@ export default function EditProfileScreen() {
 		<SafeAreaView className="bg-[#F9FAFB]">
 			<KeyboardAvoidingView behavior={'height'}>
 				<ScrollView showsVerticalScrollIndicator={false}>
-					<EditProfileAvatar />
-					<EditProfileForm />
+					<View className="gap-4">
+						<EditProfileAvatar avatar="https://randomuser.me/portraits/men/1.jpg" />
+						<EditProfileForm />
+					</View>
 				</ScrollView>
 			</KeyboardAvoidingView>
 		</SafeAreaView>

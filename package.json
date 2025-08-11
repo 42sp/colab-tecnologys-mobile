@@ -20,6 +20,7 @@
 		"expo": "^53.0.20",
 		"expo-font": "~13.3.2",
 		"expo-linear-gradient": "~14.1.5",
+		"lucide-react-native": "^0.539.0",
 		"nativewind": "latest",
 		"react": "19.0.0",
 		"react-hook-form": "^7.61.1",
