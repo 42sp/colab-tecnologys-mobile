@@ -11,14 +11,14 @@ const ColorDotVariants: Record<ColorDotVariant, { color: string }> = {
 		color: 'bg-red-500',
 	},
 	pintura: {
-		color: 'bg-yellow-500',
+		color: 'bg-amber-500',
 	},
 }
 
 interface Activity {
 	id: string
 	title: string
-	jobType: ColorDotVariant
+	jobType: 'parede' | 'contrapiso' | 'pintura'
 	location: string
 	locationType: any
 	employee: string
@@ -35,6 +35,7 @@ export function ActivityList({ data, className }: ActivityListProps) {
 		<View className={`w-full ${className}`}>
 			<SectionList
 				scrollEnabled={true}
+				showsVerticalScrollIndicator={false}
 				sections={data}
 				keyExtractor={(item) => `${item.id}`}
 				renderItem={({ item, index }) => (

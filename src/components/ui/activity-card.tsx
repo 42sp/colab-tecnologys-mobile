@@ -1,53 +1,46 @@
 import { Text, View } from 'react-native'
 import Card from '@/components/ui/card'
-import { Feather } from '@expo/vector-icons'
 import { Button } from '@/components/ui/button'
-
-type IconLocationVariant = 'unidade' | 'predio'
-
-const IconLocationVariants: Record<IconLocationVariant, { icon: keyof typeof Feather.glyphMap }> = {
-	unidade: {
-		icon: 'home',
-	},
-	predio: {
-		icon: 'trello',
-	},
-}
-
-type IconJobVariant = 'parede' | 'contrapiso' | 'pintura'
-
-const IconJobVariants: Record<IconJobVariant, { icon: keyof typeof Feather.glyphMap }> = {
-	parede: {
-		icon: 'credit-card',
-	},
-	contrapiso: {
-		icon: 'plus-square',
-	},
-	pintura: {
-		icon: 'droplet',
-	},
-}
+import { PaintRoller, Building2, House, Blocks, BrickWall, User } from 'lucide-react-native'
 
 interface ActivityCardProps {
 	data: {
 		title: string
-		jobType: IconJobVariant
+		jobType: 'parede' | 'contrapiso' | 'pintura'
 		location: string
-		locationType: IconLocationVariant
+		locationType: 'house' | 'building'
 		employee: string
 		time: Date
 	}
 }
 
 export function ActivityCard({ data }: ActivityCardProps) {
+	function getJobTypeIcon() {
+		switch (data.jobType) {
+			case 'parede':
+				return (
+					<View className="size-10 items-center justify-center rounded-full bg-blue-100">
+						<BrickWall size={18} color="#262626" />
+					</View>
+				)
+			case 'contrapiso':
+				return (
+					<View className="size-10 items-center justify-center rounded-full bg-red-100">
+						<Blocks size={18} color="#262626" />
+					</View>
+				)
+			case 'pintura':
+				return (
+					<View className="size-10 items-center justify-center rounded-full bg-amber-100">
+						<PaintRoller size={18} color="#262626" />
+					</View>
+				)
+		}
+	}
 	return (
 		<View className="">
 			<Card className="flex-row">
-				<View>
-					<Button variant="rounded" className="size-10 bg-blue-100">
-						<Feather name={IconJobVariants[data.jobType].icon} size={14} color={'black'} />
-					</Button>
-				</View>
+				{getJobTypeIcon()}
 				<Card.Body className="flex-1 justify-between gap-4 ">
 					<View className="flex-row justify-between">
 						<Text className="text-md font-inter-bold ">{data.title}</Text>
@@ -61,15 +54,15 @@ export function ActivityCard({ data }: ActivityCardProps) {
 					</View>
 					<View>
 						<View className="flex-row gap-2">
-							<Feather
-								name={IconLocationVariants[data.locationType].icon}
-								size={14}
-								color="black"
-							/>
+							{data.locationType === 'house' ? (
+								<House size={14} color="black" />
+							) : (
+								<Building2 size={14} color="black" />
+							)}
 							<Text className="flex-1 font-inter text-sm">{data.location}</Text>
 						</View>
 						<View className="flex-row gap-2">
-							<Feather name={'user'} size={14} color="black" />
+							<User size={14} color="black" />
 							<Text className="flex-1 font-inter text-sm">{data.employee}</Text>
 						</View>
 					</View>

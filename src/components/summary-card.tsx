@@ -31,12 +31,12 @@ interface SummaryCardProps {
 
 export function SummaryCard({ icon, SumaryVariant, value, label }: SummaryCardProps) {
 	return (
-		<Card className="flex-1 items-center justify-between p-3">
+		<Card className="flex-1 items-center justify-between">
 			<Card.Header className={sumaryVariants[SumaryVariant].container}>
 				<Feather name={icon} size={16} color={sumaryVariants[SumaryVariant].iconColor} />
 			</Card.Header>
-			<Card.Body className="mt-2 items-center">
-				<Text adjustsFontSizeToFit numberOfLines={1} className="font-inter-bold text-2xl font-bold">
+			<Card.Body className="items-center">
+				<Text adjustsFontSizeToFit numberOfLines={1} className="font-inter-bold text-xl font-bold">
 					{value}
 				</Text>
 				<Text adjustsFontSizeToFit numberOfLines={1} className="font-inter text-sm text-gray-500">
