@@ -6,6 +6,7 @@ import { useState } from 'react'
 
 import { Input } from '@/components/ui/input'
 import { FilterModal } from '@/components/FilterModal'
+import { SummaryCard } from '@/components/summary-card'
 
 export default function Home() {
 	const { control } = useForm();
@@ -51,6 +52,29 @@ export default function Home() {
 						console.log(filters)
 					}}
 				/>
+
+				<View className="my-4 flex-row gap-4">
+					<SummaryCard
+						icon="clipboard"
+						SumaryVariant="blue"
+						value="1000"
+						label="Activities"
+					/>
+
+					<SummaryCard
+						icon="clock"
+						SumaryVariant="orange"
+						value="200"
+						label="Pending"
+					/>
+
+					<SummaryCard
+						icon="bar-chart"
+						SumaryVariant="green"
+						value="75%"
+						label="Productivity"
+					/>
+				</View>
 			</SafeAreaView>
 		</SafeAreaProvider>
 	)
