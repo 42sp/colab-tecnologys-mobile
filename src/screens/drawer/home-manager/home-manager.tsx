@@ -5,6 +5,7 @@ import { Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 interface ActivityData {
+	id: string
 	title: string
 	jobType: string
 	location: string
@@ -21,6 +22,7 @@ const mockData: ActivityData[] = [
 		locationType: 'unidade',
 		employee: 'Carlos Silva',
 		time: new Date('2025-08-06T16:42:00'),
+		id: '01',
 	},
 	{
 		title: 'Contrapiso',
@@ -29,6 +31,7 @@ const mockData: ActivityData[] = [
 		locationType: 'unidade',
 		employee: 'Pedro Oliveira',
 		time: new Date('2025-08-07T10:15:00'),
+		id: '02',
 	},
 	{
 		title: 'Pintura finalizada',
@@ -37,6 +40,7 @@ const mockData: ActivityData[] = [
 		locationType: 'predio',
 		employee: 'Marcos Santos',
 		time: new Date('2025-08-07T14:00:00'),
+		id: '03',
 	},
 	{
 		title: '2 paredes construídas',
@@ -45,6 +49,7 @@ const mockData: ActivityData[] = [
 		locationType: 'unidade',
 		employee: 'Carlos Silva',
 		time: new Date('2025-08-07T09:30:00'),
+		id: '04',
 	},
 	{
 		title: 'Contrapiso',
@@ -53,6 +58,7 @@ const mockData: ActivityData[] = [
 		locationType: 'unidade',
 		employee: 'Pedro Oliveira',
 		time: new Date('2025-08-08T11:00:00'),
+		id: '05',
 	},
 	{
 		title: 'Pintura finalizada',
@@ -61,6 +67,7 @@ const mockData: ActivityData[] = [
 		locationType: 'predio',
 		employee: 'Marcos Santos',
 		time: new Date('2025-08-08T16:45:00'),
+		id: '06',
 	},
 	{
 		title: '2 paredes construídas',
@@ -69,6 +76,7 @@ const mockData: ActivityData[] = [
 		locationType: 'unidade',
 		employee: 'Carlos Silva',
 		time: new Date('2025-08-08T18:45:00'),
+		id: '07',
 	},
 	{
 		title: 'Contrapiso',
@@ -77,6 +85,7 @@ const mockData: ActivityData[] = [
 		locationType: 'unidade',
 		employee: 'Pedro Oliveira',
 		time: new Date('2025-08-09T16:45:00'),
+		id: '08',
 	},
 	{
 		title: 'Pintura finalizada',
@@ -85,6 +94,7 @@ const mockData: ActivityData[] = [
 		locationType: 'predio',
 		employee: 'Marcos Santos',
 		time: new Date('2025-08-09T10:09:00'),
+		id: '09',
 	},
 	{
 		title: '2 paredes construídas',
@@ -93,6 +103,7 @@ const mockData: ActivityData[] = [
 		locationType: 'unidade',
 		employee: 'Carlos Silva',
 		time: new Date('2025-08-09T14:35:00'),
+		id: '10',
 	},
 	{
 		title: 'Contrapiso',
@@ -101,6 +112,7 @@ const mockData: ActivityData[] = [
 		locationType: 'unidade',
 		employee: 'Pedro Oliveira',
 		time: new Date('2025-08-10T12:22:00'),
+		id: '11',
 	},
 	{
 		title: 'Pintura finalizada',
@@ -109,6 +121,7 @@ const mockData: ActivityData[] = [
 		locationType: 'predio',
 		employee: 'Marcos Santos',
 		time: new Date('2025-08-10T09:35:00'),
+		id: '12',
 	},
 ]
 
@@ -130,11 +143,11 @@ export default function HomeManagerScreen() {
 					}}
 				/>
 			</View>
-			<View className="">
+			<View className="flex-1">
 				{/* <View className="h-20 bg-pink-300"></View> */}
 
 				<ActivityList
-					className="h-[80%] bg-lime-400"
+					className=""
 					data={[
 						{
 							title: '',

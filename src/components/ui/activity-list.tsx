@@ -16,6 +16,7 @@ const ColorDotVariants: Record<ColorDotVariant, { color: string }> = {
 }
 
 interface Activity {
+	id: string
 	title: string
 	jobType: ColorDotVariant
 	location: string
@@ -31,18 +32,18 @@ interface ActivityListProps {
 
 export function ActivityList({ data, className }: ActivityListProps) {
 	return (
-		<View className={` w-full ${className}`}>
+		<View className={`w-full ${className}`}>
 			<SectionList
-				className=""
 				scrollEnabled={true}
 				sections={data}
-				renderItem={({ item }) => (
-					<View className=" w-full flex-row border border-black">
+				keyExtractor={(item) => `${item.id}`}
+				renderItem={({ item, index }) => (
+					<View className=" w-full flex-row">
 						<View className="items-center">
-							<View className=" h-full w-0.5 bg-gray-400" />
-							<View className={` h-3 w-3 rounded-full ${ColorDotVariants[item.jobType].color}`} />
+							<View className={`h-3 w-3 rounded-full ${ColorDotVariants[item.jobType].color}`} />
+							<View className="w-0.5 flex-1 bg-gray-400" />
 						</View>
-						<View className="ml-2 flex-1">
+						<View className="mb-2 ml-2 flex-1">
 							<ActivityCard data={item} />
 						</View>
 					</View>
@@ -51,25 +52,3 @@ export function ActivityList({ data, className }: ActivityListProps) {
 		</View>
 	)
 }
-
-// export function ActivityList({ data, className }: ActivityListProps) {
-//   return (
-//     <View className={`w-full ${className}`}>
-//       <SectionList
-//         sections={data}
-//         keyExtractor={(item, index) => item.title + index}
-//         renderItem={({ item }) => (
-//           <View className="flex-row border border-black w-full p-2">
-//             <View className="items-center">
-//               <View className="h-full w-0.5 bg-gray-400" />
-//               <View className={`h-3 w-3 rounded-full ${ColorDotVariants[item.jobType].color}`} />
-//             </View>
-//             <View className="flex-1 ml-2">
-//               <ActivityCard data={item} />
-//             </View>
-//           </View>
-//         )}
-//       />
-//     </View>
-//   )
-// }

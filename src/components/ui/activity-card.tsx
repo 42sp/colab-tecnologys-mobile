@@ -41,14 +41,14 @@ interface ActivityCardProps {
 
 export function ActivityCard({ data }: ActivityCardProps) {
 	return (
-		<View className="border border-blue-500">
+		<View className="">
 			<Card className="flex-row">
 				<View>
 					<Button variant="rounded" className="size-10 bg-blue-100">
 						<Feather name={IconJobVariants[data.jobType].icon} size={14} color={'black'} />
 					</Button>
 				</View>
-				<Card.Body className="flex-1 justify-between gap-4 border  border-red-400">
+				<Card.Body className="flex-1 justify-between gap-4 ">
 					<View className="flex-row justify-between">
 						<Text className="text-md font-inter-bold ">{data.title}</Text>
 						{data.time ? (
@@ -73,20 +73,11 @@ export function ActivityCard({ data }: ActivityCardProps) {
 							<Text className="flex-1 font-inter text-sm">{data.employee}</Text>
 						</View>
 					</View>
-					<View className="border border-pink-900">
+					<View className="hidden pl-14">
 						<Button variant="green" title="Aprovar" />
 					</View>
 				</Card.Body>
 			</Card>
 		</View>
 	)
-}
-{
-	/* <View className="mt-6 flex-row gap-2">
-				<Button title="Cancelar" variant="outline" className="flex-1" onPress={() => {}} />
-				<Button className="flex-1" onPress={handleSubmit(onSubmit)}>
-					<Text className="mr-2 font-inter-medium text-xl text-neutral-100">Salvar</Text>
-					<Feather name="check-circle" size={20} color="#fff" />
-				</Button>
-			</View> */
 }
