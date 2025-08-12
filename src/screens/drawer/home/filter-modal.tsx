@@ -1,6 +1,6 @@
 import { Modal, View, Text, ScrollView, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
-import { Button } from './ui/button'
+import { Button } from '@/components/ui/button'
 import { useForm, Controller } from 'react-hook-form'
 
 interface FilterModalProps {
@@ -81,10 +81,13 @@ export const FilterModal = ({ visible, onClose, onApply }: FilterModalProps) => 
 						<View>
 							<View className="mb-2 flex-row items-center justify-between">
 								<Text className="font-inter-medium">Date</Text>
-								<TouchableOpacity activeOpacity={0.5} onPress={() => {
-									setValue('startDate', today)
-									setValue('endDate', today)
-								}}>
+								<TouchableOpacity
+									activeOpacity={0.5}
+									onPress={() => {
+										setValue('startDate', today)
+										setValue('endDate', today)
+									}}
+								>
 									<Text className="font-inter text-blue-500">Reset</Text>
 								</TouchableOpacity>
 							</View>
@@ -113,9 +116,24 @@ export const FilterModal = ({ visible, onClose, onApply }: FilterModalProps) => 
 							</View>
 
 							<View className="my-4 flex-row gap-2">
-								<Button title='Today' variant="select" className="flex-1" onPress={() => handleQuickDate('today')} />
-								<Button title='This week' variant="select" className="flex-1" onPress={() => handleQuickDate('week')} />
-								<Button title='This month' variant="select" className="flex-1" onPress={() => handleQuickDate('month')} />
+								<Button
+									title="Today"
+									variant="select"
+									className="flex-1"
+									onPress={() => handleQuickDate('today')}
+								/>
+								<Button
+									title="This week"
+									variant="select"
+									className="flex-1"
+									onPress={() => handleQuickDate('week')}
+								/>
+								<Button
+									title="This month"
+									variant="select"
+									className="flex-1"
+									onPress={() => handleQuickDate('month')}
+								/>
 							</View>
 						</View>
 
@@ -139,12 +157,15 @@ export const FilterModal = ({ visible, onClose, onApply }: FilterModalProps) => 
 												key={status.value}
 												onPress={() => {
 													if (value.includes(status.value)) {
-														setValue('status', value.filter((s: string) => s !== status.value))
+														setValue(
+															'status',
+															value.filter((s: string) => s !== status.value),
+														)
 													} else {
 														setValue('status', [...value, status.value])
 													}
 												}}
-												className='flex-1'
+												className="flex-1"
 											/>
 										))}
 									</View>
@@ -157,14 +178,14 @@ export const FilterModal = ({ visible, onClose, onApply }: FilterModalProps) => 
 								title="Reset All"
 								variant="red"
 								onPress={resetFilters}
-								className="flex-1 mr-2"
+								className="mr-2 flex-1"
 							/>
 
 							<Button
 								title="Apply Filters"
 								variant="gradient"
 								onPress={handleSubmit(onSubmit)}
-								className="flex-1 ml-2"
+								className="ml-2 flex-1"
 							/>
 						</View>
 					</ScrollView>

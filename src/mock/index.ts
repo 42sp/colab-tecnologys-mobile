@@ -273,3 +273,131 @@ export const residencialMock = {
 		},
 	],
 }
+
+export interface ActivityService {
+	id: string
+	title: string
+	serviceType: 'parede' | 'contrapiso' | 'pintura'
+	location: string
+	locationType: 'house' | 'building'
+	employee: string
+	time: Date
+}
+
+const today = new Date()
+const yesterday = new Date(today)
+yesterday.setDate(yesterday.getDate() - 1)
+
+export const activityMock: { total: number; data: ActivityService[] } = {
+	total: 12,
+	data: [
+		{
+			title: '2 paredes construídas',
+			serviceType: 'parede',
+			location: 'Andar 3, Bloco B, Residencial Jardins',
+			locationType: 'house',
+			employee: 'Carlos Silva',
+			time: new Date('2025-08-06T16:42:00'),
+			id: '01',
+		},
+		{
+			title: 'Contrapiso',
+			serviceType: 'contrapiso',
+			location: 'Andar 2, Bloco A, Residencial Jardins',
+			locationType: 'house',
+			employee: 'Pedro Oliveira',
+			time: new Date('2025-08-07T10:15:00'),
+			id: '02',
+		},
+		{
+			title: 'Pintura finalizada',
+			serviceType: 'pintura',
+			location: 'Andar 1, Bloco c, Residencial Jardins',
+			locationType: 'building',
+			employee: 'Marcos Santos',
+			time: new Date('2025-08-07T14:00:00'),
+			id: '03',
+		},
+		{
+			title: '2 paredes construídas',
+			serviceType: 'parede',
+			location: 'Andar 3, Bloco B, Residencial Jardins',
+			locationType: 'house',
+			employee: 'Carlos Silva',
+			time: new Date('2025-08-07T09:30:00'),
+			id: '04',
+		},
+		{
+			title: 'Contrapiso',
+			serviceType: 'contrapiso',
+			location: 'Andar 2, Bloco A, Residencial Jardins',
+			locationType: 'house',
+			employee: 'Pedro Oliveira',
+			time: new Date('2025-08-08T11:00:00'),
+			id: '05',
+		},
+		{
+			title: 'Pintura finalizada',
+			serviceType: 'pintura',
+			location: 'Andar 1, Bloco c, Residencial Jardins',
+			locationType: 'building',
+			employee: 'Marcos Santos',
+			time: new Date('2025-08-08T16:45:00'),
+			id: '06',
+		},
+		{
+			title: '2 paredes construídas',
+			serviceType: 'parede',
+			location: 'Andar 3, Bloco B, Residencial Jardins',
+			locationType: 'house',
+			employee: 'Carlos Silva',
+			time: yesterday,
+			id: '07',
+		},
+		{
+			title: 'Contrapiso',
+			serviceType: 'contrapiso',
+			location: 'Andar 2, Bloco A, Residencial Jardins',
+			locationType: 'house',
+			employee: 'Pedro Oliveira',
+			time: yesterday,
+			id: '08',
+		},
+		{
+			title: 'Pintura finalizada',
+			serviceType: 'pintura',
+			location: 'Andar 1, Bloco c, Residencial Jardins',
+			locationType: 'building',
+			employee: 'Marcos Santos',
+			time: yesterday,
+			id: '09',
+		},
+		{
+			title: '2 paredes construídas',
+			serviceType: 'parede',
+			location: 'Andar 3, Bloco B, Residencial Jardins',
+			locationType: 'house',
+			employee: 'Carlos Silva',
+			time: today,
+			id: '10',
+		},
+		{
+			title: 'Contrapiso',
+			serviceType: 'contrapiso',
+			location: 'Andar 2, Bloco A, Residencial Jardins',
+			locationType: 'house',
+			employee: 'Pedro Oliveira',
+			time: today,
+			id: '11',
+		},
+		{
+			title: 'Pintura finalizada',
+			serviceType: 'pintura',
+			location: 'Andar 1, Bloco c, Residencial Jardins',
+			locationType: 'building',
+			employee: 'Marcos Santos',
+			time: today,
+			id: '12',
+		},
+	],
+}

@@ -2,21 +2,20 @@ import { Text, View } from 'react-native'
 import Card from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PaintRoller, Building2, House, Blocks, BrickWall, User } from 'lucide-react-native'
+import { ActivityService } from '@/mock'
 
-interface ActivityCardProps {
-	data: {
-		title: string
-		jobType: 'parede' | 'contrapiso' | 'pintura'
-		location: string
-		locationType: 'house' | 'building'
-		employee: string
-		time: Date
-	}
-}
+interface ActivityCardProps extends ActivityService {}
 
-export function ActivityCard({ data }: ActivityCardProps) {
+export function ActivityCard({
+	title,
+	serviceType,
+	employee,
+	location,
+	locationType,
+	time,
+}: ActivityCardProps) {
 	function getJobTypeIcon() {
-		switch (data.jobType) {
+		switch (serviceType) {
 			case 'parede':
 				return (
 					<View className="size-10 items-center justify-center rounded-full bg-blue-100">
@@ -43,10 +42,10 @@ export function ActivityCard({ data }: ActivityCardProps) {
 				{getJobTypeIcon()}
 				<Card.Body className="flex-1 justify-between gap-4 ">
 					<View className="flex-row justify-between">
-						<Text className="text-md font-inter-bold ">{data.title}</Text>
-						{data.time ? (
+						<Text className="text-md font-inter-bold ">{title}</Text>
+						{time ? (
 							<Text className="font-inter text-xs">
-								{data.time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+								{time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
 							</Text>
 						) : (
 							<Text className="font-inter text-xs">00:00</Text>
@@ -54,16 +53,16 @@ export function ActivityCard({ data }: ActivityCardProps) {
 					</View>
 					<View>
 						<View className="flex-row gap-2">
-							{data.locationType === 'house' ? (
+							{locationType === 'house' ? (
 								<House size={14} color="black" />
 							) : (
 								<Building2 size={14} color="black" />
 							)}
-							<Text className="flex-1 font-inter text-sm">{data.location}</Text>
+							<Text className="flex-1 font-inter text-sm">{location}</Text>
 						</View>
 						<View className="flex-row gap-2">
 							<User size={14} color="black" />
-							<Text className="flex-1 font-inter text-sm">{data.employee}</Text>
+							<Text className="flex-1 font-inter text-sm">{employee}</Text>
 						</View>
 					</View>
 					<View className="hidden pl-14">

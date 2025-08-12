@@ -4,8 +4,10 @@ import { SignInDivisor } from './sign-in-divisor'
 import { Button } from '@/components/ui/button'
 import { SignInForm } from './sign-in-form'
 import { ScrollView } from 'react-native-gesture-handler'
+import { useNavigate } from '@/libs/react-navigation/useNavigate'
 
 export default function SignInScreen() {
+	const { drawer } = useNavigate()
 	return (
 		<SafeAreaView className="h-full bg-white p-10">
 			<KeyboardAvoidingView behavior={'height'}>
@@ -21,7 +23,9 @@ export default function SignInScreen() {
 
 					<Button
 						title="Continue with Google"
-						onPress={() => {}}
+						onPress={() => {
+							drawer('home')
+						}}
 						variant="outline"
 						className="my-5 self-center"
 					>

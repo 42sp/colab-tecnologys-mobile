@@ -19,7 +19,7 @@ const Stack = createStackNavigator<StackParamList>()
 
 export default function StackLayout() {
 	return (
-		<Stack.Navigator screenOptions={{ headerShown: false }}>
+		<Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="signIn">
 			<Stack.Screen name="home" component={HomeScreen} options={{}} />
 			<Stack.Screen name="signIn" component={SignInScreen} options={{}} />
 			<Stack.Screen
