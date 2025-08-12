@@ -1,13 +1,52 @@
 import Card from '@/components/ui/card'
-import { Feather } from '@expo/vector-icons'
 // import { Button } from '@/components/ui/button'
 import { Dropdown } from '@/components/ui/dropdown'
 import { Text, View } from 'react-native'
-import { Controller } from 'react-hook-form'
+import {
+	Controller,
+	type UseFormSetValue,
+	type Control,
+	useWatch,
+} from 'react-hook-form'
+import type { RegisterServiceType } from '@/screens/drawer/register-service/register-service' // ajuste o path
 
 const items = [{ label: 'Item 1' }, { label: 'Item 2' }, { label: 'Item 3' }, { label: 'Item 4' }]
 
-export function RegisterServiceForm({ control }: { control: any }) {
+type Props = {
+	control: Control<RegisterServiceType>
+	setValue: UseFormSetValue<RegisterServiceType>
+	currentResidential?: {
+		id: number
+		name: string
+		torres: {
+			total: number
+			data: Array<{
+				id: number
+				name: string
+				andares: {
+					total: number
+					data: Array<{ id: number; name: string; description?: string }>
+				}
+			}>
+		}
+	}
+}
+
+export function RegisterServiceForm({ control, currentResidential, setValue}: Props) {
+	
+  const towers = currentResidential?.torres?.data ?? []
+  const towerOptions = towers.map((t) => ({ label: t.name }))
+
+
+  const selectedTowerName = useWatch({ control, name: 'tower' }) as string | undefined
+  const selectedTower = towers.find((t) => t.name === selectedTowerName)
+
+  const totalFloors = selectedTower?.andares?.total ?? 0
+  const floorOptions =
+    totalFloors > 0
+      ? Array.from({ length: totalFloors }, (_, i) => ({ label: `${i + 1}º Floor` }))
+      : []
+			
 	return (
 		<View>
 			<Card className="ml-6 mr-6 mt-6">
@@ -48,14 +87,18 @@ export function RegisterServiceForm({ control }: { control: any }) {
 								IconLeft={'calendar'}
 								IconRight={'chevron-down'}
 								className="self-center"
-								options={items}
+								options={towerOptions}
 								variant="outline"
 								placeholder="Select the block"
 								value={value}
-								onChangeText={onChange}
+								onChangeText={(val: string) => {
+									setValue('floor', '', { shouldValidate: true, shouldDirty: true })
+									onChange(val)
+								}}
 							/>
 						)}
 					/>
+				
 					<Text className="mt-4 text-lg">Floor</Text>
 					<Controller
 						control={control}
@@ -65,7 +108,7 @@ export function RegisterServiceForm({ control }: { control: any }) {
 								IconLeft={'calendar'}
 								IconRight={'chevron-down'}
 								className="self-center"
-								options={items}
+								options={floorOptions}
 								variant="outline"
 								placeholder="Select a floor"
 								value={value}
@@ -73,10 +116,9 @@ export function RegisterServiceForm({ control }: { control: any }) {
 							/>
 						)}
 					/>
+				
 				</Card.Body>
 			</Card>
-
-	
 		</View>
 	)
 }

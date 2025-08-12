@@ -32,7 +32,7 @@ function distributeEvenly(n: number) {
 }
 
 export function WorkersForm({ control }: { control: any }) {
-	const { fields, append, update, remove } = useFieldArray({
+	const { fields, append, update } = useFieldArray({
 		control,
 		name: 'workers',
 		keyName: '_id',
