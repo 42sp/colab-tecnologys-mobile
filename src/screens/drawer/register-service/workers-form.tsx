@@ -1,9 +1,15 @@
-import { useEffect, useRef } from 'react'
 import { View, Pressable, Text } from 'react-native'
-import { Controller, useFieldArray, useWatch } from 'react-hook-form'
+import { Controller, FieldErrors, useFieldArray, useWatch, type Control } from 'react-hook-form'
+import type { RegisterServiceType } from '@/screens/drawer/register-service/register-service'
 import Card from '@/components/ui/card'
 import { Dropdown } from '@/components/ui/dropdown'
 import { tarefeiros } from '@/mock'
+import { Feather } from '@expo/vector-icons'
+
+type Props = {
+	control: Control<RegisterServiceType>
+	errors: FieldErrors<RegisterServiceType>
+}
 
 const MAX_WORKERS = 4
 
@@ -14,7 +20,7 @@ const percentOptions = Array.from({ length: 11 }, (_, i) => {
 
 const workerOptions = tarefeiros.data.map((t) => ({
 	label: t.name,
-	value: String(t.id),
+	value: t.name,
 }))
 
 function distributeEvenly(n: number) {
@@ -31,22 +37,14 @@ function distributeEvenly(n: number) {
 	return arr
 }
 
-export function WorkersForm({ control }: { control: any }) {
-	const { fields, append, update } = useFieldArray({
+export function WorkersForm({ control, errors }: Props) {
+	const { fields, append, update, remove } = useFieldArray({
 		control,
 		name: 'workers',
 		keyName: '_id',
 	})
 
 	const rows = useWatch({ control, name: 'workers' }) ?? []
-
-	const didInit = useRef(false)
-	useEffect(() => {
-		if (!didInit.current && fields.length === 0) {
-			didInit.current = true
-			append({ percent: 100, worker: null })
-		}
-	}, [fields.length, append])
 
 	function handleAdd() {
 		if (fields.length >= MAX_WORKERS) return
@@ -57,7 +55,7 @@ export function WorkersForm({ control }: { control: any }) {
 			update(i, { ...(rows?.[i] ?? {}), percent: dist[i] })
 		}
 
-		append({ percent: dist[nextLen - 1], worker: null })
+		append({ percent: dist[nextLen - 1], worker: '' })
 	}
 
 	return (
@@ -74,45 +72,73 @@ export function WorkersForm({ control }: { control: any }) {
 					</Pressable>
 				</Card.Header>
 
-				<Card.Body className="gap-2">
-					{fields.map((f: any, idx: number) => (
-						<View key={f._id} className="flex-row gap-2">
-							<Controller
-								control={control}
-								name={`workers.${idx}.percent` as const}
-								render={({ field: { onChange, value } }) => (
-									<Dropdown
-										IconRight={'chevron-down'}
-										className="basis-2/5"
-										options={percentOptions}
-										variant="outline"
-										placeholder="50%"
-										value={value ? `${value}%` : ''}
-										onChangeText={(v: any) =>
-											onChange(parseInt(String(v).replace(/[^0-9]/g, ''), 10))
-										}
-									/>
-								)}
-							/>
+				<Card.Body>
+					{fields.map((f: any, idx: number) => {
+						const rowError = Array.isArray(errors.workers) ? errors.workers[idx] : undefined
 
-							<Controller
-								control={control}
-								name={`workers.${idx}.worker` as const}
-								render={({ field: { onChange, value } }) => (
-									<Dropdown
-										IconLeft={'list'}
-										IconRight={'chevron-down'}
-										className="basis-3/5"
-										options={workerOptions}
-										variant="outline"
-										placeholder="worker"
-										value={value}
-										onChangeText={onChange}
+						return (
+							<View key={f._id} className="flex-row items-center gap-2">
+								<View className="flex-[2]">
+									<Controller
+										control={control}
+										name={`workers.${idx}.percent` as const}
+										render={({ field: { onChange, value } }) => (
+											<Dropdown
+												IconRight={'chevron-down'}
+												options={percentOptions}
+												variant="outline"
+												placeholder="50%"
+												value={typeof value === 'number' ? `${value}%` : ''}
+												onChangeText={(v: any) =>
+													onChange(parseInt(String(v).replace(/[^0-9]/g, ''), 10))
+												}
+											/>
+										)}
 									/>
-								)}
-							/>
-						</View>
-					))}
+									<View className="h-4 pt-1">
+										{rowError?.percent?.message && (
+											<Text className="text-xs text-red-500">
+												{rowError.percent.message as string}
+											</Text>
+										)}
+									</View>
+								</View>
+
+								<View className="flex-[3]">
+									<Controller
+										control={control}
+										name={`workers.${idx}.worker` as const}
+										render={({ field: { onChange, value } }) => (
+											<Dropdown
+												IconLeft={'list'}
+												IconRight={'chevron-down'}
+												options={workerOptions}
+												variant="outline"
+												placeholder="worker"
+												value={value}
+												onChangeText={onChange}
+											/>
+										)}
+									/>
+									<View className="h-4">
+										{rowError?.worker?.message && (
+											<Text className="text-xs text-red-500">
+												{rowError.worker.message as string}
+											</Text>
+										)}
+									</View>
+								</View>
+
+								<Pressable onPress={() => remove(idx)}>
+									<Feather name="x" size={18} color="#374151" />
+								</Pressable>
+							</View>
+						)
+					})}
+
+					{errors.workers?.root?.message && (
+						<Text className="mt-2 text-red-500">{String(errors.workers.root.message)}</Text>
+					)}
 				</Card.Body>
 			</Card>
 		</View>

@@ -7,6 +7,7 @@ import {
 	type UseFormSetValue,
 	type Control,
 	useWatch,
+	FieldErrors,
 } from 'react-hook-form'
 import type { RegisterServiceType } from '@/screens/drawer/register-service/register-service'
 
@@ -30,23 +31,22 @@ type Props = {
 			}>
 		}
 	}
+	errors: FieldErrors<RegisterServiceType>
 }
 
-export function RegisterServiceForm({ control, currentResidential, setValue}: Props) {
-	
-  const towers = currentResidential?.torres?.data ?? []
-  const towerOptions = towers.map((t) => ({ label: t.name }))
+export function RegisterServiceForm({ control, currentResidential, setValue, errors }: Props) {
+	const towers = currentResidential?.torres?.data ?? []
+	const towerOptions = towers.map((t) => ({ label: t.name }))
 
+	const selectedTowerName = useWatch({ control, name: 'tower' }) as string
+	const selectedTower = towers.find((t) => t.name === selectedTowerName)
 
-  const selectedTowerName = useWatch({ control, name: 'tower' }) as string | undefined
-  const selectedTower = towers.find((t) => t.name === selectedTowerName)
+	const totalFloors = selectedTower?.andares?.total ?? 0
+	const floorOptions =
+		totalFloors > 0
+			? Array.from({ length: totalFloors }, (_, i) => ({ label: `${i + 1}º Floor` }))
+			: []
 
-  const totalFloors = selectedTower?.andares?.total ?? 0
-  const floorOptions =
-    totalFloors > 0
-      ? Array.from({ length: totalFloors }, (_, i) => ({ label: `${i + 1}º Floor` }))
-      : []
-			
 	return (
 		<View>
 			<Card className="ml-6 mr-6 mt-6">
@@ -98,7 +98,7 @@ export function RegisterServiceForm({ control, currentResidential, setValue}: Pr
 							/>
 						)}
 					/>
-				
+					{errors.tower && <Text className="text-red-500">{errors.tower.message}</Text>}
 					<Text className="mt-4 text-lg">Floor</Text>
 					<Controller
 						control={control}
@@ -116,7 +116,7 @@ export function RegisterServiceForm({ control, currentResidential, setValue}: Pr
 							/>
 						)}
 					/>
-				
+					{/* {errors.floor && <Text className="text-red-500">{errors.floor.message}</Text>} */}
 				</Card.Body>
 			</Card>
 		</View>
