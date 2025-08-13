@@ -64,7 +64,7 @@ export default function Home() {
 				}}
 			/>
 
-			<View className="flex-row gap-4">
+			<View className="flex-row gap-3">
 				<SummaryCard icon="clipboard" SumaryVariant="blue" value="1000" label="Activities" />
 				<SummaryCard icon="clock" SumaryVariant="orange" value="200" label="Pending" />
 				<SummaryCard icon="bar-chart" SumaryVariant="green" value="75%" label="Productivity" />
