@@ -8,7 +8,7 @@ import {
 	type Control,
 	useWatch,
 } from 'react-hook-form'
-import type { RegisterServiceType } from '@/screens/drawer/register-service/register-service' // ajuste o path
+import type { RegisterServiceType } from '@/screens/drawer/register-service/register-service'
 
 const items = [{ label: 'Item 1' }, { label: 'Item 2' }, { label: 'Item 3' }, { label: 'Item 4' }]
 
