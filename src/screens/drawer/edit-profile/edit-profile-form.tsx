@@ -9,7 +9,7 @@ import Card from '@/components/ui/card'
 
 const editProfileSchema = z.object({
 	name: z.string().nonempty('Full name is required'),
-	email: z.email('Invalid e-mail'),
+	email: z.email('Please enter a valid email address').nonempty('Email is required'),
 	phone: z.string().nonempty('Phone number is required'),
 	dateOfBirth: z.string().nonempty('Date of birth is required'),
 	address: z.string().nonempty('Address is required'),
@@ -24,6 +24,13 @@ export function EditProfileForm() {
 		formState: { errors },
 	} = useForm<EditProfileType>({
 		resolver: zodResolver(editProfileSchema),
+		defaultValues: {
+			name: '',
+			email: '',
+			phone: '',
+			dateOfBirth: '',
+			address: '',
+		},
 	})
 
 	function onSubmit(data: any) {
@@ -48,6 +55,7 @@ export function EditProfileForm() {
 								className="self-center"
 								onChangeText={onChange}
 								value={value}
+								hasError={!!errors.name}
 							/>
 						)}
 					/>
@@ -62,10 +70,13 @@ export function EditProfileForm() {
 						render={({ field: { onChange, value } }) => (
 							<Input
 								placeholder="your-email@email.com"
+								keyboardType='email-address'
+								autoCapitalize="none"
 								IconLeft={'mail'}
 								className="self-center"
 								onChangeText={onChange}
 								value={value}
+								hasError={!!errors.email}
 							/>
 						)}
 					/>
@@ -80,10 +91,12 @@ export function EditProfileForm() {
 						render={({ field: { onChange, value } }) => (
 							<Input
 								placeholder="(00) 00000 0000"
+								keyboardType='phone-pad'
 								IconLeft={'phone'}
 								className="self-center"
 								onChangeText={onChange}
 								value={value}
+								hasError={!!errors.phone}
 							/>
 						)}
 					/>
@@ -102,6 +115,7 @@ export function EditProfileForm() {
 								className="self-center"
 								onChangeText={onChange}
 								value={value}
+								hasError={!!errors.dateOfBirth}
 							/>
 						)}
 					/>
@@ -119,6 +133,7 @@ export function EditProfileForm() {
 								className="self-center"
 								onChangeText={onChange}
 								value={value}
+								hasError={!!errors.address}
 							/>
 						)}
 					/>

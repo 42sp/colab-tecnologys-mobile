@@ -11,9 +11,9 @@ import { useNavigate } from '@/libs/react-navigation/useNavigate'
 
 const SecuritySettingsSchema = z
 	.object({
-		currentPassword: z.string(),
+		currentPassword: z.string().nonempty('Current password is required'),
 		newPassword: z.string().min(6, 'Password must be at least 6 characters'),
-		confirmPassword: z.string(),
+		confirmPassword: z.string().nonempty('Confirm password is required'),
 	})
 
 	// validar se o currentPassword é igual ao password armazenado
@@ -32,6 +32,11 @@ export function SecuritySettingsForm() {
 		formState: { errors },
 	} = useForm<SecuritySettingsType>({
 		resolver: zodResolver(SecuritySettingsSchema),
+		defaultValues: {
+			currentPassword: '',
+			newPassword: '',
+			confirmPassword: '',
+		},
 	})
 
 	const { drawer } = useNavigate()
@@ -67,6 +72,7 @@ export function SecuritySettingsForm() {
 									className="self-center"
 									value={value}
 									onChangeText={onChange}
+									hasError={!!errors.currentPassword}
 								/>
 							)}
 						/>
@@ -89,6 +95,7 @@ export function SecuritySettingsForm() {
 									className="self-center"
 									value={value}
 									onChangeText={onChange}
+									hasError={!!errors.newPassword}
 								/>
 							)}
 						/>
@@ -111,6 +118,7 @@ export function SecuritySettingsForm() {
 									className="self-center"
 									onChangeText={onChange}
 									value={value}
+									hasError={!!errors.confirmPassword}
 								/>
 							)}
 						/>
@@ -133,11 +141,9 @@ export function SecuritySettingsForm() {
 					</View>
 				</Card.Footer>
 			</Card>
-			<View>
-				<Button className="flex-1" onPress={handleSubmit(onSubmit)}>
-					<Text className="font-inter-medium text-xl text-neutral-100">Save changes</Text>
-				</Button>
-			</View>
+			<Button className="flex-1" onPress={handleSubmit(onSubmit)}>
+				<Text className="font-inter-medium text-xl text-neutral-100">Save changes</Text>
+			</Button>
 			<Card className="gap-5">
 				<Card.Header>
 					<Text className="font-inter-bold text-xl">Security tips</Text>

@@ -8,8 +8,8 @@ import { useState } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
 
 const signInSchema = z.object({
-	email: z.email().nonempty(),
-	password: z.string().nonempty(),
+	email: z.email('Please enter a valid email address').nonempty('Email is required'),
+	password: z.string().nonempty('Password is required'),
 })
 
 type SignInType = z.infer<typeof signInSchema>
@@ -25,6 +25,10 @@ export function SignInForm() {
 		formState: { errors, isSubmitting },
 	} = useForm<SignInType>({
 		resolver: zodResolver(signInSchema),
+		defaultValues: {
+			email: '',
+			password: '',
+		},
 	})
 
 	async function onSubmit(data: SignInType) {
@@ -46,6 +50,7 @@ export function SignInForm() {
 							onBlur={onBlur}
 							onChangeText={onChange}
 							value={value}
+							hasError={!!errors.email}
 						/>
 						{errors.email && <Text className="text-red-500">{errors.email.message}</Text>}
 					</View>
@@ -65,6 +70,7 @@ export function SignInForm() {
 							onChangeText={onChange}
 							onBlur={onBlur}
 							value={value}
+							hasError={!!errors.password}
 						/>
 						{errors.password && <Text className="text-red-500">{errors.password.message}</Text>}
 					</View>
@@ -83,7 +89,6 @@ export function SignInForm() {
 			<Button
 				title="Sign In"
 				onPress={handleSubmit(onSubmit)}
-				className="my-5"
 				disabled={isSubmitting}
 			/>
 

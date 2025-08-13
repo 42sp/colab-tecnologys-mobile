@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 import { useNavigation } from '@react-navigation/native'
 
 const forgotPasswordSchema = z.object({
-	email: z.email('Invalid email address'),
+	email: z.email('Please enter a valid email address').nonempty('Email is required'),
 })
 
 type ForgotPasswordType = z.infer<typeof forgotPasswordSchema>
@@ -58,6 +58,7 @@ export default function ForgotPasswordScreen() {
 										onBlur={onBlur}
 										onChangeText={onChange}
 										value={value}
+										hasError={!!errors.email}
 									/>
 									{errors.email && (
 										<Text className="mt-1 font-inter text-sm text-red-500">

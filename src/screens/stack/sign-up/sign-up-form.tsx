@@ -13,12 +13,12 @@ const items = [{ label: 'Item 1' }, { label: 'Item 2' }, { label: 'Item 3' }, { 
 const signUpSchema = z
 	.object({
 		name: z.string().nonempty('Full name is required'),
-		email: z.email('Invalid e-mail'),
-		cpf: z.string().nonempty().min(11, 'CPF must have at least 11 digits'),
+		email: z.email('Please enter a valid email address').nonempty('Email is required'),
+		cpf: z.string().length(11, 'CPF must have exactly 11 digits'),
 		phone: z.string().nonempty('Phone number is required'),
 		jobTitle: z.string().nonempty('Job title is required'),
 		password: z.string().min(6, 'Password must be at least 6 characters'),
-		confirmPassword: z.string(),
+		confirmPassword: z.string().nonempty('Confirm password is required'),
 	})
 	.refine((data) => data.password === data.confirmPassword, {
 		message: "Passwords don't match",
@@ -39,7 +39,13 @@ export function SignUpForm() {
 	} = useForm<SignUpType>({
 		resolver: zodResolver(signUpSchema),
 		defaultValues: {
+			name: '',
+			email: '',
+			cpf: '',
+			phone: '',
 			jobTitle: '',
+			password: '',
+			confirmPassword: '',
 		},
 	})
 
@@ -62,6 +68,7 @@ export function SignUpForm() {
 							className="self-center"
 							onChangeText={onChange}
 							value={value}
+							hasError={!!errors.name}
 						/>
 					)}
 				/>
@@ -75,10 +82,13 @@ export function SignUpForm() {
 					render={({ field: { onChange, value } }) => (
 						<Input
 							placeholder="your-email@email.com"
+							keyboardType="email-address"
+							autoCapitalize="none"
 							IconLeft={'mail'}
 							className="self-center"
 							onChangeText={onChange}
 							value={value}
+							hasError={!!errors.email}
 						/>
 					)}
 				/>
@@ -92,10 +102,12 @@ export function SignUpForm() {
 					render={({ field: { onChange, value } }) => (
 						<Input
 							placeholder="000.000.000-00"
+							keyboardType="numeric"
 							IconLeft={'file'}
 							className="self-center"
 							onChangeText={onChange}
 							value={value}
+							hasError={!!errors.cpf}
 						/>
 					)}
 				/>
@@ -109,10 +121,12 @@ export function SignUpForm() {
 					render={({ field: { onChange, value } }) => (
 						<Input
 							placeholder="(00) 00000 0000"
+							keyboardType="phone-pad"
 							IconLeft={'phone'}
 							className="self-center"
 							onChangeText={onChange}
 							value={value}
+							hasError={!!errors.phone}
 						/>
 					)}
 				/>
@@ -127,12 +141,12 @@ export function SignUpForm() {
 						<Dropdown
 							IconLeft={'briefcase'}
 							IconRight={'chevron-down'}
-							className="self-center"
 							options={items}
-							variant="outline"
+							variant='default'
 							placeholder="Select an option"
 							value={value}
 							onChangeText={onChange}
+							hasError={!!errors.jobTitle}
 						/>
 					)}
 				/>
@@ -153,6 +167,7 @@ export function SignUpForm() {
 							className="self-center"
 							value={value}
 							onChangeText={onChange}
+							hasError={!!errors.password}
 						/>
 					)}
 				/>
@@ -173,6 +188,7 @@ export function SignUpForm() {
 							className="self-center"
 							onChangeText={onChange}
 							value={value}
+							hasError={!!errors.confirmPassword}
 						/>
 					)}
 				/>
