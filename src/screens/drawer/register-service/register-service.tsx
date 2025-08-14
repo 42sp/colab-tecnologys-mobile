@@ -1,11 +1,17 @@
-import { KeyboardAvoidingView, Image, Text, View, Pressable } from 'react-native'
+import {
+	KeyboardAvoidingView,
+	Image,
+	Text,
+	View,
+	Pressable,
+	ScrollView,
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView } from 'react-native-gesture-handler'
 import Card from '@/components/ui/card'
 import { useState } from 'react'
 import { RegisterServiceForm } from '@/screens/drawer/register-service/register-service-form'
 import { RadioCheckOption } from '@/components/ui/input-radio'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -22,13 +28,14 @@ const registerServiceSchema = z
 		workers: z.array(
 			z.object({
 				percent: z.number('Percent is required.').min(0).max(100),
-				worker: z.string(),
+				worker: z.string().nonempty('Worker is required.'),
 			}),
 		),
-		typeOfService: z.string().min(1, 'Type of service is required.'),
+		typeOfService: z.string().nonempty('Type of service is required.'),
 		apartments: z.array(z.string()).min(1, 'At least one apartment is required.'),
-		classification: z.string('Service type is required.'),
-		services: z.string().min(1, 'Service is required.'),
+		classification: z.string().nonempty('Choose one option.'),
+		services: z.string().nonempty('Service is required.'),
+		confirmed: z.boolean().optional(),
 	})
 	.superRefine((data, ctx) => {
 		const sum = (data.workers || []).reduce((acc, w) => acc + (w.percent || 0), 0)
@@ -39,22 +46,11 @@ const registerServiceSchema = z
 				path: ['workers'],
 			})
 		}
-
-		data.workers.forEach((w, index) => {
-			if (!w.worker) {
-				ctx.addIssue({
-					path: ['workers', index, 'worker'],
-					message: 'Worker is required.',
-					code: 'custom',
-				})
-			}
-		}
-	)})
+	})
 
 export type RegisterServiceType = z.infer<typeof registerServiceSchema>
 
 export default function RegisterServiceScreen() {
-	const [confirmed, setConfirmed] = useState(false)
 	const [modalVisible, setModalVisible] = useState(false)
 
 	const residentials = residencialMock.data
@@ -64,7 +60,7 @@ export default function RegisterServiceScreen() {
 	const {
 		control,
 		handleSubmit,
-		setValue,
+		reset,
 		resetField,
 		formState: { errors },
 	} = useForm<RegisterServiceType>({
@@ -78,11 +74,14 @@ export default function RegisterServiceScreen() {
 			apartments: [],
 			classification: '',
 			services: '',
+			confirmed: false,
 		},
 	})
 
-	function onSubmit(data: any) {
+	function onSubmit(data: RegisterServiceType) {
 		console.log('Dados do Serviço: ', JSON.stringify(data))
+		reset()
+		setResIndex(0)
 	}
 
 	function handleSelectResidential(index: number) {
@@ -127,7 +126,7 @@ export default function RegisterServiceScreen() {
 					<RegisterServiceForm
 						control={control}
 						currentResidential={currentResidential}
-						setValue={setValue}
+						resetField={resetField}
 						errors={errors}
 					></RegisterServiceForm>
 
@@ -137,11 +136,17 @@ export default function RegisterServiceScreen() {
 
 					<Card className="m-6">
 						<Card.Body>
-							<RadioCheckOption
-								label="The service has been completed"
-								selected={confirmed}
-								onPress={() => setConfirmed(!confirmed)}
-								variant="checkbox"
+							<Controller
+								control={control}
+								name="confirmed"
+								render={({ field: { value, onChange } }) => (
+									<RadioCheckOption
+										label="The service has been completed"
+										selected={!!value}
+										onPress={() => onChange(!value)}
+										variant="checkbox"
+									/>
+								)}
 							/>
 						</Card.Body>
 					</Card>

@@ -1,21 +1,21 @@
 import Card from '@/components/ui/card'
-// import { Button } from '@/components/ui/button'
 import { Dropdown } from '@/components/ui/dropdown'
-import { Text, View } from 'react-native'
+import { Text, View, Modal, Pressable } from 'react-native'
+import { Calendar } from 'react-native-calendars'
+import { useState } from 'react'
 import {
 	Controller,
-	type UseFormSetValue,
+	type UseFormResetField,
 	type Control,
 	useWatch,
 	FieldErrors,
 } from 'react-hook-form'
-import type { RegisterServiceType } from '@/screens/drawer/register-service/register-service'
-
-const items = [{ label: 'Item 1' }, { label: 'Item 2' }, { label: 'Item 3' }, { label: 'Item 4' }]
+import type { RegisterServiceType } from './register-service'
+import { Feather } from '@expo/vector-icons'
 
 type Props = {
 	control: Control<RegisterServiceType>
-	setValue: UseFormSetValue<RegisterServiceType>
+	resetField: UseFormResetField<RegisterServiceType>
 	currentResidential?: {
 		id: number
 		name: string
@@ -34,7 +34,10 @@ type Props = {
 	errors: FieldErrors<RegisterServiceType>
 }
 
-export function RegisterServiceForm({ control, currentResidential, setValue, errors }: Props) {
+export function RegisterServiceForm({ control, currentResidential, resetField, errors }: Props) {
+	const today = new Date().toLocaleDateString('sv-SE')
+	const [isCalendarVisible, setCalendarVisible] = useState(false)
+
 	const towers = currentResidential?.torres?.data ?? []
 	const towerOptions = towers.map((t) => ({ label: t.name }))
 
@@ -58,19 +61,65 @@ export function RegisterServiceForm({ control, currentResidential, setValue, err
 					<Controller
 						control={control}
 						name="dateOfService"
-						render={({ field: { onChange, value } }) => (
-							<Dropdown
-								IconLeft={'calendar'}
-								IconRight={'chevron-down'}
-								className="self-center"
-								options={items}
-								variant="outline"
-								placeholder="Date of service"
-								value={value}
-								onChangeText={onChange}
-							/>
-						)}
+						render={({ field: { onChange, value } }) => {
+							const formattedDate = value
+								? new Date(`${value}T00:00:00`).toLocaleDateString('pt-BR')
+								: ''
+
+							return (
+								<>
+									<Pressable
+										onPress={() => setCalendarVisible(true)}
+										className={`h-14 w-full flex-row items-center rounded-lg border bg-transparent px-4 ${
+											errors.dateOfService ? 'border-red-500' : 'border-neutral-300'
+										}`}
+									>
+										<Feather
+											name="calendar"
+											size={20}
+											color={errors.dateOfService ? '#ef4444' : '#d4d4d4'}
+										/>
+										<Text className={`flex-1 px-3 font-inter ${errors.dateOfService ? 'text-red-500' : 'text-neutral-400'
+											} `}>
+											{formattedDate || 'Date of service'}
+										</Text>
+
+									</Pressable>
+
+									<Modal visible={isCalendarVisible} transparent animationType="slide">
+										<View className="flex-1 items-center justify-center bg-black/40 p-4">
+											<View className="w-full rounded-lg bg-white p-4">
+												<Calendar
+													minDate={today}
+													onDayPress={(day) => {
+														onChange(day.dateString)
+														setCalendarVisible(false)
+													}}
+													markedDates={{
+														[value]: { selected: true, disableTouchEvent: true },
+													}}
+													theme={{
+														selectedDayBackgroundColor: '#000',
+														todayTextColor: '#Ef4444',
+														arrowColor: '#000',
+													}}
+												/>
+												<Pressable
+													onPress={() => setCalendarVisible(false)}
+													className="mt-4 items-center rounded-lg border-2 border-gray-200 bg-transparent p-3"
+												>
+													<Text className="font-inter-bold text-black">Close</Text>
+												</Pressable>
+											</View>
+										</View>
+									</Modal>
+								</>
+							)
+						}}
 					/>
+					{errors.dateOfService && (
+						<Text className="text-red-500">{errors.dateOfService.message}</Text>
+					)}
 				</Card.Body>
 			</Card>
 			<Card className="ml-6 mr-6 mt-6">
@@ -92,9 +141,10 @@ export function RegisterServiceForm({ control, currentResidential, setValue, err
 								placeholder="Select the block"
 								value={value}
 								onChangeText={(val: string) => {
-									setValue('floor', '', { shouldValidate: true, shouldDirty: true })
+									resetField('floor')
 									onChange(val)
 								}}
+								hasError={!!errors.tower}
 							/>
 						)}
 					/>
@@ -113,10 +163,11 @@ export function RegisterServiceForm({ control, currentResidential, setValue, err
 								placeholder="Select a floor"
 								value={value}
 								onChangeText={onChange}
+								hasError={!!errors.floor}
 							/>
 						)}
 					/>
-					{/* {errors.floor && <Text className="text-red-500">{errors.floor.message}</Text>} */}
+					{errors.floor && <Text className="text-red-500">{errors.floor.message}</Text>}
 				</Card.Body>
 			</Card>
 		</View>

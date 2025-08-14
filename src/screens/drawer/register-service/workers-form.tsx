@@ -18,10 +18,7 @@ const percentOptions = Array.from({ length: 11 }, (_, i) => {
 	return { label: `${v}%`, value: `${v}%` }
 })
 
-const workerOptions = tarefeiros.data.map((t) => ({
-	label: t.name,
-	value: t.name,
-}))
+const workerOptions = tarefeiros.data.map((t) => ({	label: t.name,}))
 
 function distributeEvenly(n: number) {
 	if (n <= 0) return [] as number[]
@@ -92,6 +89,7 @@ export function WorkersForm({ control, errors }: Props) {
 												onChangeText={(v: any) =>
 													onChange(parseInt(String(v).replace(/[^0-9]/g, ''), 10))
 												}
+												hasError={!!rowError?.percent}
 											/>
 										)}
 									/>
@@ -117,6 +115,7 @@ export function WorkersForm({ control, errors }: Props) {
 												placeholder="worker"
 												value={value}
 												onChangeText={onChange}
+												hasError={!!rowError?.worker}
 											/>
 										)}
 									/>
