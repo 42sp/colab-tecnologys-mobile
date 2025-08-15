@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { View } from 'react-native'
-import { Calendar } from 'react-native-calendars'
+import { Calendar, CalendarProps } from 'react-native-calendars'
 
 function markedStyleDates(start: Date, end: Date) {
 	const marked: any = {}
@@ -33,14 +33,17 @@ export interface DateRange {
 
 type CustomCalendarProps = {
 	setDateRange?: (range: DateRange) => void
-}
+} & CalendarProps
 
-export default function CustomCalendar({ setDateRange }: CustomCalendarProps) {
+export default function CustomCalendar({
+	setDateRange,
+	markingType = 'period',
+}: CustomCalendarProps) {
 	const [range, setRange] = useState<DateRange>({
 		start: null,
 		end: null,
 	})
-	const [markedDates, setMarkedDates] = useState<any>({})
+	const [selectedDates, setSelectedDates] = useState<any>({})
 
 	useEffect(() => {
 		if (!range || !setDateRange) return
@@ -50,9 +53,20 @@ export default function CustomCalendar({ setDateRange }: CustomCalendarProps) {
 	const onDayPress = (day: { dateString: string }) => {
 		const selectedDate = new Date(day.dateString)
 
+		if (markingType === 'dot' || markingType === 'multi-dot') {
+			setRange({ start: selectedDate, end: null })
+			setSelectedDates({
+				[day.dateString]: {
+					selected: true,
+					dots: [{ color: '#d16a32' }],
+				},
+			})
+			return
+		}
+
 		if (!range.start || (range.start && range.end)) {
 			setRange({ start: selectedDate, end: null })
-			setMarkedDates({
+			setSelectedDates({
 				[day.dateString]: { startingDay: true, color: '#d16a32', textColor: 'white' },
 			})
 		} else if (range.start && !range.end) {
@@ -60,25 +74,24 @@ export default function CustomCalendar({ setDateRange }: CustomCalendarProps) {
 			const end = range.start < selectedDate ? selectedDate : range.start
 			setRange({ start, end })
 
-			setMarkedDates(markedStyleDates(start, end))
+			setSelectedDates(markedStyleDates(start, end))
 		}
 	}
 
 	return (
-		<View className="flex-1">
-			<Calendar
-				onDayPress={onDayPress}
-				markingType="period"
-				markedDates={markedDates}
-				theme={{
-					arrowColor: '#B73131',
-					textDayHeaderFontFamily: 'Inter_500Medium',
-					todayTextColor: '#B73131',
-					todayDotColor: '#B73131',
-					textMonthFontWeight: 'bold',
-					monthTextColor: '#B73131',
-				}}
-			/>
-		</View>
+		<Calendar
+			onDayPress={onDayPress}
+			markingType={markingType}
+			markedDates={selectedDates}
+			theme={{
+				arrowColor: '#B73131',
+				textDayHeaderFontFamily: 'Inter_500Medium',
+				todayTextColor: '#B73131',
+				todayDotColor: '#B73131',
+				textMonthFontWeight: 'bold',
+				monthTextColor: '#B73131',
+				selectedDayBackgroundColor: '#d16a32',
+			}}
+		/>
 	)
 }
