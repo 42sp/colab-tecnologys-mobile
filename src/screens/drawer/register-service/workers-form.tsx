@@ -18,20 +18,22 @@ const percentOptions = Array.from({ length: 11 }, (_, i) => {
 	return { label: `${v}%`, value: `${v}%` }
 })
 
-const workerOptions = tarefeiros.data.map((t) => ({	label: t.name,}))
+const workerOptions = tarefeiros.data.map((t) => ({ label: t.name }))
 
-function distributeEvenly(n: number) {
-	if (n <= 0) return [] as number[]
+function distributeEvenly(n: number): number[] {
+	if (n <= 0) return []
+
 	const base = Math.floor(100 / n)
-	let rest = 100 - base * n
-	const arr = Array.from({ length: n }, () => base)
-	let i = 0
-	while (rest > 0) {
-		arr[i % n] += 1
-		rest--
-		i++
+	let remainder = 100 - base * n
+
+	const result = Array.from({ length: n }, () => base)
+
+	for (let i = 0; remainder > 0; i++) {
+		result[i % n] += 1
+		remainder--
 	}
-	return arr
+
+	return result
 }
 
 export function WorkersForm({ control, errors }: Props) {
@@ -45,14 +47,19 @@ export function WorkersForm({ control, errors }: Props) {
 
 	function handleAdd() {
 		if (fields.length >= MAX_WORKERS) return
-		const nextLen = fields.length + 1
-		const dist = distributeEvenly(nextLen)
 
-		for (let i = 0; i < fields.length; i++) {
-			update(i, { ...(rows?.[i] ?? {}), percent: dist[i] })
-		}
+		const newTotal = fields.length + 1
+		const newDistribution = distributeEvenly(newTotal)
 
-		append({ percent: dist[nextLen - 1], worker: '' })
+		fields.forEach((_, index) => {
+			const updatedWorker = { ...(rows?.[index] ?? {}), percent: newDistribution[index] }
+			update(index, updatedWorker)
+		})
+
+		append({
+			percent: newDistribution[newTotal - 1],
+			worker: '',
+		})
 	}
 
 	return (
@@ -106,18 +113,30 @@ export function WorkersForm({ control, errors }: Props) {
 									<Controller
 										control={control}
 										name={`workers.${idx}.worker` as const}
-										render={({ field: { onChange, value } }) => (
-											<Dropdown
-												IconLeft={'list'}
-												IconRight={'chevron-down'}
-												options={workerOptions}
-												variant="outline"
-												placeholder="worker"
-												value={value}
-												onChangeText={onChange}
-												hasError={!!rowError?.worker}
-											/>
-										)}
+										render={({ field: { onChange, value } }) => {
+											const allWorkers = useWatch({ control, name: 'workers' })
+
+											const selectedNames = allWorkers
+												.map((w, i) => (i !== idx ? w.worker : null))
+												.filter(Boolean)
+
+											const availableWorkerOptions = workerOptions.filter(
+												(opt) => !selectedNames.includes(opt.label),
+											)
+
+											return (
+												<Dropdown
+													IconLeft="list"
+													IconRight="chevron-down"
+													options={availableWorkerOptions}
+													variant="outline"
+													placeholder="worker"
+													value={value}
+													onChangeText={onChange}
+													hasError={!!rowError?.worker}
+												/>
+											)
+										}}
 									/>
 									<View className="h-4">
 										{rowError?.worker?.message && (

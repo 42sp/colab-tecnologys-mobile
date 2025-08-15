@@ -38,11 +38,16 @@ const registerServiceSchema = z
 		confirmed: z.boolean().optional(),
 	})
 	.superRefine((data, ctx) => {
-		const sum = (data.workers || []).reduce((acc, w) => acc + (w.percent || 0), 0)
-		if (sum > 100) {
+		const sum = (data.workers || []).reduce((total, w) => total + (w.percent || 0), 0)
+
+		if (data.workers.length === 0) {
+			return
+		}
+
+		if (sum !== 100) {
 			ctx.addIssue({
 				code: 'custom',
-				message: `(${sum}%) - Cannot exceed 100%`,
+				message: `The sum of percentages must be 100%, but it is ${sum}%.`,
 				path: ['workers'],
 			})
 		}
@@ -62,6 +67,7 @@ export default function RegisterServiceScreen() {
 		handleSubmit,
 		reset,
 		resetField,
+		setValue,
 		formState: { errors },
 	} = useForm<RegisterServiceType>({
 		resolver: zodResolver(registerServiceSchema),
@@ -127,6 +133,7 @@ export default function RegisterServiceScreen() {
 						control={control}
 						currentResidential={currentResidential}
 						resetField={resetField}
+						setValue={setValue}
 						errors={errors}
 					></RegisterServiceForm>
 

@@ -35,7 +35,7 @@ type CustomCalendarProps = {
 	setDateRange?: (range: DateRange) => void
 } & CalendarProps
 
-export function CustomCalendar({ setDateRange, markingType = 'period' }: CustomCalendarProps) {
+export function CustomCalendar({ setDateRange, markingType = 'period', ...rest }: CustomCalendarProps) {
 	const [range, setRange] = useState<DateRange>({
 		start: null,
 		end: null,
@@ -89,6 +89,7 @@ export function CustomCalendar({ setDateRange, markingType = 'period' }: CustomC
 				monthTextColor: '#B73131',
 				selectedDayBackgroundColor: '#d16a32',
 			}}
+			{...rest}
 		/>
 	)
 }

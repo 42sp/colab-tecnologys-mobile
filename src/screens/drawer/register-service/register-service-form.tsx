@@ -1,17 +1,18 @@
 import Card from '@/components/ui/card'
 import { Dropdown } from '@/components/ui/dropdown'
 import { Text, View, Modal, Pressable } from 'react-native'
-import { Calendar } from 'react-native-calendars'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
 	Controller,
 	type UseFormResetField,
+	type UseFormSetValue,
 	type Control,
 	useWatch,
 	FieldErrors,
 } from 'react-hook-form'
 import type { RegisterServiceType } from './register-service'
 import { Feather } from '@expo/vector-icons'
+import { CustomCalendar, DateRange } from '@/components/ui/calendar'
 
 type Props = {
 	control: Control<RegisterServiceType>
@@ -31,12 +32,20 @@ type Props = {
 			}>
 		}
 	}
+	setValue: UseFormSetValue<RegisterServiceType>
 	errors: FieldErrors<RegisterServiceType>
 }
 
-export function RegisterServiceForm({ control, currentResidential, resetField, errors }: Props) {
-	const today = new Date().toLocaleDateString('sv-SE')
+export function RegisterServiceForm({
+	control,
+	currentResidential,
+	resetField,
+	setValue,
+	errors,
+}: Props) {
+	const currentDate = new Date().toISOString().split('T')[0]
 	const [isCalendarVisible, setCalendarVisible] = useState(false)
+	const [selectDay, setSelectDay] = useState<DateRange>({ start: null, end: null })
 
 	const towers = currentResidential?.torres?.data ?? []
 	const towerOptions = towers.map((t) => ({ label: t.name }))
@@ -50,6 +59,14 @@ export function RegisterServiceForm({ control, currentResidential, resetField, e
 			? Array.from({ length: totalFloors }, (_, i) => ({ label: `${i + 1}º Floor` }))
 			: []
 
+	useEffect(() => {
+		if (selectDay.start && !selectDay.end) {
+			const selectedDate = selectDay.start.toISOString().split('T')[0]
+			setValue('dateOfService', selectedDate)
+			setCalendarVisible(false)
+		}
+	}, [selectDay])
+
 	return (
 		<View>
 			<Card className="ml-6 mr-6 mt-6">
@@ -61,7 +78,7 @@ export function RegisterServiceForm({ control, currentResidential, resetField, e
 					<Controller
 						control={control}
 						name="dateOfService"
-						render={({ field: { onChange, value } }) => {
+						render={({ field: { value } }) => {
 							const formattedDate = value
 								? new Date(`${value}T00:00:00`).toLocaleDateString('pt-BR')
 								: ''
@@ -79,30 +96,22 @@ export function RegisterServiceForm({ control, currentResidential, resetField, e
 											size={20}
 											color={errors.dateOfService ? '#ef4444' : '#d4d4d4'}
 										/>
-										<Text className={`flex-1 px-3 font-inter ${errors.dateOfService ? 'text-red-500' : 'text-neutral-400'
-											} `}>
+										<Text
+											className={`flex-1 px-3 font-inter ${
+												errors.dateOfService ? 'text-red-500' : 'text-neutral-400'
+											} `}
+										>
 											{formattedDate || 'Date of service'}
 										</Text>
-
 									</Pressable>
 
 									<Modal visible={isCalendarVisible} transparent animationType="slide">
 										<View className="flex-1 items-center justify-center bg-black/40 p-4">
 											<View className="w-full rounded-lg bg-white p-4">
-												<Calendar
-													minDate={today}
-													onDayPress={(day) => {
-														onChange(day.dateString)
-														setCalendarVisible(false)
-													}}
-													markedDates={{
-														[value]: { selected: true, disableTouchEvent: true },
-													}}
-													theme={{
-														selectedDayBackgroundColor: '#000',
-														todayTextColor: '#Ef4444',
-														arrowColor: '#000',
-													}}
+												<CustomCalendar
+													minDate={currentDate}
+													setDateRange={setSelectDay}
+													markingType="dot"
 												/>
 												<Pressable
 													onPress={() => setCalendarVisible(false)}
