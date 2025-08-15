@@ -15,8 +15,8 @@ export default function HomeManagerScreen() {
 		if (!range) return
 		console.log('HERE:', range)
 
-		if (!selectDay) return
-		console.log('HERE:', selectDay)
+		if (!range) return
+		console.log('HERE:', range)
 	}, [range, selectDay])
 
 	return (

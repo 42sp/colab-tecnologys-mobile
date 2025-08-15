@@ -35,10 +35,7 @@ type CustomCalendarProps = {
 	setDateRange?: (range: DateRange) => void
 } & CalendarProps
 
-export default function CustomCalendar({
-	setDateRange,
-	markingType = 'period',
-}: CustomCalendarProps) {
+export function CustomCalendar({ setDateRange, markingType = 'period' }: CustomCalendarProps) {
 	const [range, setRange] = useState<DateRange>({
 		start: null,
 		end: null,
