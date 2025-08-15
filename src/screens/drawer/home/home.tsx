@@ -4,20 +4,29 @@ import { Controller, useForm } from 'react-hook-form'
 import { Feather } from '@expo/vector-icons'
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
-import { FilterModal } from './filter-modal'
+import { HomeFilterModal } from './filter-modal'
 import { SummaryCard } from '@/screens/drawer/home/summary-card'
 import { ActivityList } from '@/screens/drawer/home/activity-list'
 import { HorizontalList } from '@/screens/drawer/home/horizontal-list'
 import { activityMock } from '@/mock'
 
+export type StatusType = 'pending' | 'approved' | 'completed'
+
+export interface FilterType {
+	serviceType?: string
+	status?: StatusType[]
+	dateRange?: {
+		start: Date
+		end: Date
+	}
+}
+
 export default function Home() {
-	const {
-		control,
-		formState: { errors, isSubmitting },
-	} = useForm()
 	const [showFilter, setShowFilter] = useState(false)
 	const [Selected, setSelected] = useState('Todos')
 	const options = ['Todos', 'Contrapiso', 'Revestimento', 'Pintura', 'Alvenaria']
+
+	const [filter, setFilter] = useState<FilterType>()
 
 	const dataList = activityMock.data
 
@@ -25,20 +34,11 @@ export default function Home() {
 		<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] p-5">
 			<View className="flex-row items-center gap-5">
 				<View className="flex-1">
-					<Controller
-						control={control}
-						name="email"
-						render={({ field: { onChange, onBlur, value } }) => (
-							<Input
-								keyboardType="default"
-								IconLeft="search"
-								placeholder="Search tasks"
-								onBlur={onBlur}
-								onChangeText={onChange}
-								value={value}
-								className="bg-white"
-							/>
-						)}
+					<Input
+						keyboardType="default"
+						IconLeft="search"
+						placeholder="Search tasks"
+						className="bg-white"
 					/>
 				</View>
 				<TouchableOpacity
@@ -56,12 +56,11 @@ export default function Home() {
 				onSelect={(value) => setSelected(value)}
 			/>
 
-			<FilterModal
-				visible={showFilter}
+			<HomeFilterModal
+				isVisible={showFilter}
 				onClose={() => setShowFilter(false)}
-				onApply={(filters) => {
-					console.log(filters)
-				}}
+				filter={filter}
+				setFilter={setFilter}
 			/>
 
 			<View className="flex-row gap-3">

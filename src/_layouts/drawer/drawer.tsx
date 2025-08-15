@@ -76,7 +76,7 @@ export default function DrawerLayout() {
 					drawerIcon: ({ color, size }) => <Feather name="file-minus" color={color} size={size} />,
 				}}
 			/>
-			{/* <Drawer.Screen
+			<Drawer.Screen
 				name="homeManager"
 				component={HomeManagerScreen}
 				options={{
@@ -84,7 +84,7 @@ export default function DrawerLayout() {
 					title: 'Home Manager',
 					drawerIcon: ({ color, size }) => <Feather name="file-minus" color={color} size={size} />,
 				}}
-			/> */}
+			/>
 		</Drawer.Navigator>
 	)
 }
