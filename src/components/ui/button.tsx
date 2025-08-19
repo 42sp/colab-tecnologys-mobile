@@ -1,7 +1,17 @@
 import { Text, TouchableOpacity, TouchableOpacityProps } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 
-type ButtonVariant = 'default' | 'outline' | 'red' | 'gradient' | 'rounded' | 'pill' | 'redPill' | 'green' | 'select' | 'selected'
+type ButtonVariant =
+	| 'default'
+	| 'outline'
+	| 'red'
+	| 'gradient'
+	| 'rounded'
+	| 'pill'
+	| 'redPill'
+	| 'green'
+	| 'select'
+	| 'selected'
 
 const baseStyle = `rounded-xl h-16 w-full items-center justify-center flex-row`
 
@@ -43,7 +53,7 @@ const buttonVariants: Record<ButtonVariant, { container: string; text: string }>
 		text: 'text-black font-inter',
 	},
 	selected: {
-		container: `${baseStyle} border-2 border-blue-500 bg-blue-100`,
+		container: `${baseStyle} border-2 border-[#B73131] bg-[#d16a32]/60`,
 		text: 'text-black font-inter',
 	},
 }
@@ -70,7 +80,6 @@ export function Button({
 	disabled,
 	...rest
 }: ButtonProps) {
-
 	if (variant === 'gradient') {
 		return (
 			<TouchableOpacity
