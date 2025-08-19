@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View, StatusBar } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { getHeaderTitle } from '@react-navigation/elements'
 import { DrawerHeaderProps } from '@react-navigation/drawer'
@@ -9,6 +9,7 @@ export function DrawerHeader({ navigation, options, route }: DrawerHeaderProps) 
 
 	return (
 		<View className="h-24 w-full" style={{ backgroundColor: 'transparent' }}>
+			<StatusBar barStyle={'light-content'} />
 			<LinearGradient
 				colors={['#B73131', '#EAA233']}
 				start={{ x: 0, y: 0.5 }}
