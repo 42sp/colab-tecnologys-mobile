@@ -35,24 +35,31 @@ export default function Home() {
 			!filter ||
 			(filter.status?.length === 0 && !filter.dateRange?.start && filter.serviceType === 'Todos')
 		) {
-			return [
-				{
-					title: 'Today',
-					data: dataList.filter(
-						({ time }) => time.toLocaleDateString() === new Date().toLocaleDateString(),
-					),
-				},
-				{
-					title: 'Yesterday',
-					data: dataList.filter(
-						({ time }) => time.toLocaleDateString() === yesterday.toLocaleDateString(),
-					),
-				},
-				{
-					title: 'Older',
-					data: dataList.filter(({ time }) => time < yesterday),
-				},
-			]
+			return {
+				amount: dataList.length,
+				percent: Math.round(
+					(dataList.filter(({ status }) => status === 'completed').length / dataList.length) * 100,
+				),
+				pendding: dataList.filter(({ status }) => status === 'pending').length,
+				data: [
+					{
+						title: 'Today',
+						data: dataList.filter(
+							({ time }) => time.toLocaleDateString() === new Date().toLocaleDateString(),
+						),
+					},
+					{
+						title: 'Yesterday',
+						data: dataList.filter(
+							({ time }) => time.toLocaleDateString() === yesterday.toLocaleDateString(),
+						),
+					},
+					{
+						title: 'Older',
+						data: dataList.filter(({ time }) => time < yesterday),
+					},
+				],
+			}
 		} else {
 			let filteredData = dataList
 
@@ -70,29 +77,25 @@ export default function Home() {
 				filteredData = filteredData.filter(({ serviceType }) => serviceType === filter.serviceType)
 			}
 
-			return [
-				{
-					title: 'Filtered Results',
-					data: filteredData,
-				},
-			]
+			return {
+				amount: filteredData.length,
+				percent: Math.round(
+					(filteredData.filter(({ status }) => status === 'completed').length /
+						filteredData.length) *
+						100,
+				),
+				pendding: filteredData.filter(({ status }) => status === 'pending').length,
+				data: [
+					{
+						title: 'Filtered Results',
+						data: filteredData,
+					},
+				],
+			}
 		}
 	}
 
 	const activityDataList = handleFilterChange(filter, dataList)
-	const activityAmount = activityDataList.reduce((acc, curr) => acc + curr.data.length, 0)
-	const activityPercentage = Math.round(
-		(activityDataList.reduce(
-			(acc, curr) => acc + curr.data.filter(({ status }) => status === 'completed').length,
-			0,
-		) /
-			activityAmount) *
-			100,
-	)
-	const activityPending = activityDataList.reduce(
-		(acc, curr) => acc + curr.data.filter(({ status }) => status === 'pending').length,
-		0,
-	)
 
 	return (
 		<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] p-5">
@@ -129,25 +132,25 @@ export default function Home() {
 			/>
 
 			<ActivityList
-				data={activityDataList}
+				data={activityDataList.data}
 				HeaderComponent={
 					<View className="flex-row gap-3">
 						<SummaryCard
 							icon="clipboard"
 							SumaryVariant="blue"
-							value={activityAmount}
+							value={activityDataList.amount}
 							label="Activities"
 						/>
 						<SummaryCard
 							icon="clock"
 							SumaryVariant="orange"
-							value={activityPending}
+							value={activityDataList.pendding}
 							label="Pending"
 						/>
 						<SummaryCard
 							icon="bar-chart"
 							SumaryVariant="green"
-							value={activityPercentage + '%'}
+							value={activityDataList.percent + '%'}
 							label="Productivity"
 						/>
 					</View>
