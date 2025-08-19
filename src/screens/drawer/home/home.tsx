@@ -79,11 +79,12 @@ export default function Home() {
 
 			return {
 				amount: filteredData.length,
-				percent: Math.round(
-					(filteredData.filter(({ status }) => status === 'completed').length /
-						filteredData.length) *
-						100,
-				),
+				percent:
+					Math.round(
+						(filteredData.filter(({ status }) => status === 'completed').length /
+							filteredData.length) *
+							100,
+					) || 0,
 				pendding: filteredData.filter(({ status }) => status === 'pending').length,
 				data: [
 					{
