@@ -6,6 +6,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
+import { api } from '@/libs/axios/axios'
 
 const signInSchema = z.object({
 	email: z.email('Please enter a valid email address').nonempty('Email is required'),
@@ -16,7 +17,6 @@ type SignInType = z.infer<typeof signInSchema>
 
 export function SignInForm() {
 	const { stack } = useNavigate()
-
 	const [hidePassword, setHidePassword] = useState(true)
 
 	const {
@@ -33,6 +33,14 @@ export function SignInForm() {
 
 	async function onSubmit(data: SignInType) {
 		console.log('Dados do Login', JSON.stringify(data))
+		const new_data = {
+			strategy: 'local',
+			...data
+		}
+		const response = await api.post(`/authentication`, {
+			new_data
+		})
+		console.log(response)
 		await new Promise((resolve) => setTimeout(resolve, 1000))
 	}
 
