@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { View } from 'react-native'
 import { Calendar, CalendarProps } from 'react-native-calendars'
 
 function markedStyleDates(start: Date, end: Date) {
@@ -26,20 +25,17 @@ function markedStyleDates(start: Date, end: Date) {
 	return marked
 }
 
-export interface DateRange {
+export interface DateRangeType {
 	start: Date | null
 	end: Date | null
 }
 
 type CustomCalendarProps = {
-	setDateRange?: (range: DateRange) => void
+	setDateRange?: (range: DateRangeType) => void
 } & CalendarProps
 
-export default function CustomCalendar({
-	setDateRange,
-	markingType = 'period',
-}: CustomCalendarProps) {
-	const [range, setRange] = useState<DateRange>({
+export function CustomCalendar({ setDateRange, markingType = 'period' }: CustomCalendarProps) {
+	const [range, setRange] = useState<DateRangeType>({
 		start: null,
 		end: null,
 	})
@@ -72,6 +68,7 @@ export default function CustomCalendar({
 		} else if (range.start && !range.end) {
 			const start = range.start < selectedDate ? range.start : selectedDate
 			const end = range.start < selectedDate ? selectedDate : range.start
+			end.setHours(23, 59, 59, 999)
 			setRange({ start, end })
 
 			setSelectedDates(markedStyleDates(start, end))
