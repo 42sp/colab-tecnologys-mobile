@@ -1,6 +1,8 @@
-import { SectionList, Text, View } from 'react-native'
+import { SectionList, SectionListProps, Text, View } from 'react-native'
 import { ActivityCard } from './activity-card'
 import { ActivityService } from '@/mock'
+import { SummaryCard } from './summary-card'
+import { he } from 'zod/locales'
 
 const ColorDotVariants: Record<'parede' | 'contrapiso' | 'pintura', { color: string }> = {
 	parede: {
@@ -17,9 +19,10 @@ const ColorDotVariants: Record<'parede' | 'contrapiso' | 'pintura', { color: str
 interface ActivityListProps {
 	data: { title: string; data: ActivityService[] }[]
 	className?: string
+	HeaderComponent?: React.ReactNode
 }
 
-export function ActivityList({ data, className }: ActivityListProps) {
+export function ActivityList({ data, className, HeaderComponent }: ActivityListProps) {
 	return (
 		<View className={`w-full flex-1 ${className}`}>
 			<SectionList
@@ -30,7 +33,7 @@ export function ActivityList({ data, className }: ActivityListProps) {
 					return <Text className="py-3 font-inter text-neutral-600">{section.title}</Text>
 				}}
 				keyExtractor={(item) => `${item.id}`}
-				renderItem={({ item, index }) => (
+				renderItem={({ item }) => (
 					<View className="w-full flex-row">
 						<View className="ml-3 items-center">
 							<View
@@ -43,6 +46,7 @@ export function ActivityList({ data, className }: ActivityListProps) {
 						</View>
 					</View>
 				)}
+				ListHeaderComponent={() => HeaderComponent}
 			/>
 		</View>
 	)

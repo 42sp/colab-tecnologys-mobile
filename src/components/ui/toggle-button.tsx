@@ -16,7 +16,7 @@ export function ToggleButton({ className }: SwitchProps) {
 				onPress={toggleSwitch}
 				className={
 					`h-8 w-14 rounded-2xl px-1` +
-					(isEnabled ? ' justify-end bg-blue-400' : ' justify-start bg-gray-300') +
+					(isEnabled ? ' justify-end bg-blue-500' : ' justify-start bg-gray-300') +
 					' flex-row items-center'
 				}
 			>

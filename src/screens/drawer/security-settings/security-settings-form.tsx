@@ -8,6 +8,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
+import { ScanFace } from 'lucide-react-native'
 
 const SecuritySettingsSchema = z
 	.object({
@@ -130,7 +131,9 @@ export function SecuritySettingsForm() {
 				<Card.Footer className="gap-5">
 					<View className="h-px bg-neutral-300" />
 					<View className="flex flex-row items-center gap-5">
-						<Image source={require('@/assets/fingerprint-icon.png')} className="h-12 w-12" />
+						<View className="size-14 items-center justify-center rounded-full bg-blue-100">
+							<ScanFace size={26} color={'#3b82f6'} />
+						</View>
 						<View className="flex-1">
 							<Text className="font-inter-medium">Facial recognition</Text>
 							<Text className="font-inter text-gray-500">Use your face to log in</Text>

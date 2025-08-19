@@ -1,44 +1,108 @@
-import { Text, View, TouchableOpacity, Modal } from 'react-native'
-import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context'
-import { Controller, useForm } from 'react-hook-form'
+import { View, TouchableOpacity } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { Feather } from '@expo/vector-icons'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
-import { FilterModal } from './filter-modal'
+import { HomeFilterModal } from './filter-modal'
 import { SummaryCard } from '@/screens/drawer/home/summary-card'
 import { ActivityList } from '@/screens/drawer/home/activity-list'
 import { HorizontalList } from '@/screens/drawer/home/horizontal-list'
-import { activityMock } from '@/mock'
+import { activityMock, ActivityService } from '@/mock'
+import { DateRangeType } from '@/components/ui/calendar'
+
+export type StatusType = 'pending' | 'approved' | 'completed'
+
+export interface FilterType {
+	serviceType?: string
+	status?: StatusType[]
+	dateRange?: DateRangeType
+}
 
 export default function Home() {
-	const {
-		control,
-		formState: { errors, isSubmitting },
-	} = useForm()
+	const [filter, setFilter] = useState<FilterType>({
+		serviceType: 'Todos',
+		status: [],
+		dateRange: { start: null, end: null },
+	})
 	const [showFilter, setShowFilter] = useState(false)
-	const [Selected, setSelected] = useState('Todos')
-	const options = ['Todos', 'Contrapiso', 'Revestimento', 'Pintura', 'Alvenaria']
-
 	const dataList = activityMock.data
+
+	function handleFilterChange(filter: FilterType | undefined, dataList: ActivityService[]) {
+		const yesterday = new Date()
+		yesterday.setDate(yesterday.getDate() - 1)
+
+		if (
+			!filter ||
+			(filter.status?.length === 0 && !filter.dateRange?.start && filter.serviceType === 'Todos')
+		) {
+			return [
+				{
+					title: 'Today',
+					data: dataList.filter(
+						({ time }) => time.toLocaleDateString() === new Date().toLocaleDateString(),
+					),
+				},
+				{
+					title: 'Yesterday',
+					data: dataList.filter(
+						({ time }) => time.toLocaleDateString() === yesterday.toLocaleDateString(),
+					),
+				},
+				{
+					title: 'Older',
+					data: dataList.filter(({ time }) => time < yesterday),
+				},
+			]
+		} else {
+			let filteredData = dataList
+
+			if (filter.status?.length) {
+				filteredData = filteredData.filter(({ status }) => filter.status?.includes(status!))
+			}
+
+			if (filter.dateRange?.start && filter.dateRange?.end) {
+				filteredData = filteredData.filter(({ time }) => {
+					return time >= filter.dateRange?.start! && time <= filter.dateRange?.end!
+				})
+			}
+
+			if (filter.serviceType && filter.serviceType !== 'Todos') {
+				filteredData = filteredData.filter(({ serviceType }) => serviceType === filter.serviceType)
+			}
+
+			return [
+				{
+					title: 'Filtered Results',
+					data: filteredData,
+				},
+			]
+		}
+	}
+
+	const activityDataList = handleFilterChange(filter, dataList)
+	const activityAmount = activityDataList.reduce((acc, curr) => acc + curr.data.length, 0)
+	const activityPercentage = Math.round(
+		(activityDataList.reduce(
+			(acc, curr) => acc + curr.data.filter(({ status }) => status === 'completed').length,
+			0,
+		) /
+			activityAmount) *
+			100,
+	)
+	const activityPending = activityDataList.reduce(
+		(acc, curr) => acc + curr.data.filter(({ status }) => status === 'pending').length,
+		0,
+	)
 
 	return (
 		<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] p-5">
 			<View className="flex-row items-center gap-5">
 				<View className="flex-1">
-					<Controller
-						control={control}
-						name="email"
-						render={({ field: { onChange, onBlur, value } }) => (
-							<Input
-								keyboardType="default"
-								IconLeft="search"
-								placeholder="Search tasks"
-								onBlur={onBlur}
-								onChangeText={onChange}
-								value={value}
-								className="bg-white"
-							/>
-						)}
+					<Input
+						keyboardType="default"
+						IconLeft="search"
+						placeholder="Search tasks"
+						className="bg-white"
 					/>
 				</View>
 				<TouchableOpacity
@@ -51,40 +115,50 @@ export default function Home() {
 			</View>
 
 			<HorizontalList
-				options={options}
-				selected={Selected}
-				onSelect={(value) => setSelected(value)}
+				options={[
+					'Todos',
+					'parede',
+					'contrapiso',
+					'pintura',
+					'alvenaria',
+					'revestimento',
+					'eletrica',
+				]}
+				selected={filter.serviceType ? filter.serviceType : 'Todos'}
+				onSelect={(value) => setFilter((prev) => ({ ...prev, serviceType: value }))}
 			/>
-
-			<FilterModal
-				visible={showFilter}
-				onClose={() => setShowFilter(false)}
-				onApply={(filters) => {
-					console.log(filters)
-				}}
-			/>
-
-			<View className="flex-row gap-3">
-				<SummaryCard icon="clipboard" SumaryVariant="blue" value="1000" label="Activities" />
-				<SummaryCard icon="clock" SumaryVariant="orange" value="200" label="Pending" />
-				<SummaryCard icon="bar-chart" SumaryVariant="green" value="75%" label="Productivity" />
-			</View>
 
 			<ActivityList
-				data={[
-					{
-						title: 'Today',
-						data: dataList.filter(({ time }) => time.getDate() === new Date().getDate()),
-					},
-					{
-						title: 'Yesterday',
-						data: dataList.filter(({ time }) => time.getDate() === new Date().getDate() - 1),
-					},
-					{
-						title: 'Oldest',
-						data: dataList,
-					},
-				]}
+				data={activityDataList}
+				HeaderComponent={
+					<View className="flex-row gap-3">
+						<SummaryCard
+							icon="clipboard"
+							SumaryVariant="blue"
+							value={activityAmount}
+							label="Activities"
+						/>
+						<SummaryCard
+							icon="clock"
+							SumaryVariant="orange"
+							value={activityPending}
+							label="Pending"
+						/>
+						<SummaryCard
+							icon="bar-chart"
+							SumaryVariant="green"
+							value={activityPercentage + '%'}
+							label="Productivity"
+						/>
+					</View>
+				}
+			/>
+
+			<HomeFilterModal
+				isVisible={showFilter}
+				onClose={() => setShowFilter(false)}
+				filter={filter}
+				setFilter={setFilter}
 			/>
 		</SafeAreaView>
 	)
