@@ -6,6 +6,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
+import { postSignIn } from '@/api/post-sign-in'
 import { api } from '@/libs/axios/axios'
 
 const signInSchema = z.object({
@@ -33,15 +34,8 @@ export function SignInForm() {
 
 	async function onSubmit(data: SignInType) {
 		console.log('Dados do Login', JSON.stringify(data))
-		const new_data = {
-			strategy: 'local',
-			...data
-		}
-		const response = await api.post(`/authentication`, {
-			new_data
-		})
-		console.log(response)
-		await new Promise((resolve) => setTimeout(resolve, 1000))
+		const token = await postSignIn(data)
+		console.log(token)
 	}
 
 	return (
