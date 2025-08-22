@@ -9,14 +9,6 @@ interface AuthState {
 	token: string | null
 }
 
-// interface AuthType {
-// 	token: string
-// 	initialState: AuthState
-// 	reducers: {
-// 		setToken: (state: AuthState, action: { payload: AuthState['token'] }) => void
-// 	}
-// }
-
 const authSlice = createSlice({
 	name: 'auth',
 	initialState,
@@ -26,7 +18,6 @@ const authSlice = createSlice({
 		},
 	},
 })
-// } as AuthType)
 
 export const { setToken } = authSlice.actions
 export const selectToken = (state: RootState) => state.auth.token

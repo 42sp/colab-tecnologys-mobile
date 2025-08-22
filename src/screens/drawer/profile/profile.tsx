@@ -8,7 +8,11 @@ import { Feather } from '@expo/vector-icons'
 import { ScrollView } from 'react-native-gesture-handler'
 import { ProfileIcon } from './profile-icon'
 
+import { useSelector } from 'react-redux'
+import type { RootState } from '@/libs/redux/store'
+
 export default function ProfileScreen() {
+	const { token } = useSelector((state: RootState) => state.auth)
 	return (
 		<ScrollView showsVerticalScrollIndicator={false}>
 			<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] p-5">
@@ -25,7 +29,12 @@ export default function ProfileScreen() {
 
 					<Card.Body className="gap-4">
 						<ProfileInfoItem label="Full Name" value="João Antônio Silva" icon="user" />
-						<ProfileInfoItem label="E-mail" value="joaosilva@email.com" icon="mail" />
+						<ProfileInfoItem
+							label="E-mail"
+							// value="joaosilva@email.com"
+							value={token ?? 'no token'}
+							icon="mail"
+						/>
 						<ProfileInfoItem label="Phone Number" value="(11) 98765-4321" icon="phone" />
 						<ProfileInfoItem label="Date of birth" value="15/05/1988" icon="calendar" />
 						<ProfileInfoItem

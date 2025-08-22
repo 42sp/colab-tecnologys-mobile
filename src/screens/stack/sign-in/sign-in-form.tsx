@@ -7,7 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
 import { postSignIn } from '@/api/post-sign-in'
-import { api } from '@/libs/axios/axios'
+import { useDispatch } from 'react-redux'
+import { setToken } from '@/libs/redux/auth/auth-slice'
 
 const signInSchema = z.object({
 	email: z.email('Please enter a valid email address').nonempty('Email is required'),
@@ -17,8 +18,9 @@ const signInSchema = z.object({
 type SignInType = z.infer<typeof signInSchema>
 
 export function SignInForm() {
-	const { stack } = useNavigate()
+	const { stack, drawer } = useNavigate()
 	const [hidePassword, setHidePassword] = useState(true)
+	const dispatch = useDispatch()
 
 	const {
 		control,
@@ -34,8 +36,14 @@ export function SignInForm() {
 
 	async function onSubmit(data: SignInType) {
 		console.log('Dados do Login', JSON.stringify(data))
-		const token = await postSignIn(data)
-		console.log(token)
+		try {
+			const token = await postSignIn(data)
+			console.log('AccessToken:', token)
+			dispatch(setToken(token))
+			drawer('profile')
+		} catch (err) {
+			console.error('Usuário invalido no login:', err)
+		}
 	}
 
 	return (
@@ -88,11 +96,7 @@ export function SignInForm() {
 				<Text className="self-end font-inter-bold text-blue-500">Forgot Password</Text>
 			</TouchableOpacity>
 
-			<Button
-				title="Sign In"
-				onPress={handleSubmit(onSubmit)}
-				disabled={isSubmitting}
-			/>
+			<Button title="Sign In" onPress={handleSubmit(onSubmit)} disabled={isSubmitting} />
 
 			<View className=" items-center">
 				<View className="flex-row">
