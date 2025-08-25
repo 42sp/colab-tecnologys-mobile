@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import profileReducer from './slices/profileSlice' // Adjust the import path as necessary
-import authReducer from './auth/auth-slice'
+import authSignInReducer from './auth-sign-in/auth-sign-in-slice'
 
 const store = configureStore({
 	reducer: {
 		// redux toolkit tem um switch interno para os types
 		profile: profileReducer, // Assuming profileReducer is defined elsewhere
-		auth: authReducer,
+		authSignIn: authSignInReducer,
 	},
 })
 

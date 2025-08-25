@@ -11,5 +11,5 @@ export async function postSignIn(data: SignInPost) {
 		...data,
 	})
 	await new Promise((resolve) => setTimeout(resolve, 1000))
-	return response.data.accessToken
+	return response.data
 }

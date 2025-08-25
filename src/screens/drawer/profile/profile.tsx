@@ -10,16 +10,31 @@ import { ProfileIcon } from './profile-icon'
 
 import { useSelector } from 'react-redux'
 import type { RootState } from '@/libs/redux/store'
+import { getProfile } from '@/api/get-profile'
+import { useEffect, useState } from 'react'
 
 export default function ProfileScreen() {
-	const { token } = useSelector((state: RootState) => state.auth)
+	const { token, id } = useSelector((state: RootState) => state.authSignIn)
+	const [profile, setProfile] = useState<any>(null)
+	useEffect(() => {
+		async function getDataProfile() {
+			try {
+				const profile = await getProfile(token, id)
+				setProfile(profile)
+			} catch (err) {
+				console.log(err)
+			}
+		}
+		getDataProfile()
+	}, [])
+
 	return (
 		<ScrollView showsVerticalScrollIndicator={false}>
 			<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] p-5">
 				<ProfileAvatar
 					avatar="https://randomuser.me/portraits/men/1.jpg"
-					name={'João Silva'}
-					email={'joaosilva@gmail.com'}
+					name={profile?.name}
+					email={profile?.email}
 				/>
 
 				<Card className="flex-1">
@@ -28,20 +43,11 @@ export default function ProfileScreen() {
 					</Card.Header>
 
 					<Card.Body className="gap-4">
-						<ProfileInfoItem label="Full Name" value="João Antônio Silva" icon="user" />
-						<ProfileInfoItem
-							label="E-mail"
-							// value="joaosilva@email.com"
-							value={token ?? 'no token'}
-							icon="mail"
-						/>
-						<ProfileInfoItem label="Phone Number" value="(11) 98765-4321" icon="phone" />
-						<ProfileInfoItem label="Date of birth" value="15/05/1988" icon="calendar" />
-						<ProfileInfoItem
-							label="Address"
-							value="Rua das Flores, 123 - São Paulo"
-							icon="map-pin"
-						/>
+						<ProfileInfoItem label="Full Name" value={profile?.name} icon="user" />
+						<ProfileInfoItem label="E-mail" value={profile?.email} icon="mail" />
+						<ProfileInfoItem label="Phone Number" value={profile?.phoneNumber} icon="phone" />
+						<ProfileInfoItem label="Date of birth" value="15/05/1988 -" icon="calendar" />
+						<ProfileInfoItem label="Address" value={profile?.address} icon="map-pin" />
 
 						<Card.Footer className="mt-4">
 							<TouchableOpacity activeOpacity={0.8} className="p-2">

@@ -8,7 +8,7 @@ import { useState } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
 import { postSignIn } from '@/api/post-sign-in'
 import { useDispatch } from 'react-redux'
-import { setToken } from '@/libs/redux/auth/auth-slice'
+import { setExpiry, setId, setToken } from '@/libs/redux/auth-sign-in/auth-sign-in-slice'
 
 const signInSchema = z.object({
 	email: z.email('Please enter a valid email address').nonempty('Email is required'),
@@ -38,8 +38,9 @@ export function SignInForm() {
 		console.log('Dados do Login', JSON.stringify(data))
 		try {
 			const token = await postSignIn(data)
-			console.log('AccessToken:', token)
-			dispatch(setToken(token))
+			dispatch(setToken(token.accessToken))
+			dispatch(setExpiry(token.authentication.payload.exp))
+			dispatch(setId(token.user.id))
 			drawer('profile')
 		} catch (err) {
 			console.error('Usuário invalido no login:', err)
