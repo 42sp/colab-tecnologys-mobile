@@ -31,6 +31,6 @@ const authSignInSlice = createSlice({
 
 export const { setToken, setExpiry, setId } = authSignInSlice.actions
 export const selectToken = (state: RootState) => state.authSignIn.token
-export const selectExpiry = (state: RootState) => state.authSignIn.token
-export const selectId = (state: RootState) => state.authSignIn.token
+export const selectExpiry = (state: RootState) => state.authSignIn.expiry
+export const selectId = (state: RootState) => state.authSignIn.id
 export default authSignInSlice.reducer

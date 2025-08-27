@@ -7,9 +7,6 @@ import StackLayout from './_layouts/stack/stack'
 import { registerRootComponent } from 'expo'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
-import { useSelector } from 'react-redux'
-import type { RootState } from '@/libs/redux/store'
-
 import {
 	useFonts,
 	Inter_400Regular,
@@ -17,17 +14,8 @@ import {
 	Inter_700Bold,
 } from '@expo-google-fonts/inter'
 import '@/global.css'
-import DrawerLayout from './_layouts/drawer/drawer'
 
 enableScreens()
-
-function AppContent() {
-	const { token, expiry } = useSelector((state: RootState) => state.authSignIn)
-	const now = Math.floor(Date.now() / 1000)
-	if (token && expiry && expiry < now.toString()) return <DrawerLayout />
-
-	return token ? <DrawerLayout /> : <StackLayout />
-}
 
 export default function App() {
 	const [fontsLoaded] = useFonts({
@@ -42,7 +30,7 @@ export default function App() {
 			<NavigationContainer>
 				<GestureHandlerRootView>
 					<SafeAreaProvider className="m-0 p-0">
-						<AppContent />
+						<StackLayout />
 					</SafeAreaProvider>
 				</GestureHandlerRootView>
 			</NavigationContainer>

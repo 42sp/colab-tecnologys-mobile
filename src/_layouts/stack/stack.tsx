@@ -7,6 +7,9 @@ import ForgotPasswordScreen from '@/screens/stack/forgot-password/forgot-passwor
 import DrawerLayout, { DrawerParamList } from '@/_layouts/drawer/drawer'
 import { StackHeader } from './stack-header'
 
+import { useSelector } from 'react-redux'
+import type { RootState } from '@/libs/redux/store'
+
 export type StackParamList = {
 	home: undefined
 	signIn: undefined
@@ -18,8 +21,11 @@ export type StackParamList = {
 const Stack = createStackNavigator<StackParamList>()
 
 export default function StackLayout() {
+	const { token, expiry } = useSelector((state: RootState) => state.authSignIn)
+	const now = Math.floor(Date.now() / 1000)
+	const route = !token || !expiry || expiry >= now.toString() ? 'signIn' : 'drawer'
 	return (
-		<Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="signIn">
+		<Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={route}>
 			<Stack.Screen name="home" component={HomeScreen} options={{}} />
 			<Stack.Screen name="signIn" component={SignInScreen} options={{}} />
 			<Stack.Screen
