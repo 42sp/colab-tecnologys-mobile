@@ -1,8 +1,13 @@
 import { z } from 'zod'
-import { EXPO_PUBLIC_API_URL } from '@env'
 
 const envScheme = z.object({
 	EXPO_PUBLIC_API_URL: z.string(),
 })
 
-export const env = envScheme.parse({ EXPO_PUBLIC_API_URL })
+const { data, error } = envScheme.safeParse(process.env)
+
+if (error) {
+	throw new Error(`Invalid env variables: ${error.message}`)
+}
+
+export const env = data

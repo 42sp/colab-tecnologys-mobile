@@ -6,9 +6,10 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
-import { postSignIn } from '@/api/post-sign-in'
 import { useDispatch } from 'react-redux'
 import { setExpiry, setId, setToken } from '@/libs/redux/auth-sign-in/auth-sign-in-slice'
+import { usePostAuthSignIn } from '@/api/post-auth-sign-in'
+import { usePostSignIn } from '@/api/post-sign-in'
 
 const signInSchema = z.object({
 	email: z.email('Please enter a valid email address').nonempty('Email is required'),
@@ -34,19 +35,37 @@ export function SignInForm() {
 		},
 	})
 
-	async function onSubmit(data: SignInType) {
-		console.log('Dados do Login', JSON.stringify(data))
-		try {
-			const token = await postSignIn(data)
-			dispatch(setToken(token.accessToken))
-			dispatch(setExpiry(token.authentication.payload.exp))
-			dispatch(setId(token.user.id))
-			drawer('profile')
-		} catch (err) {
-			console.error('Usuário invalido no login:', err)
+	const { data, loading, error, fetchData: postSignIn } = usePostSignIn()
+	const {
+		data: dataAuth,
+		loading: loadingAuth,
+		error: errorAuth,
+		fetchData: postAuthSignIn,
+	} = usePostAuthSignIn()
+
+	const onSubmit = async (user: SignInType) => {
+		if (postSignIn) {
+			await postSignIn({ data: { ...user } })
+			if (loading) console.log('loading sign in post')
+			if (error) {
+				console.log('error sign in: ', error)
+			}
+			console.log('Dados do Login(data): ', data)
+		}
+		if (postAuthSignIn) {
+			await postAuthSignIn({ data: { strategy: 'local', ...user } })
+			if (loadingAuth) console.log('loading authentication post')
+			if (error) {
+				console.log('error auth: ', errorAuth)
+			}
+			if (dataAuth) {
+				dispatch(setToken(dataAuth.token))
+				dispatch(setExpiry(dataAuth.expiry))
+				dispatch(setId(dataAuth.id))
+				drawer('profile')
+			}
 		}
 	}
-
 	return (
 		<View className="my-5 gap-5">
 			<Controller

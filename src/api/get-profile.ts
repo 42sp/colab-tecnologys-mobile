@@ -1,11 +1,20 @@
-import { api } from '@/libs/axios/axios'
+import useAxios from '@/hook/use-axios'
 
-export async function getProfile(token: string | null, id: string | null) {
-	const response = await api.get(`/access/${id}`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	})
-	await new Promise((resolve) => setTimeout(resolve, 1000))
-	return response.data
+// interface Response {
+// 	name: string
+// 	date_of_birth: string
+// 	cpf: string
+// 	registration_code: string
+// 	phone: string
+// 	address: string
+// 	city: string
+// 	state: string
+// 	postcode: string
+// }
+
+export const useGetProfile = () => {
+	const { data, loading, error } = useAxios<any>({ url: 'users', method: 'get' }, { manual: false })
+	const firstData = data?.data?.[0] ?? null
+
+	return { data: firstData, loading, error }
 }

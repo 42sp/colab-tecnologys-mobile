@@ -1,15 +1,16 @@
-import { api } from '@/libs/axios/axios'
+import useAxios from '@/hook/use-axios'
 
-type SignInPost = {
-	password: string
+interface Response {
+	id: string
 	email: string
+	created_at: string
+	updated_at: string
+	role_id: string | null
+	profile_id: string | null
+	is_active: boolean
+	is_available: boolean
 }
 
-export async function postSignIn(data: SignInPost) {
-	const response = await api.post(`/authentication`, {
-		strategy: 'local',
-		...data,
-	})
-	await new Promise((resolve) => setTimeout(resolve, 1000))
-	return response.data
+export const usePostSignIn = () => {
+	return useAxios<Response>({ url: 'users', method: 'post' }, { manual: true })
 }

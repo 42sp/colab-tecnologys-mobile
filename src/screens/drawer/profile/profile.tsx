@@ -7,34 +7,19 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Feather } from '@expo/vector-icons'
 import { ScrollView } from 'react-native-gesture-handler'
 import { ProfileIcon } from './profile-icon'
-
-import { useSelector } from 'react-redux'
-import type { RootState } from '@/libs/redux/store'
-import { getProfile } from '@/api/get-profile'
-import { useEffect, useState } from 'react'
+import { useGetProfile } from '@/api/get-profile'
 
 export default function ProfileScreen() {
-	const { token, id } = useSelector((state: RootState) => state.authSignIn)
-	const [profile, setProfile] = useState<any>(null)
-	useEffect(() => {
-		async function getDataProfile() {
-			try {
-				const profile = await getProfile(token, id)
-				setProfile(profile)
-			} catch (err) {
-				console.log(err)
-			}
-		}
-		getDataProfile()
-	}, [])
-
+	const { data, loading, error } = useGetProfile()
+	if (loading) console.log('loading profile...')
+	if (error) console.log('error: ', error)
 	return (
 		<ScrollView showsVerticalScrollIndicator={false}>
 			<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] p-5">
 				<ProfileAvatar
 					avatar="https://randomuser.me/portraits/men/1.jpg"
-					name={profile?.name}
-					email={profile?.email}
+					name={data?.name}
+					email={data?.email}
 				/>
 
 				<Card className="flex-1">
@@ -43,11 +28,11 @@ export default function ProfileScreen() {
 					</Card.Header>
 
 					<Card.Body className="gap-4">
-						<ProfileInfoItem label="Full Name" value={profile?.name} icon="user" />
-						<ProfileInfoItem label="E-mail" value={profile?.email} icon="mail" />
-						<ProfileInfoItem label="Phone Number" value={profile?.phoneNumber} icon="phone" />
+						<ProfileInfoItem label="Full Name" value={data?.password} icon="user" />
+						<ProfileInfoItem label="E-mail" value={data?.email} icon="mail" />
+						<ProfileInfoItem label="Phone Number" value={data?.phoneNumber} icon="phone" />
 						<ProfileInfoItem label="Date of birth" value="15/05/1988 -" icon="calendar" />
-						<ProfileInfoItem label="Address" value={profile?.address} icon="map-pin" />
+						<ProfileInfoItem label="Address" value={data?.address} icon="map-pin" />
 
 						<Card.Footer className="mt-4">
 							<TouchableOpacity activeOpacity={0.8} className="p-2">
