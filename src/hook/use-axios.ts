@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import axios, { AxiosRequestConfig } from 'axios'
-import { env } from '@/libs/env'
 import { useSelector } from 'react-redux'
 import type { RootState } from '@/libs/redux/store'
+import { api } from '@/libs/axios/axios'
 
 interface configRequest {
 	method: 'get' | 'post' // método que vai ser usado
@@ -20,14 +20,6 @@ export default function useAxios<T>(configRequest: configRequest, options: optio
 	const [error, setError] = useState<string | null>(null)
 	const { method, url, configs = {} } = configRequest
 	const { token } = useSelector((state: RootState) => state.authSignIn)
-
-	// instância do axios
-	const api = axios.create({
-		baseURL: env.EXPO_PUBLIC_API_URL,
-		withCredentials: true,
-		timeout: 1000,
-		...configs,
-	})
 
 	// Interceptor que depende do token
 	useEffect(() => {
