@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import axios, { AxiosRequestConfig } from 'axios'
+import { AxiosRequestConfig } from 'axios'
 import { useSelector } from 'react-redux'
 import type { RootState } from '@/libs/redux/store'
 import { api } from '@/libs/axios/axios'
 
 interface configRequest {
-	method: 'get' | 'post' // método que vai ser usado
+	method: 'get' | 'post' | 'put' | 'patch' | 'delete' // método que vai ser usado
 	url: string // url ex.: '/users', '/service'
 	configs?: AxiosRequestConfig // configurações do Axios => headers
 }
