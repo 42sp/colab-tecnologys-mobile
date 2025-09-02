@@ -50,7 +50,7 @@ export function EditProfileForm() {
 						name="name"
 						render={({ field: { onChange, value } }) => (
 							<Input
-								placeholder="Digite seu nome completo"
+								placeholder="Seu nome completo"
 								IconLeft={'user'}
 								className="self-center"
 								onChangeText={onChange}
@@ -69,7 +69,7 @@ export function EditProfileForm() {
 						name="email"
 						render={({ field: { onChange, value } }) => (
 							<Input
-								placeholder="seu-email@email.com"
+								placeholder="seu.email@email.com"
 								keyboardType='email-address'
 								autoCapitalize="none"
 								IconLeft={'mail'}
@@ -84,7 +84,7 @@ export function EditProfileForm() {
 				</View>
 
 				<View className="gap-1">
-					<Text className="font-inter text-lg">Número de telefone</Text>
+					<Text className="font-inter text-lg">Telefone</Text>
 					<Controller
 						control={control}
 						name="phone"
@@ -110,7 +110,7 @@ export function EditProfileForm() {
 						name="dateOfBirth"
 						render={({ field: { onChange, value } }) => (
 							<Input
-								placeholder="dia/mês/ano"
+								placeholder="15/05/1988"
 								IconLeft={'user'}
 								className="self-center"
 								onChangeText={onChange}
@@ -128,7 +128,7 @@ export function EditProfileForm() {
 						name="address"
 						render={({ field: { onChange, value } }) => (
 							<Input
-								placeholder="Digite seu endereço"
+								placeholder="Seu endereço"
 								IconLeft={'user'}
 								className="self-center"
 								onChangeText={onChange}

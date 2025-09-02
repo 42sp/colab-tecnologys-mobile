@@ -78,7 +78,7 @@ export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 			</View>
 
 			<TouchableOpacity onPress={uploadAvatar}>
-				<Text className="font-inter-bold text-xl text-gray-500">Mudar foto de perfil</Text>
+				<Text className="font-inter-bold text-xl text-gray-500">Alterar foto de perfil</Text>
 			</TouchableOpacity>
 		</View>
 	)

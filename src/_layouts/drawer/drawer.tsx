@@ -43,8 +43,8 @@ export default function DrawerLayout() {
 				name="profile"
 				component={ProfileScreen}
 				options={{
-					drawerLabel: 'Profile',
-					title: 'Profile',
+					drawerLabel: 'Perfil',
+					title: 'Perfil',
 					drawerIcon: ({ color, size }) => <Feather name="user" color={color} size={size} />,
 				}}
 			/>
@@ -52,8 +52,8 @@ export default function DrawerLayout() {
 				name="editProfile"
 				component={EditProfileScreen}
 				options={{
-					drawerLabel: 'Edit Profile',
-					title: 'Edit Profile',
+					drawerLabel: 'Editar Perfil',
+					title: 'Editar Perfil',
 					drawerIcon: ({ color, size }) => <Feather name="edit" color={color} size={size} />,
 				}}
 			/>
@@ -61,8 +61,8 @@ export default function DrawerLayout() {
 				name="security"
 				component={SecuritySettingsScreen}
 				options={{
-					drawerLabel: 'Safety',
-					title: 'Safety',
+					drawerLabel: 'Segurança',
+					title: 'Segurança',
 					drawerIcon: ({ color, size }) => <Feather name="shield" color={color} size={size} />,
 				}}
 			/>
@@ -70,8 +70,8 @@ export default function DrawerLayout() {
 				name="registerService"
 				component={RegisterServiceScreen}
 				options={{
-					drawerLabel: 'Register Service',
-					title: 'Register Service',
+					drawerLabel: 'Registrar serviço',
+					title: 'Registrar serviço',
 					drawerIcon: ({ color, size }) => <Feather name="file-minus" color={color} size={size} />,
 				}}
 			/>

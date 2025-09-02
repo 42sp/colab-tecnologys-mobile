@@ -38,9 +38,9 @@ export default function ForgotPasswordScreen() {
 				<ScrollView showsVerticalScrollIndicator={false}>
 					<Image source={require('@/assets/tecnologys-logo.png')} className="mb-5 self-center" />
 					<View className="my-5 items-center">
-						<Text className="font-inter-bold text-3xl">Esqueci a senha</Text>
+						<Text className="font-inter-bold text-3xl">Esqueci minha senha</Text>
 						<Text className="mt-2 text-center font-inter text-lg text-neutral-500">
-						Digite seu CPF para redefinir sua senha
+						Informe seu CPF para receber uma nova senha
 						</Text>
 					</View>
 
@@ -51,10 +51,9 @@ export default function ForgotPasswordScreen() {
 							render={({ field: { onChange, onBlur, value } }) => (
 								<View>
 									<Input
-										keyboardType="email-address"
 										autoCapitalize="none"
 										IconLeft="mail"
-										placeholder="Cpf"
+										placeholder="Informe seu CPF"
 										onBlur={onBlur}
 										onChangeText={onChange}
 										value={value}
@@ -70,12 +69,12 @@ export default function ForgotPasswordScreen() {
 						/>
 
 						<Text className="mt-4 text-center font-inter text-sm leading-5 text-neutral-500">
-						Enviaremos um link para redefinir sua senha.
+						Enviaremos uma mensagem ao seu celular com um código de ativação
 						</Text>
 
 						<Button
 							className="mt-8"
-							title="Redefinir senha"
+							title="Resetar a senha"
 							onPress={handleSubmit(onSubmit)}
 							disabled={isSubmitting}
 						/>
