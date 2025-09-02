@@ -10,7 +10,7 @@ export default function EditProfileScreen() {
 			<KeyboardAvoidingView behavior={'height'}>
 				<ScrollView showsVerticalScrollIndicator={false}>
 					<View className="gap-4">
-						<EditProfileAvatar avatar="https://randomuser.me/portraits/men/1.jpg" />
+						<EditProfileAvatar avatar="https://www.gravatar.com/avatar/?d=mp&s=200" />
 						<EditProfileForm />
 					</View>
 				</ScrollView>

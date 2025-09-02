@@ -41,9 +41,9 @@ export function HomeFilterModal({ isVisible, onClose, setFilter, filter }: Filte
 			<Pressable className="flex-1 justify-end bg-black/15" onPress={onClose}>
 				<View className="gap-2 rounded-t-2xl bg-white p-4">
 					<View className="flex-row items-center justify-between">
-						<Text className="font-inter-bold text-xl">Filter by</Text>
+						<Text className="font-inter-bold text-xl">Filtrar por</Text>
 						<TouchableOpacity activeOpacity={0.5} onPress={() => onResetFilter()}>
-							<Text className="p-4 font-inter text-blue-500">Reset All</Text>
+							<Text className="p-4 font-inter text-blue-500">Limpar</Text>
 						</TouchableOpacity>
 					</View>
 
@@ -79,7 +79,7 @@ export function HomeFilterModal({ isVisible, onClose, setFilter, filter }: Filte
 					<Pressable
 						onPress={() => (hiddenCalendar ? setHiddenCalendar(false) : setHiddenCalendar(true))}
 					>
-						<Text className="mb-2 font-inter-medium">Date Range</Text>
+						<Text className="mb-2 font-inter-medium">Selecionar período</Text>
 						<View className="flex-row gap-2 space-x-2">
 							<View className="flex-1 flex-row items-center justify-between rounded-lg border p-2">
 								<Text>{dateRange.start ? dateRange.start.toLocaleDateString('pt-BR') : ''}</Text>

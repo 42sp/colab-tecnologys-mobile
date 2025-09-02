@@ -9,7 +9,7 @@ import Card from '@/components/ui/card'
 
 const editProfileSchema = z.object({
 	name: z.string().nonempty('Full name is required'),
-	email: z.email('Please enter a valid email address').nonempty('Email is required'),
+	email: z.email('Please enter a valid email address'),
 	phone: z.string().nonempty('Phone number is required'),
 	dateOfBirth: z.string().nonempty('Date of birth is required'),
 	address: z.string().nonempty('Address is required'),
@@ -40,17 +40,17 @@ export function EditProfileForm() {
 	return (
 		<Card className="m-5 gap-5 ">
 			<Card.Header>
-				<Text className="font-inter-bold text-xl">Personal Information</Text>
+				<Text className="font-inter-bold text-xl">Informações Pessoais</Text>
 			</Card.Header>
 			<Card.Body className="gap-3">
 				<View className="gap-1">
-					<Text className="font-inter text-lg">Full name</Text>
+					<Text className="font-inter text-lg">Nome completo</Text>
 					<Controller
 						control={control}
 						name="name"
 						render={({ field: { onChange, value } }) => (
 							<Input
-								placeholder="Type your full name"
+								placeholder="Digite seu nome completo"
 								IconLeft={'user'}
 								className="self-center"
 								onChangeText={onChange}
@@ -69,7 +69,7 @@ export function EditProfileForm() {
 						name="email"
 						render={({ field: { onChange, value } }) => (
 							<Input
-								placeholder="your-email@email.com"
+								placeholder="seu-email@email.com"
 								keyboardType='email-address'
 								autoCapitalize="none"
 								IconLeft={'mail'}
@@ -84,7 +84,7 @@ export function EditProfileForm() {
 				</View>
 
 				<View className="gap-1">
-					<Text className="font-inter text-lg">Phone number</Text>
+					<Text className="font-inter text-lg">Número de telefone</Text>
 					<Controller
 						control={control}
 						name="phone"
@@ -104,13 +104,13 @@ export function EditProfileForm() {
 				</View>
 
 				<View className="gap-1">
-					<Text className="font-inter text-lg">Date of Birth</Text>
+					<Text className="font-inter text-lg">Data de nascimento</Text>
 					<Controller
 						control={control}
 						name="dateOfBirth"
 						render={({ field: { onChange, value } }) => (
 							<Input
-								placeholder="dd/mm/yyyy"
+								placeholder="dia/mês/ano"
 								IconLeft={'user'}
 								className="self-center"
 								onChangeText={onChange}
@@ -122,13 +122,13 @@ export function EditProfileForm() {
 					{errors.dateOfBirth && <Text className="text-red-500">{errors.dateOfBirth.message}</Text>}
 				</View>
 				<View className="gap-1">
-					<Text className="font-inter text-lg">Address</Text>
+					<Text className="font-inter text-lg">Endereço</Text>
 					<Controller
 						control={control}
 						name="address"
 						render={({ field: { onChange, value } }) => (
 							<Input
-								placeholder="Type your address"
+								placeholder="Digite seu endereço"
 								IconLeft={'user'}
 								className="self-center"
 								onChangeText={onChange}
