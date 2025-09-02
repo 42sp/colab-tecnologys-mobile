@@ -27,7 +27,6 @@ export default function useAxios<T>(configRequest: configRequest, options: optio
 			if (token) {
 				config.headers['Authorization'] = `Bearer ${token}`
 			}
-			console.log('Headers enviados:', config.headers)
 			return config
 		})
 

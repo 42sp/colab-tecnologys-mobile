@@ -1,36 +1,36 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 
-const initialState: AuthSignInState = {
-	token: null,
-	expiry: null,
-	id: null,
-}
-
+// types
 interface AuthSignInState {
 	token: string | null
 	expiry: string | null
 	id: string | null
 }
 
+// initial state
+const initialState: AuthSignInState = {
+	token: null,
+	expiry: null,
+	id: null,
+}
+
+// creation of slice
 const authSignInSlice = createSlice({
 	name: 'auth-sign-in',
 	initialState,
 	reducers: {
-		setToken(state, action: { payload: AuthSignInState['token'] }) {
-			state.token = action.payload
-		},
-		setExpiry(state, action: { payload: AuthSignInState['expiry'] }) {
-			state.expiry = action.payload
-		},
-		setId(state, action: { payload: AuthSignInState['id'] }) {
-			state.id = action.payload
+		setAuth(state, action: PayloadAction<AuthSignInState>) {
+			state.token = action.payload.token
+			state.expiry = action.payload.expiry
+			state.id = action.payload.id
 		},
 	},
 })
 
-export const { setToken, setExpiry, setId } = authSignInSlice.actions
+// selectors
 export const selectToken = (state: RootState) => state.authSignIn.token
 export const selectExpiry = (state: RootState) => state.authSignIn.expiry
 export const selectId = (state: RootState) => state.authSignIn.id
+export const { setAuth } = authSignInSlice.actions
 export default authSignInSlice.reducer

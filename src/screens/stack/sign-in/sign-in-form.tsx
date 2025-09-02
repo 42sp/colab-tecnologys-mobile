@@ -7,13 +7,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
 import { useDispatch } from 'react-redux'
-import { setExpiry, setId, setToken } from '@/libs/redux/auth-sign-in/auth-sign-in-slice'
+import { setAuth } from '@/libs/redux/auth-sign-in/auth-sign-in-slice'
+import { setUser } from '@/libs/redux/user-sign-in/user-sign-in-slice'
 import { usePostAuthSignIn } from '@/api/post-auth-sign-in'
 import { usePostSignIn } from '@/api/post-sign-in'
 
 const signInSchema = z.object({
-	email: z.email('Please enter a valid email address').nonempty('Email is required'),
-	password: z.string().nonempty('Password is required'),
+	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve conter 11 caracteres'),
+	password: z.string().nonempty('Senha é obrigatório'),
 })
 
 type SignInType = z.infer<typeof signInSchema>
@@ -30,7 +31,7 @@ export function SignInForm() {
 	} = useForm<SignInType>({
 		resolver: zodResolver(signInSchema),
 		defaultValues: {
-			email: '',
+			cpf: '',
 			password: '',
 		},
 	})
@@ -47,21 +48,30 @@ export function SignInForm() {
 		if (postSignIn) {
 			await postSignIn({ data: { ...user } })
 			if (loading) console.log('loading sign in post')
-			if (error) {
-				console.log('error sign in: ', error)
+			// if (error) {
+			// 	console.log('error sign in: ', error)
+			// }
+			if (data) {
+				console.log('Dados do Login(data): ', data)
+				dispatch(
+					setUser({
+						id: data.id,
+						isActive: data.is_active,
+						isAvailable: data.is_available,
+						roleId: data.role_id, // null
+						profileId: data.profile_id, // null
+					}),
+				)
 			}
-			console.log('Dados do Login(data): ', data)
 		}
 		if (postAuthSignIn) {
 			await postAuthSignIn({ data: { strategy: 'local', ...user } })
 			if (loadingAuth) console.log('loading authentication post')
-			if (error) {
-				console.log('error auth: ', errorAuth)
-			}
+			// if (error) {
+			// 	console.log('error auth: ', errorAuth)
+			// }
 			if (dataAuth) {
-				dispatch(setToken(dataAuth.token))
-				dispatch(setExpiry(dataAuth.expiry))
-				dispatch(setId(dataAuth.id))
+				dispatch(setAuth({ token: dataAuth.token, expiry: dataAuth.expiry, id: dataAuth.id }))
 				drawer('profile')
 			}
 		}
@@ -70,19 +80,19 @@ export function SignInForm() {
 		<View className="my-5 gap-5">
 			<Controller
 				control={control}
-				name="email"
+				name="cpf"
 				render={({ field: { onChange, onBlur, value } }) => (
 					<View>
 						<Input
-							keyboardType="email-address"
+							keyboardType="numeric"
 							autoCapitalize="none"
-							placeholder="Email address"
+							placeholder="CPF"
 							onBlur={onBlur}
 							onChangeText={onChange}
 							value={value}
-							hasError={!!errors.email}
+							hasError={!!errors.cpf}
 						/>
-						{errors.email && <Text className="text-red-500">{errors.email.message}</Text>}
+						{errors.cpf && <Text className="text-red-500">{errors.cpf.message}</Text>}
 					</View>
 				)}
 			/>
@@ -93,7 +103,7 @@ export function SignInForm() {
 				render={({ field: { onChange, onBlur, value } }) => (
 					<View>
 						<Input
-							placeholder="Password"
+							placeholder="Senha"
 							IconRight="eye"
 							iconPress={() => (hidePassword ? setHidePassword(false) : setHidePassword(true))}
 							secureTextEntry={hidePassword}
@@ -113,21 +123,21 @@ export function SignInForm() {
 					stack('forgotPassword')
 				}}
 			>
-				<Text className="self-end font-inter-bold text-blue-500">Forgot Password</Text>
+				<Text className="self-end font-inter-bold text-blue-500">Esqueci a senha</Text>
 			</TouchableOpacity>
 
-			<Button title="Sign In" onPress={handleSubmit(onSubmit)} disabled={isSubmitting} />
+			<Button title="Entrar" onPress={handleSubmit(onSubmit)} disabled={isSubmitting} />
 
 			<View className=" items-center">
 				<View className="flex-row">
-					<Text className="font-inter">Don&rsquo;t have an account? </Text>
+					<Text className="font-inter">Não tem uma conta? </Text>
 					<TouchableOpacity
 						activeOpacity={0.5}
 						onPress={() => {
 							stack('signUp')
 						}}
 					>
-						<Text className="font-inter-bold text-blue-500">Sign Up</Text>
+						<Text className="font-inter-bold text-blue-500">Criar conta</Text>
 					</TouchableOpacity>
 				</View>
 			</View>

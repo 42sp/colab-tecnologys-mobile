@@ -15,14 +15,14 @@ export default function SignInScreen() {
 					<Image source={require('@/assets/tecnologys-logo.png')} className="mb-5 self-center" />
 
 					<View className="my-5 items-center">
-						<Text className="font-inter-bold text-3xl">Welcome Back</Text>
+						<Text className="font-inter-bold text-3xl">Bem vindo</Text>
 						<Text className="mt-2 text-center font-inter text-lg text-neutral-500">
-							Sign in to continue
+							Faça login para continuar
 						</Text>
 					</View>
 
 					<Button
-						title="Continue with Google"
+						title="Entrar com o Google"
 						onPress={() => {
 							drawer('home')
 						}}
@@ -32,7 +32,7 @@ export default function SignInScreen() {
 						<Image source={require('@/assets/google-logo.png')} className="mr-2" />
 					</Button>
 
-					<SignInDivisor text="or" className="my-5" />
+					<SignInDivisor text="ou" className="my-5" />
 
 					<SignInForm />
 				</ScrollView>

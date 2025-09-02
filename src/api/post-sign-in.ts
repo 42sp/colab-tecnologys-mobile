@@ -2,7 +2,7 @@ import useAxios from '@/hook/use-axios'
 
 interface Response {
 	id: string
-	email: string
+	cpf: string
 	created_at: string
 	updated_at: string
 	role_id: string | null
