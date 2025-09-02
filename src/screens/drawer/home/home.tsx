@@ -105,7 +105,7 @@ export default function Home() {
 					<Input
 						keyboardType="default"
 						IconLeft="search"
-						placeholder="Search tasks"
+						placeholder="Procurar tarefas"
 						className="bg-white"
 					/>
 				</View>

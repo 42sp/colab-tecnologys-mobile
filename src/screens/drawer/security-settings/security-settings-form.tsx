@@ -55,17 +55,17 @@ export function SecuritySettingsForm() {
 		<View className=" mt-6 gap-5 px-4 pb-4 ">
 			<Card className=" gap-5">
 				<Card.Header>
-					<Text className="font-inter-bold text-xl">Manage password</Text>
+					<Text className="font-inter-bold text-xl">Gerenciar senha</Text>
 				</Card.Header>
 				<Card.Body className="gap-5 pb-10">
 					<View className="gap-1">
-						<Text>Current password</Text>
+						<Text>Senha atual</Text>
 						<Controller
 							control={control}
 							name="currentPassword"
 							render={({ field: { onChange, value } }) => (
 								<Input
-									placeholder="Type your current password"
+									placeholder="Digite sua senha atual"
 									IconLeft={'lock'}
 									IconRight={hideCurrentPassword ? 'eye-off' : 'eye'}
 									iconPress={() => setHideCurrentPassword(!hideCurrentPassword)}
@@ -82,13 +82,13 @@ export function SecuritySettingsForm() {
 						)}
 					</View>
 					<View className="gap-1">
-						<Text>New password</Text>
+						<Text>Nova senha</Text>
 						<Controller
 							control={control}
 							name="newPassword"
 							render={({ field: { onChange, value } }) => (
 								<Input
-									placeholder="Type your new password"
+									placeholder="Digite sua nova senha"
 									IconLeft={'lock'}
 									IconRight={hideNewPassword ? 'eye-off' : 'eye'}
 									iconPress={() => setHideNewPassword(!hideNewPassword)}
@@ -105,13 +105,13 @@ export function SecuritySettingsForm() {
 						)}
 					</View>
 					<View className="gap-1">
-						<Text>Confirm new password</Text>
+						<Text>Confirme a nova senha</Text>
 						<Controller
 							control={control}
 							name="confirmPassword"
 							render={({ field: { onChange, value } }) => (
 								<Input
-									placeholder="Confirm your new password"
+									placeholder="Confirme a sua nova senha"
 									IconLeft={'lock'}
 									IconRight={hideConfirmPassword ? 'eye-off' : 'eye'}
 									iconPress={() => setHideConfirmPassword(!hideConfirmPassword)}
@@ -135,8 +135,9 @@ export function SecuritySettingsForm() {
 							<ScanFace size={26} color={'#3b82f6'} />
 						</View>
 						<View className="flex-1">
-							<Text className="font-inter-medium">Facial recognition</Text>
-							<Text className="font-inter text-gray-500">Use your face to log in</Text>
+							<Text className="font-inter-medium">Reconhecimento facial</Text>
+							<Text className="font-inter text-gray-500">Use seu rosto para fazer login
+							</Text>
 						</View>
 						<View className="p-2">
 							<ToggleButton />
@@ -145,24 +146,24 @@ export function SecuritySettingsForm() {
 				</Card.Footer>
 			</Card>
 			<Button className="flex-1" onPress={handleSubmit(onSubmit)}>
-				<Text className="font-inter-medium text-xl text-neutral-100">Save changes</Text>
+				<Text className="font-inter-medium text-xl text-neutral-100">Salvar mudanças</Text>
 			</Button>
 			<Card className="gap-5">
 				<Card.Header>
-					<Text className="font-inter-bold text-xl">Security tips</Text>
+					<Text className="font-inter-bold text-xl">Dicas de segurança</Text>
 				</Card.Header>
 				<Card.Body>
 					<Text className="font-inter text-gray-500">
-						{'\u2022'} Use a strong and unique password
+						{'\u2022'} Use uma senha forte e única
 					</Text>
 					<Text className="font-inter text-gray-500">
-						{'\u2022'} Never share your login details
+						{'\u2022'} Nunca compartilhe seus dados de login
 					</Text>
 					<Text className="font-inter text-gray-500">
-						{'\u2022'} Enable biometric authentication
+						{'\u2022'} Ative a autenticação biométrica
 					</Text>
 					<Text className="font-inter text-gray-500">
-						{'\u2022'} Update your password regularly
+						{'\u2022'} Atualize sua senha regularmente
 					</Text>
 				</Card.Body>
 			</Card>

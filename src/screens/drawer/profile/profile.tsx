@@ -39,20 +39,20 @@ export default function ProfileScreen() {
 
 				<Card className="flex-1">
 					<Card.Header>
-						<Text className="font-inter-bold text-xl">Personal Information</Text>
+						<Text className="font-inter-bold text-xl">Informações pessoais</Text>
 					</Card.Header>
 
 					<Card.Body className="gap-4">
-						<ProfileInfoItem label="Full Name" value={profile?.name} icon="user" />
+						<ProfileInfoItem label="Nome completo" value={profile?.name} icon="user" />
 						<ProfileInfoItem label="E-mail" value={profile?.email} icon="mail" />
-						<ProfileInfoItem label="Phone Number" value={profile?.phoneNumber} icon="phone" />
-						<ProfileInfoItem label="Date of birth" value="15/05/1988 -" icon="calendar" />
-						<ProfileInfoItem label="Address" value={profile?.address} icon="map-pin" />
+						<ProfileInfoItem label="Número de telefone" value={profile?.phoneNumber} icon="phone" />
+						<ProfileInfoItem label="Data de nascimento" value="15/05/1988 -" icon="calendar" />
+						<ProfileInfoItem label="Endereço" value={profile?.address} icon="map-pin" />
 
 						<Card.Footer className="mt-4">
 							<TouchableOpacity activeOpacity={0.8} className="p-2">
 								<Text className="self-center font-inter-bold text-lg text-blue-500">
-									Edit Information
+									Editar informações
 								</Text>
 							</TouchableOpacity>
 						</Card.Footer>
@@ -62,16 +62,16 @@ export default function ProfileScreen() {
 				<View className="rounded-xl bg-white">
 					<TouchableOpacity className="w-full flex-row items-center gap-4 rounded-t-xl border border-neutral-100 p-3">
 						<ProfileIcon icon="bell" color={'#d97706'} background="#fef3c7" />
-						<Text className="font-inter-medium text-xl">Notifications</Text>
+						<Text className="font-inter-medium text-xl">Notificações</Text>
 					</TouchableOpacity>
 
 					<TouchableOpacity className=" text-pu w-full flex-row items-center gap-4 rounded-b-xl border border-neutral-100 p-3">
 						<ProfileIcon icon="lock" color={'#a855f7'} background="#f3e8ff" />
-						<Text className="font-inter-medium text-xl">Security</Text>
+						<Text className="font-inter-medium text-xl">Segurança</Text>
 					</TouchableOpacity>
 				</View>
 
-				<Button variant="red" title="Logout" className="">
+				<Button variant="red" title="Sair" className="">
 					<Feather name="log-out" size={20} color={'#ef4444'} className="mr-3" />
 				</Button>
 			</SafeAreaView>

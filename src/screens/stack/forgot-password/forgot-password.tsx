@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 import { useNavigation } from '@react-navigation/native'
 
 const forgotPasswordSchema = z.object({
-	email: z.email('Please enter a valid email address').nonempty('Email is required'),
+	cpf: z.string().nonempty('O cpf é necessário'),
 })
 
 type ForgotPasswordType = z.infer<typeof forgotPasswordSchema>
@@ -38,31 +38,31 @@ export default function ForgotPasswordScreen() {
 				<ScrollView showsVerticalScrollIndicator={false}>
 					<Image source={require('@/assets/tecnologys-logo.png')} className="mb-5 self-center" />
 					<View className="my-5 items-center">
-						<Text className="font-inter-bold text-3xl">Forgot Password</Text>
+						<Text className="font-inter-bold text-3xl">Esqueci a senha</Text>
 						<Text className="mt-2 text-center font-inter text-lg text-neutral-500">
-							Enter your email address to reset your password
+						Digite seu CPF para redefinir sua senha
 						</Text>
 					</View>
 
 					<View className="mt-10">
 						<Controller
 							control={control}
-							name="email"
+							name="cpf"
 							render={({ field: { onChange, onBlur, value } }) => (
 								<View>
 									<Input
 										keyboardType="email-address"
 										autoCapitalize="none"
 										IconLeft="mail"
-										placeholder="Email address"
+										placeholder="Cpf"
 										onBlur={onBlur}
 										onChangeText={onChange}
 										value={value}
-										hasError={!!errors.email}
+										hasError={!!errors.cpf}
 									/>
-									{errors.email && (
+									{errors.cpf && (
 										<Text className="mt-1 font-inter text-sm text-red-500">
-											{errors.email.message}
+											{errors.cpf.message}
 										</Text>
 									)}
 								</View>
@@ -70,12 +70,12 @@ export default function ForgotPasswordScreen() {
 						/>
 
 						<Text className="mt-4 text-center font-inter text-sm leading-5 text-neutral-500">
-							We&#39;ll send you a link to reset your password
+						Enviaremos um link para redefinir sua senha.
 						</Text>
 
 						<Button
 							className="mt-8"
-							title="Reset Password"
+							title="Redefinir senha"
 							onPress={handleSubmit(onSubmit)}
 							disabled={isSubmitting}
 						/>
@@ -86,7 +86,7 @@ export default function ForgotPasswordScreen() {
 							onPress={() => router.goBack()}
 						>
 							<Text className="text-center font-inter-bold text-base leading-6 text-blue-600">
-								Back to Sign In
+							Voltar para o Login
 							</Text>
 						</TouchableOpacity>
 					</View>
