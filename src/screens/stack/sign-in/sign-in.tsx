@@ -15,7 +15,7 @@ export default function SignInScreen() {
 					<Image source={require('@/assets/tecnologys-logo.png')} className="mb-5 self-center" />
 
 					<View className="my-5 items-center">
-						<Text className="font-inter-bold text-3xl">Bem vindo</Text>
+						<Text className="font-inter-bold text-3xl">Bem vindo ao SEGY</Text>
 						<Text className="mt-2 text-center font-inter text-lg text-neutral-500">
 							Faça login para continuar
 						</Text>

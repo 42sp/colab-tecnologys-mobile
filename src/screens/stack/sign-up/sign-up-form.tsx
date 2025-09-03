@@ -7,31 +7,34 @@ import { Dropdown } from '@/components/ui/dropdown'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
-
-const items = [{ label: 'Item 1' }, { label: 'Item 2' }, { label: 'Item 3' }, { label: 'Item 4' }]
+import { usePostUser } from '@/api/post-user'
+import { useDispatch } from 'react-redux'
+import { setUser } from '@/libs/redux/user/user-slice'
+import { usePostAuthSignIn } from '@/api/post-auth-sign-in'
+import { setAuth } from '@/libs/redux/auth-sign-in/auth-sign-in-slice'
+import { useGetRoles } from '@/api/get-roles'
+import { usePostProfile } from '@/api/post-profile'
 
 const signUpSchema = z
 	.object({
-		name: z.string().nonempty('Full name is required'),
-		email: z.email('Please enter a valid email address').nonempty('Email is required'),
-		cpf: z.string().length(11, 'CPF must have exactly 11 digits'),
-		phone: z.string().nonempty('Phone number is required'),
-		jobTitle: z.string().nonempty('Job title is required'),
-		password: z.string().min(6, 'Password must be at least 6 characters'),
-		confirmPassword: z.string().nonempty('Confirm password is required'),
+		name: z.string().nonempty('Nome é obrigatório'),
+		email: z.string(),
+		cpf: z.string().length(11, 'CPF deve conter 11 caracteres'),
+		phone: z.string().nonempty('Número de telefone é obrigatório'),
+		jobTitle: z.string().nonempty('Função é obrigatório'),
+		password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
+		confirmPassword: z.string().nonempty('Confirme sua senha'),
 	})
 	.refine((data) => data.password === data.confirmPassword, {
-		message: "Passwords don't match",
+		message: 'As senhas não correspondem',
 		path: ['confirmPassword'],
 	})
 
 type SignUpType = z.infer<typeof signUpSchema>
 
 export function SignUpForm() {
-	const { stack } = useNavigate()
-
+	const { stack, drawer } = useNavigate()
 	const [hidePassword, setHidePassword] = useState(true)
-
 	const {
 		control,
 		handleSubmit,
@@ -48,22 +51,89 @@ export function SignUpForm() {
 			confirmPassword: '',
 		},
 	})
+	const { items } = useGetRoles()
+	const { fetchData: postUser } = usePostUser()
+	const { data: dataAuth, fetchData: postAuth } = usePostAuthSignIn()
+	const { data: dataProfile, fetchData: postProfile } = usePostProfile()
+	const dispatch = useDispatch()
 
-	function onSubmit(data: any) {
-		console.log('Dados de Registro: ', JSON.stringify(data))
-		stack('signIn')
+	const onSubmit = async (profile: SignUpType) => {
+		console.log('Dados de registro ', profile)
+
+		// post user
+		if (postUser) {
+			console.log('chamando postUser')
+			const responseUser = await postUser({
+				data: { cpf: profile.cpf, password: profile.password, role_id: profile.jobTitle },
+			})
+			console.log('Dados do postUser: ', responseUser)
+
+			if (responseUser) {
+				dispatch(
+					setUser({
+						id: responseUser.id,
+						cpf: responseUser.cpf,
+						roleId: responseUser.role_id,
+						profileId: responseUser.profile_id,
+						isActive: responseUser.is_active,
+						isAvailable: responseUser.is_available,
+						createdAt: responseUser.created_at,
+						updatedAt: responseUser.updated_at,
+					}),
+				)
+			}
+			// post auth
+			if (postAuth && responseUser) {
+				console.log('chamando postAuth')
+				const responseAuth = await postAuth({
+					data: { strategy: 'local', cpf: profile.cpf, password: profile.password },
+				})
+				console.log('Dados do postAuth:', responseAuth)
+
+				if (responseAuth) {
+					dispatch(
+						setAuth({
+							token: responseAuth.accessToken,
+							expiry: responseAuth.authentication.payload.exp,
+							id: responseAuth.user.id,
+						}),
+					)
+				}
+				// post profile
+				if (postProfile && responseAuth) {
+					console.log('chamando postProfile')
+					const responseProfile = await postProfile({
+						data: {
+							name: profile.name,
+							email: profile.email,
+							phone: profile.phone,
+							date_of_birth: '2003-02-01',
+							registration_code: 'REG-2025-008',
+							address: 'Rua Exemplo, 123',
+							city: 'São Paulo',
+							state: 'SP',
+							postcode: '01234-567',
+							user_id: responseUser.id,
+						},
+					})
+					console.log('response postProfile: ', responseProfile)
+					console.log('indo pra perfil')
+					drawer('profile')
+				}
+			}
+		}
 	}
 
 	return (
 		<View className="h-full items-center justify-between gap-5 ">
 			<View className="gap-1">
-				<Text>Full name</Text>
+				<Text>Nome completo</Text>
 				<Controller
 					control={control}
 					name="name"
 					render={({ field: { onChange, value } }) => (
 						<Input
-							placeholder="Type your full name"
+							placeholder="Digite seu nome completo"
 							IconLeft={'user'}
 							className="self-center"
 							onChangeText={onChange}
@@ -81,7 +151,7 @@ export function SignUpForm() {
 					name="email"
 					render={({ field: { onChange, value } }) => (
 						<Input
-							placeholder="your-email@email.com"
+							placeholder="seu-email@email.com"
 							keyboardType="email-address"
 							autoCapitalize="none"
 							IconLeft={'mail'}
@@ -114,7 +184,7 @@ export function SignUpForm() {
 				{errors.cpf && <Text className="text-red-500">{errors.cpf.message}</Text>}
 			</View>
 			<View className="gap-1">
-				<Text>Phone number</Text>
+				<Text>Número de telefone</Text>
 				<Controller
 					control={control}
 					name="phone"
@@ -133,7 +203,7 @@ export function SignUpForm() {
 				{errors.phone && <Text className="text-red-500">{errors.phone.message}</Text>}
 			</View>
 			<View className="gap-1">
-				<Text>Job title</Text>
+				<Text>Função</Text>
 				<Controller
 					control={control}
 					name="jobTitle"
@@ -142,10 +212,14 @@ export function SignUpForm() {
 							IconLeft={'briefcase'}
 							IconRight={'chevron-down'}
 							options={items}
-							variant='default'
-							placeholder="Select an option"
-							value={value}
-							onChangeText={onChange}
+							variant="default"
+							placeholder="Selecione uma opção"
+							value={items.find((item) => item.id === value)?.label || ''} // mostra label
+							onChangeText={(selectedLabel) => {
+								// encontra o item pelo label e guarda o id
+								const selected = items.find((item) => item.label === selectedLabel)
+								if (selected) onChange(selected.id) // guarda role_id
+							}}
 							hasError={!!errors.jobTitle}
 						/>
 					)}
@@ -153,13 +227,13 @@ export function SignUpForm() {
 				{errors.jobTitle && <Text className="text-red-500">{errors.jobTitle.message}</Text>}
 			</View>
 			<View className="gap-1">
-				<Text>Password</Text>
+				<Text>Senha</Text>
 				<Controller
 					control={control}
 					name="password"
 					render={({ field: { onChange, value } }) => (
 						<Input
-							placeholder="Type your password"
+							placeholder="Digite sua senha"
 							IconLeft={'lock'}
 							IconRight={hidePassword ? 'eye' : 'eye-off'}
 							iconPress={() => setHidePassword(!hidePassword)}
@@ -174,13 +248,13 @@ export function SignUpForm() {
 				{errors.password && <Text className="text-red-500">{errors.password.message}</Text>}
 			</View>
 			<View className="gap-1">
-				<Text>Confirm password</Text>
+				<Text>Confirmar senha</Text>
 				<Controller
 					control={control}
 					name="confirmPassword"
 					render={({ field: { onChange, value } }) => (
 						<Input
-							placeholder="Confirm your password"
+							placeholder="Confirme sua senha"
 							IconLeft={'lock'}
 							IconRight={hidePassword ? 'eye' : 'eye-off'}
 							iconPress={() => setHidePassword(!hidePassword)}
@@ -197,10 +271,10 @@ export function SignUpForm() {
 				)}
 			</View>
 
-			<Button title="Create account" onPress={handleSubmit(onSubmit)} className="my-5" />
+			<Button title="Criar conta" onPress={handleSubmit(onSubmit)} className="my-5" />
 			<View className="py-5">
 				<Text>
-					Already have an account?
+					Já tem uma conta?
 					<Text
 						onPress={() => {
 							stack('signUp')
@@ -208,7 +282,7 @@ export function SignUpForm() {
 						className="font-inter-bold text-blue-500"
 					>
 						{' '}
-						Sign in
+						Entrar
 					</Text>
 				</Text>
 			</View>
