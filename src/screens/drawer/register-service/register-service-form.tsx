@@ -12,7 +12,7 @@ import {
 } from 'react-hook-form'
 import type { RegisterServiceType } from './register-service'
 import { Feather } from '@expo/vector-icons'
-import { CustomCalendar, DateRange } from '@/components/ui/calendar'
+import { CustomCalendar, DateRangeType } from '@/components/ui/calendar'
 
 type Props = {
 	control: Control<RegisterServiceType>
@@ -45,7 +45,7 @@ export function RegisterServiceForm({
 }: Props) {
 	const currentDate = new Date().toISOString().split('T')[0]
 	const [isCalendarVisible, setCalendarVisible] = useState(false)
-	const [selectDay, setSelectDay] = useState<DateRange>({ start: null, end: null })
+	const [selectDay, setSelectDay] = useState<DateRangeType>({ start: null, end: null })
 
 	const towers = currentResidential?.torres?.data ?? []
 	const towerOptions = towers.map((t) => ({ label: t.name }))
@@ -71,10 +71,10 @@ export function RegisterServiceForm({
 		<View>
 			<Card className="ml-6 mr-6 mt-6">
 				<Card.Header>
-					<Text className="font-inter-bold text-xl text-black">Date of execution</Text>
+					<Text className="font-inter-bold text-xl text-black">Data da execução</Text>
 				</Card.Header>
 				<Card.Body className="gap-2">
-					<Text className="text-lg">Date</Text>
+					<Text className="text-lg">Data</Text>
 					<Controller
 						control={control}
 						name="dateOfService"
@@ -101,7 +101,7 @@ export function RegisterServiceForm({
 												errors.dateOfService ? 'text-red-500' : 'text-neutral-400'
 											} `}
 										>
-											{formattedDate || 'Date of service'}
+											{formattedDate || 'Data do serviço'}
 										</Text>
 									</Pressable>
 
@@ -117,7 +117,7 @@ export function RegisterServiceForm({
 													onPress={() => setCalendarVisible(false)}
 													className="mt-4 items-center rounded-lg border-2 border-gray-200 bg-transparent p-3"
 												>
-													<Text className="font-inter-bold text-black">Close</Text>
+													<Text className="font-inter-bold text-black">Fechar</Text>
 												</Pressable>
 											</View>
 										</View>
@@ -133,10 +133,10 @@ export function RegisterServiceForm({
 			</Card>
 			<Card className="ml-6 mr-6 mt-6">
 				<Card.Header>
-					<Text className="font-inter-bold text-xl text-black">Local Information</Text>
+					<Text className="font-inter-bold text-xl text-black">Informação do Local</Text>
 				</Card.Header>
 				<Card.Body className="gap-2">
-					<Text className="text-lg">Tower / Block</Text>
+					<Text className="text-lg">Torre</Text>
 					<Controller
 						control={control}
 						name="tower"
@@ -147,7 +147,7 @@ export function RegisterServiceForm({
 								className="self-center"
 								options={towerOptions}
 								variant="outline"
-								placeholder="Select the block"
+								placeholder="Selecione a torre"
 								value={value}
 								onChangeText={(val: string) => {
 									resetField('floor')
@@ -158,7 +158,7 @@ export function RegisterServiceForm({
 						)}
 					/>
 					{errors.tower && <Text className="text-red-500">{errors.tower.message}</Text>}
-					<Text className="mt-4 text-lg">Floor</Text>
+					<Text className="mt-4 text-lg">Pavimento</Text>
 					<Controller
 						control={control}
 						name="floor"
@@ -169,7 +169,7 @@ export function RegisterServiceForm({
 								className="self-center"
 								options={floorOptions}
 								variant="outline"
-								placeholder="Select a floor"
+								placeholder="Selecione o andar"
 								value={value}
 								onChangeText={onChange}
 								hasError={!!errors.floor}

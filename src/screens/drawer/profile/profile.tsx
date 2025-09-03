@@ -56,7 +56,7 @@ export default function ProfileScreen() {
 					</TouchableOpacity>
 				</View>
 
-				<Button variant="red" title="Sair" className="">
+				<Button variant="red" title="Deslogar" className="">
 					<Feather name="log-out" size={20} color={'#ef4444'} className="mr-3" />
 				</Button>
 			</SafeAreaView>

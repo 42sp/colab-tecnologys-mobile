@@ -88,7 +88,7 @@ export function SecuritySettingsForm() {
 							name="newPassword"
 							render={({ field: { onChange, value } }) => (
 								<Input
-									placeholder="Digite sua nova senha"
+									placeholder="Nova senha"
 									IconLeft={'lock'}
 									IconRight={hideNewPassword ? 'eye-off' : 'eye'}
 									iconPress={() => setHideNewPassword(!hideNewPassword)}
@@ -105,13 +105,13 @@ export function SecuritySettingsForm() {
 						)}
 					</View>
 					<View className="gap-1">
-						<Text>Confirme a nova senha</Text>
+						<Text>Confirmar senha</Text>
 						<Controller
 							control={control}
 							name="confirmPassword"
 							render={({ field: { onChange, value } }) => (
 								<Input
-									placeholder="Confirme a sua nova senha"
+									placeholder="Confirme sua senha"
 									IconLeft={'lock'}
 									IconRight={hideConfirmPassword ? 'eye-off' : 'eye'}
 									iconPress={() => setHideConfirmPassword(!hideConfirmPassword)}
@@ -154,16 +154,16 @@ export function SecuritySettingsForm() {
 				</Card.Header>
 				<Card.Body>
 					<Text className="font-inter text-gray-500">
-						{'\u2022'} Use uma senha forte e única
+						{'\u2022'} Crie uma senha forte e única
 					</Text>
 					<Text className="font-inter text-gray-500">
-						{'\u2022'} Nunca compartilhe seus dados de login
+						{'\u2022'} Nunca compartilhe suas credenciais
 					</Text>
 					<Text className="font-inter text-gray-500">
 						{'\u2022'} Ative a autenticação biométrica
 					</Text>
 					<Text className="font-inter text-gray-500">
-						{'\u2022'} Atualize sua senha regularmente
+						{'\u2022'} Mude sua senha regularmente
 					</Text>
 				</Card.Body>
 			</Card>

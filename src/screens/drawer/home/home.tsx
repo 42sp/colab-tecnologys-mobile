@@ -1,7 +1,7 @@
 import { View, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Feather } from '@expo/vector-icons'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { HomeFilterModal } from './filter-modal'
 import { SummaryCard } from '@/screens/drawer/home/summary-card'
@@ -43,19 +43,19 @@ export default function Home() {
 				pendding: dataList.filter(({ status }) => status === 'pending').length,
 				data: [
 					{
-						title: 'Today',
+						title: 'Hoje',
 						data: dataList.filter(
 							({ time }) => time.toLocaleDateString() === new Date().toLocaleDateString(),
 						),
 					},
 					{
-						title: 'Yesterday',
+						title: 'Ontem',
 						data: dataList.filter(
 							({ time }) => time.toLocaleDateString() === yesterday.toLocaleDateString(),
 						),
 					},
 					{
-						title: 'Older',
+						title: 'Anteriores',
 						data: dataList.filter(({ time }) => time < yesterday),
 					},
 				],
@@ -140,19 +140,19 @@ export default function Home() {
 							icon="clipboard"
 							SumaryVariant="blue"
 							value={activityDataList.amount}
-							label="Activities"
+							label="Atividades"
 						/>
 						<SummaryCard
 							icon="clock"
 							SumaryVariant="orange"
 							value={activityDataList.pendding}
-							label="Pending"
+							label="Pendentes"
 						/>
 						<SummaryCard
 							icon="bar-chart"
 							SumaryVariant="green"
 							value={activityDataList.percent + '%'}
-							label="Productivity"
+							label="Produtividade"
 						/>
 					</View>
 				}

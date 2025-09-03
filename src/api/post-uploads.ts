@@ -1,24 +1,24 @@
-import { api } from '@/libs/axios/axios'
+import useAxios from '@/hook/use-axios';
 
-type UploadsPost = {
-  id: string | null
-  uri: string
-  token: string | null
+interface UploadResponse {
+	id: string;
+	uri: string;
+	size: number;
+	contentType: string;
 }
 
-export async function postUploads (data: UploadsPost){
-
-		const response = await api.post(`/uploads`, {
-			id: data.id,
-			uri: data.uri,
-		},
-		{
-			headers: {
-				Authorization: `Bearer ${data.token}`,
-			},
-		}
+export const usePostUploads = () => {
+	const res = useAxios<UploadResponse>(
+	  { url: 'uploads', method: 'post' },
+	  { manual: true }
 	)
-		await new Promise((resolve) => setTimeout(resolve, 1000))
-		return (response.data)
 
-}
+	const upload = res.fetchData!
+
+	return {
+	  upload,
+	  data: res.data,
+	  loading: res.loading,
+	  error: res.error,
+	}
+  }

@@ -129,11 +129,11 @@ export const areaMock = [
 export const serviceTypeMock = [
 	{
 		id: 29,
-		name: '2 pav 4'
+		name: '2 pav 2'
 	},
 	{
 		id: 32,
-		name: '3 pav 4'
+		name: '3 pav 3'
 	},
 		{
 		id: 36,

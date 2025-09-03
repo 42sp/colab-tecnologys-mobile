@@ -66,13 +66,13 @@ export function WorkersForm({ control, errors }: Props) {
 		<View>
 			<Card className="ml-6 mr-6 mt-6">
 				<Card.Header className="mb-1 flex-row items-center justify-between">
-					<Text className="font-inter-bold text-xl text-black">Workers</Text>
+					<Text className="font-inter-bold text-xl text-black">Tarefeiro</Text>
 					<Pressable
 						onPress={handleAdd}
 						className="h-9 items-center justify-center rounded-lg border-2 border-gray-200 px-3 disabled:opacity-40"
 						disabled={fields.length >= MAX_WORKERS}
 					>
-						<Text className="w-[135px] text-center text-xl text-gray-700">Add</Text>
+						<Text className="w-[135px] text-center text-xl text-gray-700">Adicionar</Text>
 					</Pressable>
 				</Card.Header>
 
@@ -130,7 +130,7 @@ export function WorkersForm({ control, errors }: Props) {
 													IconRight="chevron-down"
 													options={availableWorkerOptions}
 													variant="outline"
-													placeholder="worker"
+													placeholder="Tarefeiro"
 													value={value}
 													onChangeText={onChange}
 													hasError={!!rowError?.worker}

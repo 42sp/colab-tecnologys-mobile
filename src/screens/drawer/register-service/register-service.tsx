@@ -22,19 +22,19 @@ import { ChooseResidentialModal } from '@/screens/drawer/register-service/choose
 
 const registerServiceSchema = z
 	.object({
-		dateOfService: z.string().nonempty('Date is required.'),
-		tower: z.string().nonempty('Tower is required.'),
-		floor: z.string().nonempty('Floor is required.'),
+		dateOfService: z.string().nonempty('Selecione uma data.'),
+		tower: z.string().nonempty('Selecione a torre.'),
+		floor: z.string().nonempty('Selecione o andar.'),
 		workers: z.array(
 			z.object({
-				percent: z.number('Percent is required.').min(0).max(100),
-				worker: z.string().nonempty('Worker is required.'),
+				percent: z.number('Insira o percentual do serviço.').min(0).max(100),
+				worker: z.string().nonempty('Selecione um tarefeiro.'),
 			}),
 		),
-		typeOfService: z.string().nonempty('Type of service is required.'),
-		apartments: z.array(z.string()).min(1, 'At least one apartment is required.'),
-		classification: z.string().nonempty('Choose one option.'),
-		services: z.string().nonempty('Service is required.'),
+		typeOfService: z.string().nonempty('Tipo de serviço é obrigatório.'),
+		apartments: z.array(z.string()).min(1, 'Pelo menos um apartamento deve ser selecionado.'),
+		classification: z.string().nonempty('Escolha a classificação.'),
+		services: z.string().nonempty('Serviço é obrigatório.'),
 		confirmed: z.boolean().optional(),
 	})
 	.superRefine((data, ctx) => {
@@ -47,7 +47,7 @@ const registerServiceSchema = z
 		if (sum !== 100) {
 			ctx.addIssue({
 				code: 'custom',
-				message: `The sum of percentages must be 100%, but it is ${sum}%.`,
+				message: `A soma das porcentagens deve ser 100%, mas é ${sum}%.`,
 				path: ['workers'],
 			})
 		}
@@ -116,7 +116,7 @@ export default function RegisterServiceScreen() {
 							>
 								<Image source={require('@/assets/residencial-icon.png')} className="h-12 w-12" />
 								<Text className="font-inter-medium  text-gray-800" numberOfLines={1}>
-									{currentResidential ? currentResidential.name : 'Select a residential'}
+									{currentResidential ? currentResidential.name : 'Selecione o residencial'}
 								</Text>
 							</Pressable>
 						</Card.Body>
@@ -148,7 +148,7 @@ export default function RegisterServiceScreen() {
 								name="confirmed"
 								render={({ field: { value, onChange } }) => (
 									<RadioCheckOption
-										label="The service has been completed"
+										label="Confirmo que o serviço foi finalizado"
 										selected={!!value}
 										onPress={() => onChange(!value)}
 										variant="checkbox"
@@ -158,9 +158,9 @@ export default function RegisterServiceScreen() {
 						</Card.Body>
 					</Card>
 					<View className="m-6 flex-row gap-2">
-						<Button title="Cancel" variant="outline" className="flex-1" onPress={() => {}} />
+						<Button title="Cancelar" variant="outline" className="flex-1" onPress={() => {}} />
 						<Button
-							title="Send"
+							title="Enviar"
 							className="flex-1"
 							variant="gradient"
 							onPress={handleSubmit(onSubmit)}

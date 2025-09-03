@@ -9,7 +9,7 @@ import type { RegisterServiceType } from './register-service'
 import { serviceTypeMock, serviceMock } from '@/mock'
 
 const apartments = [{ label: '1' }, { label: '2' }, { label: '3' }, { label: '4' }]
-const radioOptions = [{ label: 'Extern' }, { label: 'Intern' }]
+const radioOptions = [{ label: 'Externo' }, { label: 'Interno' }]
 
 type Props = {
 	control: Control<RegisterServiceType>
@@ -27,7 +27,7 @@ export function TypeServiceForm({ control, errors }: Props) {
 		<View>
 			<Card className="ml-6 mr-6 mt-6">
 				<Card.Header>
-					<Text className="font-inter-bold text-xl text-black">Type of service</Text>
+					<Text className="font-inter-bold text-xl text-black">Tipo de serviço</Text>
 				</Card.Header>
 				<Card.Body className="gap-2">
 					<Controller
@@ -39,7 +39,7 @@ export function TypeServiceForm({ control, errors }: Props) {
 								IconRight={'chevron-down'}
 								options={serviceTypeOptions}
 								variant="outline"
-								placeholder="Select the type of service"
+								placeholder="Selecione o tipo de serviço"
 								value={value}
 								onChangeText={onChange}
 								hasError={!!errors.typeOfService}
@@ -49,7 +49,7 @@ export function TypeServiceForm({ control, errors }: Props) {
 					{errors.typeOfService && (
 						<Text className="text-xs text-red-500">{errors.typeOfService.message}</Text>
 					)}
-					<Text className="mt-4 text-lg">Apartment</Text>
+					<Text className="mt-4 text-lg">Apartamentos</Text>
 					<Controller
 						control={control}
 						name="apartments"
@@ -68,10 +68,10 @@ export function TypeServiceForm({ control, errors }: Props) {
 									<Dropdown
 										IconLeft="list"
 										IconRight="chevron-down"
-										
+
 										options={apartments}
 										variant="outline"
-										placeholder="Select the apartments"
+										placeholder="Selecione os apartamentos"
 										value=""
 										onChangeText={addApartment}
 										hasError={!!errors.apartments}
@@ -120,7 +120,7 @@ export function TypeServiceForm({ control, errors }: Props) {
 								className="mt-2"
 								options={services}
 								variant="outline"
-								placeholder="Select the service"
+								placeholder="Selecione os serviços"
 								value={value}
 								onChangeText={onChange}
 								hasError={!!errors.services}
