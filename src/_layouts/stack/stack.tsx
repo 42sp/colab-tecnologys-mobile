@@ -4,6 +4,7 @@ import HomeScreen from '@/screens/stack/home/home'
 import SignInScreen from '@/screens/stack/sign-in/sign-in'
 import SignUpScreen from '@/screens/stack/sign-up/sign-up'
 import ForgotPasswordScreen from '@/screens/stack/forgot-password/forgot-password'
+import VerifyCode from '@/screens/stack/verify-code/verify-code'
 import DrawerLayout, { DrawerParamList } from '@/_layouts/drawer/drawer'
 import { StackHeader } from './stack-header'
 
@@ -15,6 +16,7 @@ export type StackParamList = {
 	signIn: undefined
 	signUp: undefined
 	forgotPassword: undefined
+	verifyCode: undefined
 	drawer: NavigatorScreenParams<DrawerParamList>
 }
 
@@ -39,6 +41,15 @@ export default function StackLayout() {
 			/>
 			<Stack.Screen name="forgotPassword" component={ForgotPasswordScreen} options={{}} />
 			<Stack.Screen name="drawer" component={DrawerLayout} options={{}} />
+			<Stack.Screen
+				name="verifyCode"
+				component={VerifyCode}
+				options={{
+					headerShown: true,
+					title: 'New Account',
+					header: StackHeader,
+				}}
+			/>
 		</Stack.Navigator>
 	)
 }
