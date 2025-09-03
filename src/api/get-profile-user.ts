@@ -1,16 +1,32 @@
-import { api } from '@/libs/axios/axios'
+import useAxios from '@/hook/use-axios'
 
-type ProfileGet = {
-	token: string | null
-  }
-
-export async function getProfile (data: ProfileGet){
-		const response = await api.get(`/profile`,
-		{
-			headers: {
-				Authorization: `Bearer ${data.token}`,
-			},
-		})
-		await new Promise((resolve) => setTimeout(resolve, 1000))
-		return (response.data)
+interface Profile {
+	id: string
+	user_id: string
+	name: string
+	email: string
+	date_of_birth: string
+	registration_code: string
+	phone: string
+	photo: string | null
+	address: string
+	city: string
+	state: string
+	postcode: string
+	created_at: string
+	updated_at: string
 }
+
+type Paginated<T> = { data: T[] }
+
+export const useGetProfile = () => {
+	const res = useAxios<Paginated<Profile>>(
+	  { url: 'profile', method: 'get' },
+	  { manual: true }
+	)
+
+	const profile: Profile | null = res.data?.data?.[0] ?? null
+	const getProfile = res.fetchData!
+
+	return { profile, loading: res.loading, error: res.error, getProfile }
+  }
