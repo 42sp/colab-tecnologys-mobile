@@ -1,4 +1,4 @@
-import useAxios from '@/hook/use-axios'
+import useAxios from '@/hooks/use-axios'
 
 interface Profile {
 	id: string
@@ -20,13 +20,10 @@ interface Profile {
 type Paginated<T> = { data: T[] }
 
 export const useGetProfile = () => {
-	const res = useAxios<Paginated<Profile>>(
-	  { url: 'profile', method: 'get' },
-	  { manual: true }
-	)
+	const res = useAxios<Paginated<Profile>>({ url: 'profile', method: 'get' }, { manual: true })
 
 	const profile: Profile | null = res.data?.data?.[0] ?? null
 	const getProfile = res.fetchData!
 
 	return { profile, loading: res.loading, error: res.error, getProfile }
-  }
+}
