@@ -1,4 +1,4 @@
-import useAxios from '@/hook/use-axios'
+import useAxios from '@/hooks/use-axios'
 
 interface Response {
 	accessToken: string
@@ -12,23 +12,6 @@ interface Response {
 	}
 }
 
-interface Return {
-	token: string | null
-	expiry: string | null
-	id: string | null
-}
-
 export const usePostAuthSignIn = () => {
-	const { data, loading, error, fetchData } = useAxios<Response>(
-		{ url: 'authentication', method: 'post' },
-		{ manual: true },
-	)
-
-	const value: Return = {
-		token: data?.accessToken ?? null,
-		expiry: data?.authentication.payload.exp ?? null,
-		id: data?.user.id ?? null,
-	}
-
-	return { data: value, loading, error, fetchData }
+	return useAxios<Response>({ url: 'authentication', method: 'post' }, { manual: true })
 }

@@ -8,9 +8,7 @@ import { useState } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
 import { useDispatch } from 'react-redux'
 import { setAuth } from '@/libs/redux/auth-sign-in/auth-sign-in-slice'
-import { setUser } from '@/libs/redux/user-sign-in/user-sign-in-slice'
 import { usePostAuthSignIn } from '@/api/post-auth-sign-in'
-import { usePostSignIn } from '@/api/post-sign-in'
 
 const signInSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve conter 11 caracteres'),
@@ -36,42 +34,23 @@ export function SignInForm() {
 		},
 	})
 
-	const { data, loading, error, fetchData: postSignIn } = usePostSignIn()
-	const {
-		data: dataAuth,
-		loading: loadingAuth,
-		error: errorAuth,
-		fetchData: postAuthSignIn,
-	} = usePostAuthSignIn()
+	const { data, loading, error, fetchData: postAuthSignIn } = usePostAuthSignIn()
 
 	const onSubmit = async (user: SignInType) => {
-		if (postSignIn) {
-			await postSignIn({ data: { ...user } })
-			if (loading) console.log('loading sign in post')
-			// if (error) {
-			// 	console.log('error sign in: ', error)
-			// }
-			if (data) {
-				console.log('Dados do Login(data): ', data)
-				dispatch(
-					setUser({
-						id: data.id,
-						isActive: data.is_active,
-						isAvailable: data.is_available,
-						roleId: data.role_id, // null
-						profileId: data.profile_id, // null
-					}),
-				)
-			}
-		}
 		if (postAuthSignIn) {
-			await postAuthSignIn({ data: { strategy: 'local', ...user } })
-			if (loadingAuth) console.log('loading authentication post')
+			const responseAuth = await postAuthSignIn({ data: { strategy: 'local', ...user } })
+			if (loading) console.log('loading authentication post')
 			// if (error) {
 			// 	console.log('error auth: ', errorAuth)
 			// }
-			if (dataAuth) {
-				dispatch(setAuth({ token: dataAuth.token, expiry: dataAuth.expiry, id: dataAuth.id }))
+			if (responseAuth) {
+				dispatch(
+					setAuth({
+						token: responseAuth.accessToken,
+						expiry: responseAuth.authentication.payload.exp,
+						id: responseAuth.user.id,
+					}),
+				)
 				drawer('profile')
 			}
 		}

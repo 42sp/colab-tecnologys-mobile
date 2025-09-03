@@ -1,4 +1,4 @@
-import useAxios from '@/hook/use-axios'
+import useAxios from '@/hooks/use-axios'
 
 // interface Response {
 // 	name: string
