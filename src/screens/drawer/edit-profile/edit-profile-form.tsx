@@ -8,11 +8,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Card from '@/components/ui/card'
 
 const editProfileSchema = z.object({
-	name: z.string().nonempty('Full name is required'),
-	email: z.email('Please enter a valid email address'),
-	phone: z.string().nonempty('Phone number is required'),
-	dateOfBirth: z.string().nonempty('Date of birth is required'),
-	address: z.string().nonempty('Address is required'),
+	name: z.string().nonempty('Nome completo é obrigatório'),
+	email: z.email().optional(),
+	phone: z.string().nonempty('Telefone é obrigatório'),
+	dateOfBirth: z.string().nonempty('Data de nascimento é obrigatório'),
+	address: z.string().nonempty('Endereço é obrigatório'),
 })
 
 type EditProfileType = z.infer<typeof editProfileSchema>
