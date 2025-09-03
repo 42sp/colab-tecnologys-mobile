@@ -34,15 +34,11 @@ export function SignInForm() {
 		},
 	})
 
-	const { data, loading, error, fetchData: postAuthSignIn } = usePostAuthSignIn()
+	const { fetchData: postAuthSignIn } = usePostAuthSignIn()
 
 	const onSubmit = async (user: SignInType) => {
 		if (postAuthSignIn) {
 			const responseAuth = await postAuthSignIn({ data: { strategy: 'local', ...user } })
-			if (loading) console.log('loading authentication post')
-			// if (error) {
-			// 	console.log('error auth: ', errorAuth)
-			// }
 			if (responseAuth) {
 				dispatch(
 					setAuth({
