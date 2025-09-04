@@ -1,7 +1,6 @@
 import { api } from '@/libs/axios/axios'
 
 interface UploadsProps {
-	id: string
 	uri: string
 }
 
@@ -12,7 +11,7 @@ interface UploadsResponse {
 	contentType: string
 }
 
-export async function uploads({ id, uri }: UploadsProps) {
-	const response = await api.post<UploadsResponse>('/uploads', { id, uri })
+export async function uploads({ uri }: UploadsProps) {
+	const response = await api.post<UploadsResponse>('/uploads', { uri })
 	return response.data
 }

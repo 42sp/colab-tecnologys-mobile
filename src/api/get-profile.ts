@@ -5,16 +5,16 @@ interface Profile {
 	user_id: string
 	name: string
 	email: string
-	date_of_birth: string
+	date_of_birth: Date
 	registration_code: string
 	phone: string
-	photo: string | null
+	photo: string
 	address: string
 	city: string
 	state: string
 	postcode: string
-	created_at: string
-	updated_at: string
+	created_at: Date
+	updated_at: Date
 }
 
 interface ProfileResponse {
