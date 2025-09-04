@@ -1,21 +1,18 @@
-import useAxios from '@/hooks/use-axios'
+import { api } from '@/libs/axios/axios'
 
-interface UploadResponse {
+interface UploadsProps {
+	id: string
+	uri: string
+}
+
+interface UploadsResponse {
 	id: string
 	uri: string
 	size: number
 	contentType: string
 }
 
-export const usePostUploads = () => {
-	const res = useAxios<UploadResponse>({ url: 'uploads', method: 'post' }, { manual: true })
-
-	const upload = res.fetchData!
-
-	return {
-		upload,
-		data: res.data,
-		loading: res.loading,
-		error: res.error,
-	}
+export async function uploads({ id, uri }: UploadsProps) {
+	const response = await api.post<UploadsResponse>('/uploads', { id, uri })
+	return response.data
 }
