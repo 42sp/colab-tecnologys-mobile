@@ -6,10 +6,12 @@ import { z } from 'zod'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Card from '@/components/ui/card'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/libs/redux/store'
 
 const editProfileSchema = z.object({
 	name: z.string().nonempty('Nome completo é obrigatório'),
-	email: z.email().optional(),
+	email: z.string(),
 	phone: z.string().nonempty('Telefone é obrigatório'),
 	dateOfBirth: z.string().nonempty('Data de nascimento é obrigatório'),
 	address: z.string().nonempty('Endereço é obrigatório'),
@@ -18,6 +20,7 @@ const editProfileSchema = z.object({
 type EditProfileType = z.infer<typeof editProfileSchema>
 
 export function EditProfileForm() {
+	const user = useSelector((state: RootState) => state.userProfile)
 	const {
 		control,
 		handleSubmit,
@@ -25,11 +28,11 @@ export function EditProfileForm() {
 	} = useForm<EditProfileType>({
 		resolver: zodResolver(editProfileSchema),
 		defaultValues: {
-			name: '',
-			email: '',
-			phone: '',
-			dateOfBirth: '',
-			address: '',
+			name: user.name || '',
+			email: user.email || '',
+			phone: user.phone || '',
+			dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('pt-BR') : '',
+			address: user.address || '',
 		},
 	})
 
@@ -70,7 +73,7 @@ export function EditProfileForm() {
 						render={({ field: { onChange, value } }) => (
 							<Input
 								placeholder="seu.email@email.com"
-								keyboardType='email-address'
+								keyboardType="email-address"
 								autoCapitalize="none"
 								IconLeft={'mail'}
 								className="self-center"
@@ -91,7 +94,7 @@ export function EditProfileForm() {
 						render={({ field: { onChange, value } }) => (
 							<Input
 								placeholder="(00) 00000 0000"
-								keyboardType='phone-pad'
+								keyboardType="phone-pad"
 								IconLeft={'phone'}
 								className="self-center"
 								onChangeText={onChange}
