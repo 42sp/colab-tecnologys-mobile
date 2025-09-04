@@ -3,27 +3,18 @@ import { RootState } from '../store'
 
 // types
 interface UserState {
-	id: string | null
-	cpf: string | null
-	roleId: string | null
-	profileId: string | null
-	isActive: boolean | null
-	isAvailable: boolean | null
-	createdAt: string | null
-	updatedAt: string | null
+	id?: string
+	cpf?: string
+	roleId?: string
+	profileId?: string
+	isActive?: boolean
+	isAvailable?: boolean
+	createdAt?: Date
+	updatedAt?: Date
 }
 
 // initial state
-const initialState: UserState = {
-	id: null,
-	cpf: null,
-	roleId: null,
-	profileId: null,
-	isActive: false,
-	isAvailable: false,
-	createdAt: null,
-	updatedAt: null,
-}
+const initialState: UserState = {}
 
 // creation of slice
 const userSlice = createSlice({
