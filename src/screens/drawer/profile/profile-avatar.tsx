@@ -1,9 +1,9 @@
 import { Image, Text, View } from 'react-native'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Feather } from '@expo/vector-icons'
-import { usePostUploads } from '@/api/post-uploads'
-import { useGetProfile } from '@/api/get-profile-user'
+import { uploads } from '@/api/post-uploads'
+import { getProfile } from '@/api/get-profile'
 import { pickAndCompressImage } from '@/utils.ts/imageManager'
 import { env } from '@/libs/env'
 
@@ -12,27 +12,55 @@ type ProfileAvatarProps = {
 	name: string
 }
 
+interface TypeProfile {
+	id: string
+	user_id: string
+	name: string
+	email: string
+	date_of_birth: Date
+	registration_code: string
+	phone: string
+	photo: string
+	address: string
+	city: string
+	state: string
+	postcode: string
+	created_at: Date
+	updated_at: Date
+}
+
 const API_URL = env.EXPO_PUBLIC_API_URL
 
 export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
-	const { profile, getProfile } = useGetProfile()
-	const { upload } = usePostUploads();
-
+	const [profile, setProfile] = useState<TypeProfile>()
+	const fetchProfile = async () => {
+		try {
+			const response = await getProfile()
+			setProfile(response.data[0])
+		} catch (error) {
+			console.log('ProfileAvatar 1st getProfiel: ', error)
+		}
+	}
 	useEffect(() => {
-		getProfile();
-	}, [profile]);
+		fetchProfile()
+	}, [])
 
 	const photoUrl = profile?.photo
 		? `${API_URL}/images/${profile.photo}?t=${profile.updated_at}`
-		: avatar;
+		: avatar
 
 	async function updateAvatar() {
-		const result = await pickAndCompressImage();
-		if (!result) return;
+		const result = await pickAndCompressImage()
+		if (!result) return
 
-		const { fileId, uri } = result;
-		await upload({ data: { id: fileId, uri } });
-		await getProfile();
+		const { fileId, uri } = result
+		try {
+			await uploads({ id: fileId, uri })
+			const response = await getProfile()
+			setProfile(response.data[0])
+		} catch (error) {
+			console.log('ProfileAvatar 2nd getProfile and uploads: ', error)
+		}
 	}
 
 	return (

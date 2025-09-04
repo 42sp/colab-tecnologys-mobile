@@ -1,37 +1,63 @@
 import { Text, View, Image, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { Button } from '@/components/ui/button'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { pickAndCompressImage } from '@/utils.ts/imageManager'
-import { useGetProfile } from '@/api/get-profile-user'
-import { usePostUploads } from '@/api/post-uploads';
+import { getProfile } from '@/api/get-profile'
+import { uploads } from '@/api/post-uploads'
 import { env } from '@/libs/env'
 
 type EditProfileAvatarProps = {
 	avatar: string
 }
 
+interface TypeProfile {
+	id: string
+	user_id: string
+	name: string
+	email: string
+	date_of_birth: Date
+	registration_code: string
+	phone: string
+	photo: string
+	address: string
+	city: string
+	state: string
+	postcode: string
+	created_at: Date
+	updated_at: Date
+}
+
 const API_URL = env.EXPO_PUBLIC_API_URL
 
 export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
-	const { profile, getProfile } = useGetProfile()
-	const { upload } = usePostUploads();
-
+	const [profile, setProfile] = useState<TypeProfile>()
+	const fetchProfile = async () => {
+		try {
+			const response = await getProfile()
+			setProfile(response.data[0])
+		} catch (error) {
+			console.log(error)
+		}
+	}
 	useEffect(() => {
-		getProfile();
-	}, [profile]);
+		fetchProfile()
+	}, [])
 
 	const photoUrl = profile?.photo
 		? `${API_URL}/images/${profile.photo}?t=${profile.updated_at}`
-		: avatar;
+		: avatar
 
 	async function updateAvatar() {
-		const result = await pickAndCompressImage();
-		if (!result) return;
+		const result = await pickAndCompressImage()
+		if (!result) return
 
-		const { fileId, uri } = result;
-		await upload({ data: { id: fileId, uri } });
-		await getProfile();
+		const { fileId, uri } = result
+		try {
+			await uploads({ id: fileId, uri })
+		} catch (error) {
+			console.log(error)
+		}
 	}
 
 	return (
