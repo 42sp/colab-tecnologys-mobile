@@ -12,13 +12,9 @@ import { ScanFace } from 'lucide-react-native'
 
 const SecuritySettingsSchema = z
 	.object({
-		currentPassword: z.string().nonempty('A senha atual é obrigatória'),
 		newPassword: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
 		confirmPassword: z.string().nonempty('A confirmação da senha é obrigatória'),
 	})
-
-	// validar se o currentPassword é igual ao password armazenado
-
 	.refine((data) => data.newPassword === data.confirmPassword, {
 		message: "As senhas não correspondem",
 		path: ['confirmPassword'],
@@ -26,7 +22,7 @@ const SecuritySettingsSchema = z
 
 type SecuritySettingsType = z.infer<typeof SecuritySettingsSchema>
 
-export function SecuritySettingsForm() {
+export function ResetPasswordForm() {
 	const {
 		control,
 		handleSubmit,
@@ -34,7 +30,6 @@ export function SecuritySettingsForm() {
 	} = useForm<SecuritySettingsType>({
 		resolver: zodResolver(SecuritySettingsSchema),
 		defaultValues: {
-			currentPassword: '',
 			newPassword: '',
 			confirmPassword: '',
 		},
@@ -47,40 +42,13 @@ export function SecuritySettingsForm() {
 		drawer('profile')
 	}
 
-	const [hideCurrentPassword, setHideCurrentPassword] = useState(true)
 	const [hideNewPassword, setHideNewPassword] = useState(true)
 	const [hideConfirmPassword, setHideConfirmPassword] = useState(true)
 
 	return (
-		<View className=" mt-6 gap-5 px-4 pb-4 ">
+		<View className=" gap-5 px-4 pb-4 ">
 			<Card className=" gap-5">
-				<Card.Header>
-					<Text className="font-inter-bold text-xl">Gerenciar senha</Text>
-				</Card.Header>
 				<Card.Body className="gap-5 pb-10">
-					<View className="gap-1">
-						<Text>Senha atual</Text>
-						<Controller
-							control={control}
-							name="currentPassword"
-							render={({ field: { onChange, value } }) => (
-								<Input
-									placeholder="Digite sua senha atual"
-									IconLeft={'lock'}
-									IconRight={hideCurrentPassword ? 'eye-off' : 'eye'}
-									iconPress={() => setHideCurrentPassword(!hideCurrentPassword)}
-									secureTextEntry={hideCurrentPassword}
-									className="self-center"
-									value={value}
-									onChangeText={onChange}
-									hasError={!!errors.currentPassword}
-								/>
-							)}
-						/>
-						{errors.currentPassword && (
-							<Text className="text-red-500">{errors.currentPassword.message}</Text>
-						)}
-					</View>
 					<View className="gap-1">
 						<Text>Nova senha</Text>
 						<Controller

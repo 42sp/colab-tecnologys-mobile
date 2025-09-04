@@ -8,16 +8,16 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigate } from '@/libs/react-navigation/useNavigate'
 
 const forgotPasswordSchema = z.object({
-	cpf: z.string().nonempty('O cpf é necessário'),
+	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve ser válido'),
 })
 
 type ForgotPasswordType = z.infer<typeof forgotPasswordSchema>
 
 export default function ForgotPasswordScreen() {
-	const router = useNavigation()
+	const { stack } = useNavigate()
 
 	const {
 		control,
@@ -25,6 +25,9 @@ export default function ForgotPasswordScreen() {
 		formState: { errors, isSubmitting },
 	} = useForm<ForgotPasswordType>({
 		resolver: zodResolver(forgotPasswordSchema),
+		defaultValues: {
+			cpf: '',
+		},
 	})
 
 	async function onSubmit(data: ForgotPasswordType) {
@@ -40,7 +43,7 @@ export default function ForgotPasswordScreen() {
 					<View className="my-5 items-center">
 						<Text className="font-inter-bold text-3xl">Esqueci minha senha</Text>
 						<Text className="mt-2 text-center font-inter text-lg text-neutral-500">
-						Informe seu CPF para receber uma nova senha
+							Informe seu CPF para receber uma nova senha
 						</Text>
 					</View>
 
@@ -51,6 +54,7 @@ export default function ForgotPasswordScreen() {
 							render={({ field: { onChange, onBlur, value } }) => (
 								<View>
 									<Input
+										keyboardType="numeric"
 										autoCapitalize="none"
 										IconLeft="mail"
 										placeholder="Informe seu CPF"
@@ -69,23 +73,26 @@ export default function ForgotPasswordScreen() {
 						/>
 
 						<Text className="mt-4 text-center font-inter text-sm leading-5 text-neutral-500">
-						Enviaremos uma mensagem ao seu celular com um código de ativação
+							Enviaremos uma mensagem ao seu celular com um código de ativação
 						</Text>
 
 						<Button
 							className="mt-8"
 							title="Resetar a senha"
-							onPress={handleSubmit(onSubmit)}
+							onPress={() => {
+								handleSubmit(onSubmit)
+								stack('verifyCode')
+							}}
 							disabled={isSubmitting}
 						/>
 
 						<TouchableOpacity
 							className="mt-6 self-center"
 							activeOpacity={0.5}
-							onPress={() => router.goBack()}
+							onPress={() => stack('signIn')}
 						>
 							<Text className="text-center font-inter-bold text-base leading-6 text-blue-600">
-							Voltar para o Login
+								Voltar para o Login
 							</Text>
 						</TouchableOpacity>
 					</View>
