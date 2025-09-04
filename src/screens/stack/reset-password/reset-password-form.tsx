@@ -46,7 +46,7 @@ export function ResetPasswordForm() {
 	const [hideConfirmPassword, setHideConfirmPassword] = useState(true)
 
 	return (
-		<View className=" mt-6 gap-5 px-4 pb-4 ">
+		<View className=" gap-5 px-4 pb-4 ">
 			<Card className=" gap-5">
 				<Card.Body className="gap-5 pb-10">
 					<View className="gap-1">
