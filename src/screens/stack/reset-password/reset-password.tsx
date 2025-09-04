@@ -1,14 +1,16 @@
+import { KeyboardAvoidingView } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { ResetPasswordForm } from './reset-password-form'
+import { ScrollView } from 'react-native-gesture-handler'
 
-import { SafeAreaView, View } from 'react-native';
-
-export default function ResetPassword() {
+export default function ResetPasswordScreen() {
 	return (
 		<SafeAreaView>
-			<View className="m-4 bg-white p-10 rounded-lg">
-				<View className="my-4 px-4">
-
-				</View>
-			</View>
+			<KeyboardAvoidingView behavior={'height'}>
+				<ScrollView showsVerticalScrollIndicator={false}>
+					<ResetPasswordForm />
+				</ScrollView>
+			</KeyboardAvoidingView>
 		</SafeAreaView>
 	)
 }
