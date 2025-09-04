@@ -12,15 +12,15 @@ import { ScanFace } from 'lucide-react-native'
 
 const SecuritySettingsSchema = z
 	.object({
-		currentPassword: z.string().nonempty('Current password is required'),
-		newPassword: z.string().min(6, 'Password must be at least 6 characters'),
-		confirmPassword: z.string().nonempty('Confirm password is required'),
+		currentPassword: z.string().nonempty('A senha atual é obrigatória'),
+		newPassword: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
+		confirmPassword: z.string().nonempty('A confirmação da senha é obrigatória'),
 	})
 
 	// validar se o currentPassword é igual ao password armazenado
 
 	.refine((data) => data.newPassword === data.confirmPassword, {
-		message: "Passwords don't match",
+		message: "As senhas não correspondem",
 		path: ['confirmPassword'],
 	})
 
@@ -146,7 +146,7 @@ export function SecuritySettingsForm() {
 				</Card.Footer>
 			</Card>
 			<Button className="flex-1" onPress={handleSubmit(onSubmit)}>
-				<Text className="font-inter-medium text-xl text-neutral-100">Salvar mudanças</Text>
+				<Text className="font-inter-medium text-xl text-neutral-100">Salvar alterações</Text>
 			</Button>
 			<Card className="gap-5">
 				<Card.Header>
