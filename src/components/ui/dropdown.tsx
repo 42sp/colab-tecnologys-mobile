@@ -26,13 +26,17 @@ const dropdownVariants: Record<DropdownVariant, { container: string; text: strin
 	},
 }
 
+export interface ItemType {
+	label: string
+}
+
 interface DropdownProps extends TextInputProps {
 	IconLeft?: keyof typeof Feather.glyphMap
 	IconRight?: keyof typeof Feather.glyphMap
 	iconColor?: string
 	className?: string
 	placeholder?: string
-	options: { label: string }[]
+	options: ItemType[]
 	variant?: DropdownVariant
 	value?: string
 	onChangeText?: (text: string) => void
@@ -59,7 +63,7 @@ export function Dropdown({
 	const errorClass = hasError ? dropdownVariants['error'].container : ''
 	const errorText = hasError ? dropdownVariants['error'].text : ''
 
-	const iconColorStyle = hasError ? '#ef4444' : (iconColor ? iconColor : '#d4d4d4')
+	const iconColorStyle = hasError ? '#ef4444' : iconColor ? iconColor : '#d4d4d4'
 
 	return (
 		<Pressable
@@ -67,17 +71,13 @@ export function Dropdown({
 			className={`w-full ${className}`}
 		>
 			<View className={`px-4 ${containerStyle} ${errorClass} ${className}`}>
-				{IconLeft && (
-					<Feather name={IconLeft} size={20} color={iconColorStyle} />
-				)}
+				{IconLeft && <Feather name={IconLeft} size={20} color={iconColorStyle} />}
 
 				<Text className={`flex-1 px-3 ${textStyle} ${errorText} ${className}`}>
 					{value || placeholder}
 				</Text>
 
-				{IconRight && (
-					<Feather name={IconRight} size={20} color={iconColorStyle} />
-				)}
+				{IconRight && <Feather name={IconRight} size={20} color={iconColorStyle} />}
 			</View>
 
 			{open && (

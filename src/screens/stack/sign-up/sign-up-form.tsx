@@ -3,17 +3,18 @@ import { z } from 'zod'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
-import { Dropdown } from '@/components/ui/dropdown'
+import { Dropdown, ItemType } from '@/components/ui/dropdown'
 import { Button } from '@/components/ui/button'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
-import { usePostUser } from '@/api/post-user'
 import { useDispatch } from 'react-redux'
+import { getRoles } from '@/api/get-roles'
+import { createUser } from '@/api/create-user'
+import { signIn } from '@/api/sign-in'
+import { setAuth } from '@/libs/redux/auth/auth-slice'
+import { createProfile } from '@/api/create-profile'
 import { setUser } from '@/libs/redux/user/user-slice'
-import { usePostAuthSignIn } from '@/api/post-auth-sign-in'
-import { setAuth } from '@/libs/redux/auth-sign-in/auth-sign-in-slice'
-import { useGetRoles } from '@/api/get-roles'
-import { usePostProfile } from '@/api/post-profile'
+import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
 
 const signUpSchema = z
 	.object({
@@ -32,9 +33,14 @@ const signUpSchema = z
 
 type SignUpType = z.infer<typeof signUpSchema>
 
+type RolesType = {
+	id: string
+} & ItemType
+
 export function SignUpForm() {
 	const { stack, drawer } = useNavigate()
 	const [hidePassword, setHidePassword] = useState(true)
+
 	const {
 		control,
 		handleSubmit,
@@ -51,76 +57,69 @@ export function SignUpForm() {
 			confirmPassword: '',
 		},
 	})
-	const { items } = useGetRoles()
-	const { fetchData: postUser } = usePostUser()
-	const { data: dataAuth, fetchData: postAuth } = usePostAuthSignIn()
-	const { data: dataProfile, fetchData: postProfile } = usePostProfile()
+	const [rolesList, setRolesList] = useState<RolesType[]>([])
 	const dispatch = useDispatch()
 
-	const onSubmit = async (profile: SignUpType) => {
-		console.log('Dados de registro ', profile)
+	const fetchRolesList = async () => {
+		try {
+			const roles = await getRoles()
+			const list = roles.data.map(({ id, role_name }) => ({ id, label: role_name }))
+			setRolesList(list)
+		} catch (error) {
+			console.log(error)
+		}
+	}
 
-		// post user
-		if (postUser) {
-			console.log('chamando postUser')
-			const responseUser = await postUser({
-				data: { cpf: profile.cpf, password: profile.password, role_id: profile.jobTitle },
+	useEffect(() => {
+		fetchRolesList()
+	}, [])
+
+	async function onSubmit(profile: SignUpType) {
+		console.log('Dados de registro ', profile.jobTitle)
+		try {
+			const user = await createUser({
+				cpf: profile.cpf,
+				password: profile.password,
+				role_id: profile.jobTitle,
 			})
-			console.log('Dados do postUser: ', responseUser)
+			const auth = await signIn({ cpf: profile.cpf, password: profile.password })
 
-			if (responseUser) {
-				dispatch(
-					setUser({
-						id: responseUser.id,
-						cpf: responseUser.cpf,
-						roleId: responseUser.role_id,
-						profileId: responseUser.profile_id,
-						isActive: responseUser.is_active,
-						isAvailable: responseUser.is_available,
-						createdAt: responseUser.created_at,
-						updatedAt: responseUser.updated_at,
-					}),
-				)
-			}
-			// post auth
-			if (postAuth && responseUser) {
-				console.log('chamando postAuth')
-				const responseAuth = await postAuth({
-					data: { strategy: 'local', cpf: profile.cpf, password: profile.password },
-				})
-				console.log('Dados do postAuth:', responseAuth)
+			const { payload } = auth.authentication
+			dispatch(setAuth({ token: auth.accessToken, expiry: payload.exp, id: payload.sub }))
 
-				if (responseAuth) {
-					dispatch(
-						setAuth({
-							token: responseAuth.accessToken,
-							expiry: responseAuth.authentication.payload.exp,
-							id: responseAuth.user.id,
-						}),
-					)
-				}
-				// post profile
-				if (postProfile && responseAuth) {
-					console.log('chamando postProfile')
-					const responseProfile = await postProfile({
-						data: {
-							name: profile.name,
-							email: profile.email,
-							phone: profile.phone,
-							date_of_birth: '2003-02-01',
-							registration_code: 'REG-2025-008',
-							address: 'Rua Exemplo, 123',
-							city: 'São Paulo',
-							state: 'SP',
-							postcode: '01234-567',
-							user_id: responseUser.id,
-						},
-					})
-					console.log('response postProfile: ', responseProfile)
-					console.log('indo pra perfil')
-					drawer('profile')
-				}
-			}
+			const newProfile = await createProfile({
+				name: profile.name,
+				phone: profile.name,
+			})
+
+			dispatch(
+				setUser({
+					id: user.id,
+					cpf: user.cpf,
+					roleId: user.role_id,
+					profileId: user.profile_id,
+					isActive: user.is_active,
+					isAvailable: user.is_available,
+					createdAt: user.created_at,
+					updatedAt: user.updated_at,
+				}),
+			)
+			dispatch(
+				setProfile({
+					name: newProfile.name,
+					dateOfBirth: newProfile.date_of_birth,
+					registrationCode: newProfile.registration_code,
+					phone: newProfile.phone,
+					address: newProfile.address,
+					city: newProfile.city,
+					state: newProfile.state,
+					postcode: newProfile.postcode,
+					photo: newProfile.photo,
+				}),
+			)
+			drawer('home')
+		} catch (error) {
+			console.log(error)
 		}
 	}
 
@@ -211,14 +210,13 @@ export function SignUpForm() {
 						<Dropdown
 							IconLeft={'briefcase'}
 							IconRight={'chevron-down'}
-							options={items}
+							options={rolesList}
 							variant="default"
 							placeholder="Selecione uma opção"
-							value={items.find((item) => item.id === value)?.label || ''} // mostra label
+							value={rolesList.find((item) => item.id === value)?.label || ''} // mostra label
 							onChangeText={(selectedLabel) => {
-								// encontra o item pelo label e guarda o id
-								const selected = items.find((item) => item.label === selectedLabel)
-								if (selected) onChange(selected.id) // guarda role_id
+								const selected = rolesList.find((item) => item.label === selectedLabel)
+								if (selected) onChange(selected.id)
 							}}
 							hasError={!!errors.jobTitle}
 						/>

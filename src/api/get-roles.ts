@@ -1,21 +1,23 @@
-import useAxios from '@/hooks/use-axios'
+import { api } from '@/libs/axios/axios'
 
 interface Roles {
 	id: string
 	role_name: string
+	role_description: string
+	hierarchy_level: number
+	is_active: boolean
+	updated_at: Date
+	created_at: Date
 }
 
-interface Response {
+interface GetRolesResponse {
+	total: number
+	skip: number
+	limit: number
 	data: Roles[]
 }
 
-export const useGetRoles = () => {
-	const { data, loading, error } = useAxios<Response>({ url: 'roles', method: 'get' })
-
-	const items =
-		data?.data.map((roles) => ({
-			id: roles.id,
-			label: roles.role_name,
-		})) || []
-	return { items, loading, error }
+export async function getRoles() {
+	const response = await api.get<GetRolesResponse>('/roles')
+	return response.data
 }

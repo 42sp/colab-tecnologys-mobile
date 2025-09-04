@@ -21,12 +21,13 @@ export type StackParamList = {
 const Stack = createStackNavigator<StackParamList>()
 
 export default function StackLayout() {
-	const { token, expiry } = useSelector((state: RootState) => state.authSignIn)
+	const { token, expiry } = useSelector((state: RootState) => state.auth)
 	const now = Math.floor(Date.now() / 1000)
 	const route = !token || !expiry || expiry >= now.toString() ? 'signIn' : 'drawer'
+
 	return (
 		<Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={route}>
-			<Stack.Screen name="home" component={HomeScreen} options={{}} />
+			{/* <Stack.Screen name="home" component={HomeScreen} options={{}} /> */}
 			<Stack.Screen name="signIn" component={SignInScreen} options={{}} />
 			<Stack.Screen
 				name="signUp"
