@@ -35,7 +35,8 @@
     "react-native-screens": "~4.11.1",
     "react-redux": "^9.2.0",
     "zo": "^0.0.2",
-    "zod": "^4.0.14"
+    "zod": "^4.0.14",
+    "expo-image-manipulator": "~13.1.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
