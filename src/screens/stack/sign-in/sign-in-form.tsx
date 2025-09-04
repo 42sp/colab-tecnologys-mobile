@@ -6,9 +6,10 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
-import { useDispatch } from 'react-redux'
-import { setAuth } from '@/libs/redux/auth-sign-in/auth-sign-in-slice'
-import { usePostAuthSignIn } from '@/api/post-auth-sign-in'
+import { useDispatch, useSelector } from 'react-redux'
+import { setAuth } from '@/libs/redux/auth/auth-slice'
+import { signIn } from '@/api/sign-in'
+import { RootState } from '@/libs/redux/store'
 
 const signInSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve conter 11 caracteres'),
@@ -34,23 +35,18 @@ export function SignInForm() {
 		},
 	})
 
-	const { fetchData: postAuthSignIn } = usePostAuthSignIn()
-
-	const onSubmit = async (user: SignInType) => {
-		if (postAuthSignIn) {
-			const responseAuth = await postAuthSignIn({ data: { strategy: 'local', ...user } })
-			if (responseAuth) {
-				dispatch(
-					setAuth({
-						token: responseAuth.accessToken,
-						expiry: responseAuth.authentication.payload.exp,
-						id: responseAuth.user.id,
-					}),
-				)
-				drawer('profile')
-			}
+	async function onSubmit(user: SignInType) {
+		try {
+			const auth = await signIn({ ...user })
+			const { accessToken } = auth
+			const { payload } = auth.authentication
+			dispatch(setAuth({ token: accessToken, expiry: payload.exp, id: payload.sub }))
+			drawer('home')
+		} catch (error) {
+			console.log(error)
 		}
 	}
+
 	return (
 		<View className="my-5 gap-5">
 			<Controller
