@@ -2,31 +2,16 @@ import { Text, View, Image, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
-import { getProfile } from '@/api/get-profile'
 import { env } from '@/libs/env'
 import { launchImageLibraryAsync, useMediaLibraryPermissions } from 'expo-image-picker'
 import { useImageManager } from '@/utils.ts/useImageManager'
 import { uploads } from '@/api/post-uploads'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '@/libs/redux/store'
+import { updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
 
 type EditProfileAvatarProps = {
 	avatar: string
-}
-
-interface TypeProfile {
-	id: string
-	user_id: string
-	name: string
-	email: string
-	date_of_birth: Date
-	registration_code: string
-	phone: string
-	photo: string
-	address: string
-	city: string
-	state: string
-	postcode: string
-	created_at: Date
-	updated_at: Date
 }
 
 const API_URL = env.EXPO_PUBLIC_API_URL
@@ -34,34 +19,26 @@ const API_URL = env.EXPO_PUBLIC_API_URL
 export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 	const { setManipulatedImage, renderedImage } = useImageManager()
 	const [_status, _requestPermission] = useMediaLibraryPermissions()
-	const [profile, setProfile] = useState<TypeProfile>()
 	const [imageUri, setImageUri] = useState<string>('')
-
-	const fetchProfile = async () => {
-		try {
-			const response = await getProfile()
-			setProfile(response.data[0])
-		} catch (error) {
-			console.log(error)
-		}
-	}
-	useEffect(() => {
-		fetchProfile()
-	}, [])
+	const profile = useSelector((state: RootState) => state.userProfile)
+	const dispatch = useDispatch()
 
 	useEffect(() => {
 		const handleRenderedImage = async () => {
-			console.log('uri: ', imageUri)
-			const result = await uploads({ uri: imageUri })
-			if (result) {
-				await getProfile()
+			try {
+				const result = await uploads({ uri: imageUri })
+				if (result) {
+					dispatch(updateProfile({ photo: result.id }))
+				}
+			} catch (error) {
+				console.log('error returned edit-profile-avatar: ', error)
 			}
 		}
 		handleRenderedImage()
-	}, [renderedImage])
+	}, [renderedImage, imageUri])
 
 	const photoUrl = profile?.photo
-		? `${API_URL}/images/${profile.photo}?t=${profile.updated_at}`
+		? `${API_URL}/images/${profile.photo}?t=${profile.updatedAt}`
 		: avatar
 
 	async function updateAvatar() {

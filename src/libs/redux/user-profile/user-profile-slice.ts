@@ -12,6 +12,7 @@ interface UserProfileState {
 	city?: string
 	state?: string
 	postcode?: string
+	updatedAt?: Date
 }
 
 const initialState: UserProfileState = {}
@@ -21,6 +22,9 @@ const userProfileSlice = createSlice({
 	initialState,
 	reducers: {
 		setProfile(state, { payload }: PayloadAction<UserProfileState>) {
+			return { ...state, ...payload }
+		},
+		updateProfile(state, { payload }: PayloadAction<Partial<UserProfileState>>) {
 			return { ...state, ...payload }
 		},
 	},
@@ -36,6 +40,7 @@ export const selectAddress = (state: RootState) => state.userProfile.address
 export const selectCity = (state: RootState) => state.userProfile.city
 export const selectRegion = (state: RootState) => state.userProfile.state
 export const selectPostcode = (state: RootState) => state.userProfile.postcode
+export const selectUpdatedAt = (state: RootState) => state.userProfile.updatedAt
 
-export const { setProfile } = userProfileSlice.actions
+export const { setProfile, updateProfile } = userProfileSlice.actions
 export default userProfileSlice.reducer
