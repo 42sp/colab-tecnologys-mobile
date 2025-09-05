@@ -6,10 +6,11 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { setAuth } from '@/libs/redux/auth/auth-slice'
 import { signIn } from '@/api/sign-in'
-import { RootState } from '@/libs/redux/store'
+import { getProfile } from '@/api/get-profile'
+import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
 
 const signInSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve conter 11 caracteres'),
@@ -41,6 +42,21 @@ export function SignInForm() {
 			const { accessToken } = auth
 			const { payload } = auth.authentication
 			dispatch(setAuth({ token: accessToken, expiry: payload.exp, id: payload.sub }))
+			const profile = await getProfile()
+			const userProfile = profile.data[0]
+			dispatch(
+				setProfile({
+					name: userProfile.name,
+					dateOfBirth: userProfile.date_of_birth,
+					registrationCode: userProfile.registration_code,
+					phone: userProfile.phone,
+					address: userProfile.address,
+					city: userProfile.city,
+					state: userProfile.state,
+					postcode: userProfile.postcode,
+					photo: userProfile.photo,
+				}),
+			)
 			drawer('home')
 		} catch (error) {
 			console.log(error)

@@ -1,7 +1,6 @@
 import { ProfileAvatar } from './profile-avatar'
 import { ProfileInfoItem } from './profile-info-item'
 import { Button } from '@/components/ui/button'
-import { useEffect } from 'react'
 import Card from '@/components/ui/card'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -12,18 +11,11 @@ import { useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
 
 export default function ProfileScreen() {
-	const userProfile = useSelector((state: RootState) => state.userProfile)
-
-	// const { data, loading, error } = useGetProfile()
-	// if (loading) console.log('loading profile...')
-	// if (error) console.log('error: ', error)
+	const user = useSelector((state: RootState) => state.userProfile)
 	return (
 		<ScrollView showsVerticalScrollIndicator={false}>
 			<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] p-5">
-				<ProfileAvatar
-					avatar="https://randomuser.me/portraits/men/1.jpg"
-					name={userProfile.name || ''}
-				/>
+				<ProfileAvatar avatar="https://randomuser.me/portraits/men/1.jpg" name={user.name || ''} />
 
 				<Card className="flex-1">
 					<Card.Header>
@@ -31,11 +23,15 @@ export default function ProfileScreen() {
 					</Card.Header>
 
 					<Card.Body className="gap-4">
-						<ProfileInfoItem label="Nome completo" value={userProfile.name || ''} icon="user" />
-						<ProfileInfoItem label="CPF" value={userProfile.cpf || ''} icon="mail" />
-						<ProfileInfoItem label="Número de telefone" value={userProfile.phone || ''} icon="phone" />
-						<ProfileInfoItem label="Data de nascimento" value={userProfile.dateOfBirth || ''} icon="calendar" />
-						<ProfileInfoItem label="Endereço" value={userProfile.address || ''} icon="map-pin" />
+						<ProfileInfoItem label="Nome completo" value={user.name || ''} icon="user" />
+						<ProfileInfoItem label="Email" value={user.email || ''} icon="mail" />
+						<ProfileInfoItem label="Número de telefone" value={user.phone || ''} icon="phone" />
+						<ProfileInfoItem
+							label="Data de nascimento"
+							value={user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('pt-BR') : ''}
+							icon="calendar"
+						/>
+						<ProfileInfoItem label="Endereço" value={user.address || ''} icon="map-pin" />
 
 						<Card.Footer className="mt-4">
 							<TouchableOpacity activeOpacity={0.8} className="p-2">
