@@ -115,6 +115,7 @@ export function SignUpForm() {
 					state: newProfile.state,
 					postcode: newProfile.postcode,
 					photo: newProfile.photo,
+					updatedAt: newProfile.updated_at,
 				}),
 			)
 			drawer('home')

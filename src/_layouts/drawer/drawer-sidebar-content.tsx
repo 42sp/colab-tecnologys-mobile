@@ -4,10 +4,13 @@ import { View, Text, Image, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { type Route } from '@react-navigation/native'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/libs/redux/store'
 
 export function CustomDrawerContent(props: any) {
 	const { state } = props
 	const { drawer } = useNavigate()
+	const profile = useSelector((state: RootState) => state.userProfile)
 
 	return (
 		<DrawerContentScrollView
@@ -25,13 +28,17 @@ export function CustomDrawerContent(props: any) {
 				<View className="items-center">
 					<View className="relative -mt-6 size-36 rounded-full border border-neutral-100 bg-white p-1">
 						<Image
-							source={{ uri: 'https://randomuser.me/portraits/men/1.jpg' }}
+							source={{
+								uri: profile?.photo ? profile.photo : 'https://randomuser.me/portraits/men/1.jpg',
+							}}
 							className=" h-full w-full rounded-full"
 							resizeMode="cover"
 						/>
 					</View>
-					<Text className="pt-6 text-lg font-medium">Ricardo Oliveira</Text>
-					<Text className="text-x mb-8 text-gray-500">ricardo.oliveira@construtech.com</Text>
+					<Text className="pt-6 text-lg font-medium">{profile?.name || ''}</Text>
+					<Text className="text-x mb-8 text-gray-500">
+						{profile?.email ? profile.email : profile?.phone || ''}
+					</Text>
 				</View>
 
 				{state.routes.map((route: Route<string>, index: number) => {

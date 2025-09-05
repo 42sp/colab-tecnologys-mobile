@@ -55,6 +55,7 @@ export function SignInForm() {
 					state: userProfile.state,
 					postcode: userProfile.postcode,
 					photo: userProfile.photo,
+					updatedAt: userProfile.updated_at,
 				}),
 			)
 			drawer('home')
