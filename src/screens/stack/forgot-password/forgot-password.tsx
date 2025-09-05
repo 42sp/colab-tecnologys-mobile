@@ -30,8 +30,11 @@ export default function ForgotPasswordScreen() {
 		},
 	})
 
-	async function onSubmit(data: ForgotPasswordType) {
-		console.log('Email', JSON.stringify(data))
+	async function onSubmit({ cpf }: ForgotPasswordType) {
+		try {
+		} catch (error) {
+			console.log(error)
+		}
 		await new Promise((resolve) => setTimeout(resolve, 1000))
 	}
 

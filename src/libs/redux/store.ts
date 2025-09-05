@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './auth/auth-slice'
 import userReducer from './user/user-slice'
 import userProfileReducer from './user-profile/user-profile-slice'
+import passwordRecoveryReducer from './password-recovery/password-recovery-slice'
 
 const store = configureStore({
 	reducer: {
@@ -9,6 +10,7 @@ const store = configureStore({
 		auth: authReducer,
 		user: userReducer,
 		userProfile: userProfileReducer,
+		passwordRecovery: passwordRecoveryReducer,
 	},
 })
 
