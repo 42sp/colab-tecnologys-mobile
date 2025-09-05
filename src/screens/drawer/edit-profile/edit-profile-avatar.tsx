@@ -2,10 +2,11 @@ import { Text, View, Image, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { Button } from '@/components/ui/button'
 import { useEffect } from 'react'
-import { pickAndCompressImage } from '@/utils.ts/imageManager'
 import { useGetProfile } from '@/api/get-profile-user'
 import { usePostUploads } from '@/api/post-uploads';
 import { env } from '@/libs/env'
+import { launchImageLibraryAsync, useMediaLibraryPermissions } from 'expo-image-picker'
+import { useImageManager } from '@/utils.ts/useImageManager'
 
 type EditProfileAvatarProps = {
 	avatar: string
@@ -16,6 +17,8 @@ const API_URL = env.EXPO_PUBLIC_API_URL
 export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 	const { profile, getProfile } = useGetProfile()
 	const { upload } = usePostUploads();
+	const { setManipulatedImage, renderedImage } = useImageManager();
+	const [_status, _requestPermission] = useMediaLibraryPermissions();
 
 	useEffect(() => {
 		getProfile();
@@ -26,13 +29,21 @@ export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 		: avatar;
 
 	async function updateAvatar() {
-		const result = await pickAndCompressImage();
-		if (!result) return;
-
-		const { fileId, uri } = result;
-		await upload({ data: { id: fileId, uri } });
-		await getProfile();
-	}
+			const result = await launchImageLibraryAsync({
+				mediaTypes: 'images',
+				base64: true,
+				allowsEditing: true,
+				quality: 1,
+				aspect: [1, 1],
+			  })
+	
+			console.log("Resultado da imagem:", result?.assets && result.assets[0] ? result.assets[0].assetId : null);
+	
+			if (!result.canceled && result.assets[0].base64) {
+				const base64 = result.assets[0].base64;
+				setManipulatedImage({image: `data:image/png;base64,${base64}`, options: {width:300, height:300, compress: 0.8, format: 'jpeg'}});
+			}
+		}
 
 	return (
 		<View className="items-center gap-3">
