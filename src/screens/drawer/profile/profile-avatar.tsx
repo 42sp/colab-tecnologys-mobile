@@ -6,63 +6,44 @@ import { getProfile } from '@/api/get-profile'
 import { env } from '@/libs/env'
 import { launchImageLibraryAsync, useMediaLibraryPermissions } from 'expo-image-picker'
 import { useImageManager } from '@/utils.ts/useImageManager'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '@/libs/redux/store'
+import { updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
 
 type ProfileAvatarProps = {
 	avatar: string
 	name: string
 }
 
-interface TypeProfile {
-	id: string
-	user_id: string
-	name: string
-	email: string
-	date_of_birth: Date
-	registration_code: string
-	phone: string
-	photo: string
-	address: string
-	city: string
-	state: string
-	postcode: string
-	created_at: Date
-	updated_at: Date
-}
-
 const API_URL = env.EXPO_PUBLIC_API_URL
 
 export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
-	const [profile, setProfile] = useState<TypeProfile>()
 	const { setManipulatedImage, renderedImage } = useImageManager()
 	const [_status, _requestPermission] = useMediaLibraryPermissions()
 	const [imageUri, setImageUri] = useState<string>('')
-
-	const fetchProfile = async () => {
-		try {
-			const response = await getProfile()
-			setProfile(response.data[0])
-		} catch (error) {
-			console.log('ProfileAvatar 1st getProfile: ', error)
-		}
-	}
-	useEffect(() => {
-		fetchProfile()
-	}, [])
+	const profile = useSelector((state: RootState) => state.userProfile)
+	const dispatch = useDispatch()
 
 	useEffect(() => {
 		const handleRenderedImage = async () => {
-			console.log('uri: ', imageUri)
-			const result = await uploads({ uri: imageUri }) // corrigir
-			if (result) {
-				await getProfile()
+			if (!imageUri) return
+			try {
+				const result = await uploads({ uri: imageUri })
+				if (result) {
+					const user = await getProfile()
+					dispatch(updateProfile({ photo: result.id, updatedAt: user.data[0].updated_at }))
+				}
+			} catch (error) {
+				console.log('error returned profile-avatar: ', error)
 			}
 		}
 		handleRenderedImage()
-	}, [renderedImage])
-
+	}, [renderedImage, imageUri])
 	const photoUrl = profile?.photo
-		? `${API_URL}/images/${profile.photo}?t=${profile.updated_at}`
+		? `${API_URL}/images/${profile.photo}?t=${profile.updatedAt}`
 		: avatar
+
+	const displayImage = renderedImage || photoUrl
 
 	async function updateAvatar() {
 		const result = await launchImageLibraryAsync({
@@ -80,7 +61,6 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 
 		if (!result.canceled && result.assets[0].base64) {
 			const base64 = result.assets[0].base64
-			const assets = result.assets[0]
 			setManipulatedImage({
 				image: `data:image/png;base64,${base64}`,
 				options: { width: 300, height: 300, compress: 0.8, format: 'jpeg' },
