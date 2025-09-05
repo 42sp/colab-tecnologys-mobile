@@ -9,6 +9,9 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
+import { passwordRecovery } from '@/api/password-recovery'
+import { useDispatch } from 'react-redux'
+import { setPasswordRecovery } from '@/libs/redux/password-recovery/password-recovery-slice'
 
 const forgotPasswordSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve ser válido'),
@@ -18,6 +21,7 @@ type ForgotPasswordType = z.infer<typeof forgotPasswordSchema>
 
 export default function ForgotPasswordScreen() {
 	const { stack } = useNavigate()
+	const dispatch = useDispatch()
 
 	const {
 		control,
@@ -25,17 +29,23 @@ export default function ForgotPasswordScreen() {
 		formState: { errors, isSubmitting },
 	} = useForm<ForgotPasswordType>({
 		resolver: zodResolver(forgotPasswordSchema),
-		defaultValues: {
-			cpf: '',
-		},
 	})
 
 	async function onSubmit({ cpf }: ForgotPasswordType) {
 		try {
+			const response = await passwordRecovery({ cpf })
+			console.log('response', response)
+
+			dispatch(
+				setPasswordRecovery({
+					cpf,
+					phone: response.phone,
+				}),
+			)
+			stack('verifyCode')
 		} catch (error) {
 			console.log(error)
 		}
-		await new Promise((resolve) => setTimeout(resolve, 1000))
 	}
 
 	return (
@@ -82,10 +92,7 @@ export default function ForgotPasswordScreen() {
 						<Button
 							className="mt-8"
 							title="Resetar a senha"
-							onPress={() => {
-								handleSubmit(onSubmit)
-								stack('verifyCode')
-							}}
+							onPress={handleSubmit(onSubmit)}
 							disabled={isSubmitting}
 						/>
 
