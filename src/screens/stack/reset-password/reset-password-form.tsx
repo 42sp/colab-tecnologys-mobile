@@ -9,6 +9,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
 import { ScanFace } from 'lucide-react-native'
+import { patchUsers } from '@/api/patch-users'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '@/libs/redux/store'
+import { signIn } from '@/api/sign-in'
+import { setAuth } from '@/libs/redux/auth/auth-slice'
+import { getProfile } from '@/api/get-profile'
+import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
 
 const SecuritySettingsSchema = z
 	.object({
@@ -16,30 +23,56 @@ const SecuritySettingsSchema = z
 		confirmPassword: z.string().nonempty('A confirmação da senha é obrigatória'),
 	})
 	.refine((data) => data.newPassword === data.confirmPassword, {
-		message: "As senhas não correspondem",
+		message: 'As senhas não correspondem',
 		path: ['confirmPassword'],
 	})
 
 type SecuritySettingsType = z.infer<typeof SecuritySettingsSchema>
 
 export function ResetPasswordForm() {
+	const { cpf, userId } = useSelector((state: RootState) => state.passwordRecovery)
+	const dispatch = useDispatch()
+
 	const {
 		control,
 		handleSubmit,
 		formState: { errors },
 	} = useForm<SecuritySettingsType>({
 		resolver: zodResolver(SecuritySettingsSchema),
-		defaultValues: {
-			newPassword: '',
-			confirmPassword: '',
-		},
 	})
 
 	const { drawer } = useNavigate()
 
-	function onSubmit(data: SecuritySettingsType) {
-		console.log('Dados de Registro: ', JSON.stringify(data))
-		drawer('profile')
+	async function onSubmit({ newPassword }: SecuritySettingsType) {
+		try {
+			if (!userId || !cpf) throw new Error('Erro inesperado')
+
+			const user = await patchUsers({ id: userId, cpf: cpf, password: newPassword })
+
+			const auth = await signIn({ cpf: user.cpf, password: newPassword })
+			const { accessToken } = auth
+			const { payload } = auth.authentication
+			dispatch(setAuth({ token: accessToken, expiry: payload.exp, id: payload.sub }))
+			const profile = await getProfile()
+			const userProfile = profile.data[0]
+			dispatch(
+				setProfile({
+					name: userProfile.name,
+					dateOfBirth: userProfile.date_of_birth,
+					registrationCode: userProfile.registration_code,
+					phone: userProfile.phone,
+					address: userProfile.address,
+					city: userProfile.city,
+					state: userProfile.state,
+					postcode: userProfile.postcode,
+					photo: userProfile.photo,
+					updatedAt: userProfile.updated_at,
+				}),
+			)
+			drawer('home')
+		} catch (error) {
+			console.log(error)
+		}
 	}
 
 	const [hideNewPassword, setHideNewPassword] = useState(true)
@@ -104,8 +137,7 @@ export function ResetPasswordForm() {
 						</View>
 						<View className="flex-1">
 							<Text className="font-inter-medium">Reconhecimento facial</Text>
-							<Text className="font-inter text-gray-500">Use seu rosto para fazer login
-							</Text>
+							<Text className="font-inter text-gray-500">Use seu rosto para fazer login</Text>
 						</View>
 						<View className="p-2">
 							<ToggleButton />
@@ -121,18 +153,14 @@ export function ResetPasswordForm() {
 					<Text className="font-inter-bold text-xl">Dicas de segurança</Text>
 				</Card.Header>
 				<Card.Body>
-					<Text className="font-inter text-gray-500">
-						{'\u2022'} Crie uma senha forte e única
-					</Text>
+					<Text className="font-inter text-gray-500">{'\u2022'} Crie uma senha forte e única</Text>
 					<Text className="font-inter text-gray-500">
 						{'\u2022'} Nunca compartilhe suas credenciais
 					</Text>
 					<Text className="font-inter text-gray-500">
 						{'\u2022'} Ative a autenticação biométrica
 					</Text>
-					<Text className="font-inter text-gray-500">
-						{'\u2022'} Mude sua senha regularmente
-					</Text>
+					<Text className="font-inter text-gray-500">{'\u2022'} Mude sua senha regularmente</Text>
 				</Card.Body>
 			</Card>
 		</View>
