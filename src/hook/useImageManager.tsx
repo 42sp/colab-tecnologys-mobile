@@ -19,10 +19,10 @@ export function useImageManager() {
 		options: { format: 'jpeg' },
 	})
 	const manipulator = ImageManipulator.useImageManipulator(manipulatedImage.image)
-	const [renderedImage, setRenderedImage] = useState<string>('')
+	const [renderedImage, setRenderedImage] = useState<ImageManipulator.ImageResult | undefined>(undefined)
 
 	useEffect(() => {
-		if (manipulatedImage) {
+		if (manipulatedImage.image !== '') {
 			performManipulation()
 		}
 	}, [manipulatedImage])
@@ -34,8 +34,9 @@ export function useImageManager() {
 			const saved = await rendered.saveAsync({
 				compress: manipulatedImage.options.compress,
 				format: manipulatedImage.options.format.toLowerCase() as ImageManipulator.SaveFormat,
+				base64: true,
 			})
-			setRenderedImage(saved.uri)
+			setRenderedImage(saved)
 			setError(null)
 		} catch (err: any) {
 			console.error('Erro ao manipular imagem:', err)

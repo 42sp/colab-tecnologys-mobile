@@ -20,15 +20,14 @@ const API_URL = env.EXPO_PUBLIC_API_URL
 export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 	const { setManipulatedImage, renderedImage } = useImageManager()
 	const [_status, _requestPermission] = useMediaLibraryPermissions()
-	const [imageUri, setImageUri] = useState<string>('')
 	const profile = useSelector((state: RootState) => state.userProfile)
 	const dispatch = useDispatch()
 
 	useEffect(() => {
 		const handleRenderedImage = async () => {
-			if (!imageUri) return
+			if (!renderedImage) return
 			try {
-				const result = await uploads({ uri: imageUri })
+				const result = await uploads({ uri: `data:image/jpeg;base64,${renderedImage.base64}` })
 				if (result) {
 					const user = await getProfile()
 					dispatch(updateProfile({ photo: result.id, updatedAt: user.data[0].updated_at }))
@@ -38,7 +37,7 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 			}
 		}
 		handleRenderedImage()
-	}, [renderedImage, imageUri])
+	}, [renderedImage])
 	const photoUrl = profile?.photo
 		? `${API_URL}/images/${profile.photo}?t=${profile.updatedAt}`
 		: avatar
@@ -61,9 +60,8 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 			const base64 = result.assets[0].base64
 			setManipulatedImage({
 				image: `data:image/png;base64,${base64}`,
-				options: { width: 300, height: 300, compress: 0.8, format: 'jpeg' },
+				options: { width: 300, height: 300, compress: 0.5, format: 'jpeg' },
 			})
-			setImageUri(`data:image/png;base64,${base64}`)
 		}
 	}
 
@@ -72,7 +70,7 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 			<TouchableNativeFeedback onPress={updateAvatar} useForeground>
 				<View className="size-36 rounded-full border border-neutral-100 bg-white p-1">
 					<Image
-						source={{ uri: renderedImage ? renderedImage : photoUrl}}
+						source={{ uri: renderedImage ? renderedImage.uri : photoUrl}}
 						className="h-full w-full rounded-full"
 					/>
 					<View className="mt-[-35px] h-10 w-10 items-center justify-center self-end rounded-full bg-zinc-900">
