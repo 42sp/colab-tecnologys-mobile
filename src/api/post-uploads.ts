@@ -12,6 +12,11 @@ interface UploadsResponse {
 }
 
 export async function uploads({ uri }: UploadsProps) {
-	const response = await api.post<UploadsResponse>('/uploads', { uri })
-	return response.data
+	try {
+		const response = await api.post<UploadsResponse>('/uploads', { uri })
+		return response.data
+	} catch (error) {
+		console.log('Error uploading image:', error)
+		throw error
+	}
 }
