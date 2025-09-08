@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
 import { env } from '@/libs/env'
 import { launchImageLibraryAsync, useMediaLibraryPermissions } from 'expo-image-picker'
-import { useImageManager } from '@/utils.ts/useImageManager'
+import { useImageManager } from '@/hook/useImageManager'
 import { uploads } from '@/api/post-uploads'
+import { getProfile } from '@/api/get-profile'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
 import { updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
@@ -25,10 +26,12 @@ export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 
 	useEffect(() => {
 		const handleRenderedImage = async () => {
+			if (!imageUri) return
 			try {
 				const result = await uploads({ uri: imageUri })
 				if (result) {
-					dispatch(updateProfile({ photo: result.id }))
+					const user = await getProfile()
+					dispatch(updateProfile({ photo: result.id, updatedAt: user.data[0].updated_at }))
 				}
 			} catch (error) {
 				console.log('error returned edit-profile-avatar: ', error)

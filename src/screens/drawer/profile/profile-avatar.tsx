@@ -5,7 +5,7 @@ import { uploads } from '@/api/post-uploads'
 import { getProfile } from '@/api/get-profile'
 import { env } from '@/libs/env'
 import { launchImageLibraryAsync, useMediaLibraryPermissions } from 'expo-image-picker'
-import { useImageManager } from '@/utils.ts/useImageManager'
+import { useImageManager } from '@/hook/useImageManager'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
 import { updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
@@ -43,8 +43,6 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 		? `${API_URL}/images/${profile.photo}?t=${profile.updatedAt}`
 		: avatar
 
-	const displayImage = renderedImage || photoUrl
-
 	async function updateAvatar() {
 		const result = await launchImageLibraryAsync({
 			mediaTypes: 'images',
@@ -74,7 +72,7 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 			<TouchableNativeFeedback onPress={updateAvatar} useForeground>
 				<View className="size-36 rounded-full border border-neutral-100 bg-white p-1">
 					<Image
-						source={{ uri: renderedImage ? renderedImage : photoUrl }}
+						source={{ uri: renderedImage ? renderedImage : photoUrl}}
 						className="h-full w-full rounded-full"
 					/>
 					<View className="mt-[-35px] h-10 w-10 items-center justify-center self-end rounded-full bg-zinc-900">
