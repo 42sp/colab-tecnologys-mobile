@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { Text, View, TextInput, Keyboard, TouchableOpacity } from 'react-native'
+import OTPTextView from 'react-native-otp-textinput'
+import { Text, View, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Image } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons'
@@ -7,44 +8,31 @@ import { Button } from '@/components/ui/button'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
 import { useForm, Controller } from 'react-hook-form'
 import { z } from 'zod'
+// import Clipboard from 'expo-clipboard';
 import { zodResolver } from '@hookform/resolvers/zod'
 
-const codeSchema = z.object({
-	code: z
-		.array(z.string().min(1, 'Digite todos os dígitos').regex(/^\d$/, 'Apenas números'))
-		.length(6, 'O código deve ter 6 dígitos'),
+const otpSchema = z.object({
+	otp: z.string().length(6, 'O código deve ter 6 dígitos').regex(/^\d{6}$/, 'Apenas números')
 })
 
-type CodeForm = z.infer<typeof codeSchema>
+type otpForm = z.infer<typeof otpSchema>
 
 export default function VerifyCode() {
 	const { stack } = useNavigate()
-
-	const inputs = useRef<Array<TextInput | null>>([])
-	const [focusedIndex, setFocusedIndex] = useState<number | null>(null)
-
+	// const input = useRef<OTPTextView>(null);
 	const [timer, setTimer] = useState(30)
 	const [isButtonDisabled, setIsButtonDisabled] = useState(true)
 
 	const {
 		control,
 		handleSubmit,
-		setValue,
 		formState: { errors },
-	} = useForm<CodeForm>({
-		resolver: zodResolver(codeSchema),
+	} = useForm<otpForm>({
+		resolver: zodResolver(otpSchema),
 		defaultValues: {
-			code: ['', '', '', '', '', ''],
+			otp: '',
 		},
 	})
-
-	useEffect(() => {
-		setTimeout(() => {
-			if (inputs.current[0]) {
-				inputs.current[0]?.focus()
-			}
-		}, 100)
-	}, [])
 
 	useEffect(() => {
 		if (timer > 0) {
@@ -58,32 +46,19 @@ export default function VerifyCode() {
 		}
 	}, [timer])
 
-	const onSubmit = (data: CodeForm) => {
-		const codeJSON = {code: parseInt(data.code.join(''), 10)}
-
-		console.log('Dados do código: ', JSON.stringify(codeJSON))
+	const onSubmit = (data: otpForm) => {
+		console.log("otp data: ",data)
 		stack('resetPassword')
 	}
 
-	const handleChange = (text: string, index: number) => {
-		if (text.length > 1) return
-
-		setValue(`code.${index}`, text, { shouldValidate: true })
-
-		if (text && index < inputs.current.length - 1) {
-			inputs.current[index + 1]?.focus()
-		} else if (index === inputs.current.length - 1) {
-			Keyboard.dismiss()
-		}
-	}
-
-	const handleBackspace = (index: number) => {
-		setValue(`code.${index}`, '', { shouldValidate: true })
-
-		if (index > 0) {
-			inputs.current[index - 1]?.focus()
-		}
-	}
+	// const handleCellTextChange = async (text: string, i: number) => {
+	// 	if (i === 0) {
+	// 	  const clippedText = await Clipboard.getStringAsync();
+	// 	  if (clippedText.slice(0, 1) === text) {
+	// 		input.current?.setValue(clippedText, true);
+	// 	  }
+	// 	}
+	//   };
 
 	return (
 		<SafeAreaView>
@@ -104,41 +79,29 @@ export default function VerifyCode() {
 					</View>
 				</View>
 
-				<View className="my-6 flex-row justify-center gap-2">
-					{Array.from({ length: 6 }).map((_, index) => (
+				<View className="my-6 flex-row justify-center gap-2 ">
+
 						<Controller
-							key={index}
-							name={`code.${index}`}
+							name="otp"
 							control={control}
-							render={({ field: { value } }) => (
-								<TextInput
-									ref={(ref) => {
-										inputs.current[index] = ref
-									}}
-									className={`h-12 w-12 items-center justify-center rounded-lg border ${
-										focusedIndex === index ? 'border-2 border-blue-400' : 'border-gray-300'
-									} bg-white text-center`}
+							render={({ field: { onChange } }) => (
+								<View>
+								<OTPTextView
+									handleTextChange={onChange}
+									// handleCellTextChange={handleCellTextChange}
+									inputCount={6}
 									keyboardType="numeric"
-									maxLength={1}
-									value={value}
-									onChangeText={(text) => handleChange(text, index)}
-									onFocus={() => setFocusedIndex(index)}
-									onBlur={() => setFocusedIndex(null)}
-									onKeyPress={({ nativeEvent }) => {
-										if (nativeEvent.key === 'Backspace') {
-											handleBackspace(index)
-										}
-									}}
-									selectionColor="transparent"
-								/>
+									tintColor={"#d16a32"}
+									textInputStyle={{width: 40, height: 50, }}/>
+							  </ View>
 							)}
 						/>
-					))}
+
 				</View>
 
-				{errors.code && Array.isArray(errors.code) && (
+				{errors.otp && (
 					<Text className="pb-2 font-inter text-center text-red-500">
-						{errors.code.find((err) => err?.message)?.message}
+						{errors.otp.message}
 					</Text>
 				)}
 

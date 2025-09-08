@@ -1,7 +1,7 @@
 import { Text, View, Image, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { Button } from '@/components/ui/button'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { env } from '@/libs/env'
 import { launchImageLibraryAsync, useMediaLibraryPermissions } from 'expo-image-picker'
 import { useImageManager } from '@/hook/useImageManager'
@@ -59,7 +59,6 @@ export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 
 		if (!result.canceled && result.assets[0].base64) {
 			const base64 = result.assets[0].base64
-			const assets = result.assets[0]
 			setManipulatedImage({
 				image: `data:image/png;base64,${base64}`,
 				options: { width: 300, height: 300, compress: 0.5, format: 'jpeg'},
