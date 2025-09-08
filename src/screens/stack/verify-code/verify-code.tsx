@@ -19,6 +19,7 @@ type otpForm = z.infer<typeof otpSchema>
 
 export default function VerifyCode() {
 	const { stack } = useNavigate()
+	const [baseTimer, setBaseTimer] = useState(30)
 	// const input = useRef<OTPTextView>(null);
 	const [timer, setTimer] = useState(30)
 	const [isButtonDisabled, setIsButtonDisabled] = useState(true)
@@ -59,6 +60,15 @@ export default function VerifyCode() {
 	// 	  }
 	// 	}
 	//   };
+
+	function formatTimer(seconds: number): string {
+		const minutes = Math.floor(seconds / 60)
+		const remainingSeconds = seconds % 60
+
+		return `${minutes.toString().padStart(2, '0')}:${remainingSeconds
+			.toString()
+			.padStart(2, '0')}`
+	}
 
 	return (
 		<SafeAreaView>
@@ -108,7 +118,7 @@ export default function VerifyCode() {
 				<Button title="Verificar" onPress={handleSubmit(onSubmit)} />
 
 				<Text className="mt-4 font-inter text-center font-bold text-blue-400">
-					Aguarde {`00:${timer.toString().padStart(2, '0')}`} segundos para enviar novamente
+					Aguarde {formatTimer(timer)} para enviar novamente
 				</Text>
 
 				<TouchableOpacity
@@ -116,7 +126,9 @@ export default function VerifyCode() {
 					activeOpacity={0.5}
 					onPress={() => {
 						console.log('Reenviar código')
-						setTimer(30)
+						const newBase = baseTimer * 2
+						setBaseTimer(newBase)
+						setTimer(newBase)
 						setIsButtonDisabled(true)
 					}}
 					disabled={isButtonDisabled}
