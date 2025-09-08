@@ -81,7 +81,7 @@ export default function VerifyCode() {
 					/>
 					<Text className="mt-4 text-center text-2xl font-bold">Verificação de Código</Text>
 					<Text className="mt-4 font-inter text-center text-lg text-gray-500">
-						Digite o texto enviado para
+						Digite o código de 6 digitos enviado para
 					</Text>
 					<View className="mt-2 flex-row items-center justify-center gap-2">
 						<Text className="text-center text-lg font-inter-bold text-gray-500">+55 (11) 9999-****</Text>
@@ -102,7 +102,14 @@ export default function VerifyCode() {
 									inputCount={6}
 									keyboardType="numeric"
 									tintColor={"#d16a32"}
-									textInputStyle={{width: 40, height: 50, }}/>
+									textInputStyle={{
+										borderWidth: 1,
+										borderColor: '#ccc',
+										borderRadius: 8,
+										width: 42,
+										height: 52,
+										backgroundColor: '#fff',
+									  }}/>
 							  </ View>
 							)}
 						/>
