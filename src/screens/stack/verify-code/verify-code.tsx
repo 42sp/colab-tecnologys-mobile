@@ -1,7 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import OTPTextView from 'react-native-otp-textinput'
 import { Text, View, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { setAuth } from '@/libs/redux/auth/auth-slice'
+import { passwordRecovery } from '@/api/password-recovery'
+import { useDispatch, useSelector } from 'react-redux'
 import { Image } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons'
 import { Button } from '@/components/ui/button'
@@ -10,6 +13,9 @@ import { useForm, Controller } from 'react-hook-form'
 import { z } from 'zod'
 // import Clipboard from 'expo-clipboard';
 import { zodResolver } from '@hookform/resolvers/zod'
+import { RootState } from '@/libs/redux/store'
+import { ErrorModal } from '@/components/ui/error-modal'
+
 
 const otpSchema = z.object({
 	otp: z.string().length(6, 'O código deve ter 6 dígitos').regex(/^\d{6}$/, 'Apenas números')
@@ -20,6 +26,9 @@ type otpForm = z.infer<typeof otpSchema>
 export default function VerifyCode() {
 	const { stack } = useNavigate()
 	const [baseTimer, setBaseTimer] = useState(30)
+	const cpf = useSelector((state: RootState) => state.passwordRecovery.cpf)
+	const dispatch = useDispatch()
+	const [modalVisible, setModalVisible] = useState(false)
 	// const input = useRef<OTPTextView>(null);
 	const [timer, setTimer] = useState(30)
 	const [isButtonDisabled, setIsButtonDisabled] = useState(true)
@@ -47,9 +56,22 @@ export default function VerifyCode() {
 		}
 	}, [timer])
 
-	const onSubmit = (data: otpForm) => {
+	async function onSubmit(data: otpForm) {
 		console.log("otp data: ",data)
-		stack('resetPassword')
+		try {
+			const response = await passwordRecovery({ cpf, code: data.otp })
+			console.log('response', response)
+
+			dispatch(
+				setAuth({
+				token: response.accessToken ?? null, expiry: '', id: ''
+				}),
+			)
+			stack('resetPassword')
+		} catch (error) {
+			console.log(error)
+			setModalVisible(true)
+		}
 	}
 
 	// const handleCellTextChange = async (text: string, i: number) => {
@@ -144,6 +166,12 @@ export default function VerifyCode() {
 						Reenviar código
 					</Text>
 				</TouchableOpacity>
+				<ErrorModal
+        visible={modalVisible}
+        message="Ocorreu um erro"
+        description="Não foi possível completar a solicitação."
+        onClose={() => setModalVisible(false)}
+      />
 			</View>
 		</SafeAreaView>
 	)

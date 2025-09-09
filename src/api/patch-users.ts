@@ -19,6 +19,6 @@ interface PatchUsersResponse {
 }
 
 export async function patchUsers({ id, ...rest }: PatchUsersProps) {
-	const response = await api.post<PatchUsersResponse>(`/users/${id} `, { ...rest })
+	const response = await api.patch<PatchUsersResponse>(`/users/${id}`, { ...rest })
 	return response.data
 }
