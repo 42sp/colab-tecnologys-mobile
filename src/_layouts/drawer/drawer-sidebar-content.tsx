@@ -4,13 +4,19 @@ import { View, Text, Image, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { type Route } from '@react-navigation/native'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
+import { resetAuth } from '@/libs/redux/auth/auth-slice'
 
 export function CustomDrawerContent(props: any) {
 	const { state } = props
 	const { drawer } = useNavigate()
 	const profile = useSelector((state: RootState) => state.userProfile)
+	const dispatch = useDispatch()
+
+	const onLogout = () => {
+		dispatch(resetAuth())
+	}
 
 	return (
 		<DrawerContentScrollView
@@ -80,7 +86,7 @@ export function CustomDrawerContent(props: any) {
 					)
 				})}
 
-				<TouchableOpacity className="mt-8 flex-row gap-3 px-5 py-4" onPress={() => drawer('home')}>
+				<TouchableOpacity className="mt-8 flex-row gap-3 px-5 py-4" onPress={onLogout}>
 					<Feather name="log-out" color="#6b7280" size={22} />
 					<Text className="text-lg font-medium text-gray-500">Sair</Text>
 				</TouchableOpacity>

@@ -1,6 +1,5 @@
 import { createStackNavigator } from '@react-navigation/stack'
 import { NavigatorScreenParams } from '@react-navigation/native'
-import HomeScreen from '@/screens/stack/home/home'
 import SignInScreen from '@/screens/stack/sign-in/sign-in'
 import SignUpScreen from '@/screens/stack/sign-up/sign-up'
 import ForgotPasswordScreen from '@/screens/stack/forgot-password/forgot-password'
@@ -8,9 +7,6 @@ import VerifyCode from '@/screens/stack/verify-code/verify-code'
 import ResetPassword from '@/screens/stack/reset-password/reset-password'
 import DrawerLayout, { DrawerParamList } from '@/_layouts/drawer/drawer'
 import { StackHeader } from './stack-header'
-
-import { useSelector } from 'react-redux'
-import type { RootState } from '@/libs/redux/store'
 
 export type StackParamList = {
 	home: undefined
@@ -25,12 +21,8 @@ export type StackParamList = {
 const Stack = createStackNavigator<StackParamList>()
 
 export default function StackLayout() {
-	const { token, expiry } = useSelector((state: RootState) => state.auth)
-	const now = Math.floor(Date.now() / 1000)
-	const route = !token || !expiry || expiry >= now.toString() ? 'signIn' : 'drawer'
-
 	return (
-		<Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={route}>
+		<Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="signIn">
 			{/* <Stack.Screen name="home" component={HomeScreen} options={{}} /> */}
 			<Stack.Screen name="signIn" component={SignInScreen} options={{}} />
 			<Stack.Screen
@@ -38,7 +30,7 @@ export default function StackLayout() {
 				component={SignUpScreen}
 				options={{
 					headerShown: true,
-					title: 'New Account',
+					title: 'Nova conta',
 					header: StackHeader,
 				}}
 			/>
