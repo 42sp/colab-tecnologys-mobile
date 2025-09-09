@@ -3,18 +3,17 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { type Route } from '@react-navigation/native'
-import { useNavigate } from '@/libs/react-navigation/useNavigate'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
 import { resetAuth } from '@/libs/redux/auth/auth-slice'
 
 export function CustomDrawerContent(props: any) {
 	const { state } = props
-	const { drawer } = useNavigate()
 	const profile = useSelector((state: RootState) => state.userProfile)
 	const dispatch = useDispatch()
 
-	const onLogout = () => {
+	function onLogout() {
+		// pop up pra confirmar que quer fazer logout
 		dispatch(resetAuth())
 	}
 

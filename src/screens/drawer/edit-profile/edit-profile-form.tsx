@@ -8,6 +8,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Card from '@/components/ui/card'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
+import { useNavigation } from '@react-navigation/native'
+import { DrawerNavigationProp } from '@react-navigation/drawer'
+import { DrawerParamList } from '@/_layouts/drawer/drawer'
 
 const editProfileSchema = z.object({
 	name: z.string().nonempty('Nome completo é obrigatório'),
@@ -25,6 +28,7 @@ export function EditProfileForm() {
 		control,
 		handleSubmit,
 		formState: { errors },
+		reset,
 	} = useForm<EditProfileType>({
 		resolver: zodResolver(editProfileSchema),
 		defaultValues: {
@@ -35,9 +39,23 @@ export function EditProfileForm() {
 			address: user.address || '',
 		},
 	})
+	type ProfileScreenNavigationProp = DrawerNavigationProp<DrawerParamList>
+	const navigation = useNavigation<ProfileScreenNavigationProp>()
 
-	function onSubmit(data: any) {
+	function onSubmit(data: EditProfileType) {
 		console.log('Dados de Registro: ', JSON.stringify(data))
+		navigation.navigate('profile')
+	}
+
+	function onCancel() {
+		reset({
+			name: user.name || '',
+			email: user.email || '',
+			phone: user.phone || '',
+			dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('pt-BR') : '',
+			address: user.address || '',
+		})
+		navigation.navigate('profile')
 	}
 
 	return (
@@ -144,7 +162,7 @@ export function EditProfileForm() {
 				</View>
 
 				<View className="mt-6 flex-row gap-2">
-					<Button title="Cancelar" variant="outline" className="flex-1" onPress={() => {}} />
+					<Button title="Cancelar" variant="outline" className="flex-1" onPress={onCancel} />
 					<Button className="flex-1" onPress={handleSubmit(onSubmit)}>
 						<Text className="mr-2 font-inter-medium text-xl text-neutral-100">Salvar</Text>
 						<Feather name="check-circle" size={20} color="#fff" />
