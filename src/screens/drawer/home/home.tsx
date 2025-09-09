@@ -9,6 +9,10 @@ import { ActivityList } from '@/screens/drawer/home/activity-list'
 import { HorizontalList } from '@/screens/drawer/home/horizontal-list'
 import { activityMock, ActivityService } from '@/mock'
 import { DateRangeType } from '@/components/ui/calendar'
+import { Button } from '@/components/ui/button'
+import { DrawerNavigationProp } from '@react-navigation/drawer'
+import { DrawerParamList } from '@/_layouts/drawer/drawer'
+import { useNavigation } from '@react-navigation/native'
 
 export type StatusType = 'pending' | 'approved' | 'completed'
 
@@ -97,6 +101,8 @@ export default function Home() {
 	}
 
 	const activityDataList = handleFilterChange(filter, dataList)
+	type ProfileScreenNavigationProp = DrawerNavigationProp<DrawerParamList>
+	const navigation = useNavigation<ProfileScreenNavigationProp>()
 
 	return (
 		<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] p-5">
@@ -157,6 +163,13 @@ export default function Home() {
 					</View>
 				}
 			/>
+			<Button
+				variant="rounded"
+				onPress={() => navigation.navigate('registerService')}
+				className="absolute bottom-16 right-5 size-16"
+			>
+				<Feather name="plus" size={32} color="#FFFFFF" />
+			</Button>
 
 			<HomeFilterModal
 				isVisible={showFilter}
