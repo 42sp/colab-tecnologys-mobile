@@ -12,10 +12,8 @@ import { ScanFace } from 'lucide-react-native'
 import { patchUsers } from '@/api/patch-users'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
-import { signIn } from '@/api/sign-in'
-import { setAuth } from '@/libs/redux/auth/auth-slice'
-import { getProfile } from '@/api/get-profile'
-import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
+import { clearPasswordRecovery } from '@/libs/redux/password-recovery/password-recovery-slice'
+import { ErrorModal } from '@/components/ui/error-modal'
 
 const SecuritySettingsSchema = z
 	.object({
@@ -30,6 +28,8 @@ const SecuritySettingsSchema = z
 type SecuritySettingsType = z.infer<typeof SecuritySettingsSchema>
 
 export function ResetPasswordForm() {
+	const token = useSelector((state: RootState) => state.auth.token)
+	const [modalVisible, setModalVisible] = useState(false)
 	const { cpf, userId } = useSelector((state: RootState) => state.passwordRecovery)
 	const dispatch = useDispatch()
 
@@ -41,37 +41,19 @@ export function ResetPasswordForm() {
 		resolver: zodResolver(SecuritySettingsSchema),
 	})
 
-	const { drawer } = useNavigate()
+	const { stack } = useNavigate()
 
 	async function onSubmit({ newPassword }: SecuritySettingsType) {
 		try {
-			if (!userId || !cpf) throw new Error('Erro inesperado')
+			if (!userId || !cpf) setModalVisible(true)
+			await patchUsers({ id: userId, cpf: cpf, password: newPassword })
 
-			const user = await patchUsers({ id: userId, cpf: cpf, password: newPassword })
+			dispatch(clearPasswordRecovery())
 
-			const auth = await signIn({ cpf: user.cpf, password: newPassword })
-			const { accessToken } = auth
-			const { payload } = auth.authentication
-			dispatch(setAuth({ token: accessToken, expiry: payload.exp, id: payload.sub }))
-			const profile = await getProfile()
-			const userProfile = profile.data[0]
-			dispatch(
-				setProfile({
-					name: userProfile.name,
-					dateOfBirth: userProfile.date_of_birth,
-					registrationCode: userProfile.registration_code,
-					phone: userProfile.phone,
-					address: userProfile.address,
-					city: userProfile.city,
-					state: userProfile.state,
-					postcode: userProfile.postcode,
-					photo: userProfile.photo,
-					updatedAt: userProfile.updated_at,
-				}),
-			)
-			drawer('home')
+			stack('signIn')
 		} catch (error) {
 			console.log(error)
+			setModalVisible(true)
 		}
 	}
 
@@ -163,6 +145,12 @@ export function ResetPasswordForm() {
 					<Text className="font-inter text-gray-500">{'\u2022'} Mude sua senha regularmente</Text>
 				</Card.Body>
 			</Card>
+			<ErrorModal
+        visible={modalVisible}
+        message="Ocorreu um erro"
+        description="Não foi possível completar a solicitação."
+        onClose={() => setModalVisible(false)}
+      />
 		</View>
 	)
 }
