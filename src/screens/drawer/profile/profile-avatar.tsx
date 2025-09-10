@@ -1,5 +1,5 @@
 import { Image, Text, TouchableNativeFeedback, View } from 'react-native'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Feather } from '@expo/vector-icons'
 import { uploads } from '@/api/post-uploads'
 import { getProfile } from '@/api/get-profile'
@@ -11,7 +11,7 @@ import { RootState } from '@/libs/redux/store'
 import { updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
 
 type ProfileAvatarProps = {
-	avatar: string
+	avatar: number
 	name: string
 }
 
@@ -22,25 +22,31 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 	const [_status, _requestPermission] = useMediaLibraryPermissions()
 	const profile = useSelector((state: RootState) => state.userProfile)
 	const dispatch = useDispatch()
+	const [image, setImage] = useState<string | null>(null)
 
 	useEffect(() => {
 		const handleRenderedImage = async () => {
 			if (!renderedImage) return
+			setImage(renderedImage.uri)
 			try {
 				const result = await uploads({ uri: `data:image/jpeg;base64,${renderedImage.base64}` })
 				if (result) {
 					const user = await getProfile()
-					dispatch(updateProfile({ photo: result.id, updatedAt: user.data[0].updated_at }))
+					dispatch(updateProfile({ photo: user.data[0].photo, updatedAt: user.data[0].updated_at }))
+					setImage(null)
 				}
 			} catch (error) {
 				console.log('error returned profile-avatar: ', error)
+				setImage(null)
 			}
 		}
 		handleRenderedImage()
 	}, [renderedImage])
 	const photoUrl = profile?.photo
-		? `${API_URL}/images/${profile.photo}?t=${profile.updatedAt}`
-		: avatar
+		? `${API_URL}images/${profile.photo}?t=${profile.updatedAt}`
+		: null
+
+	const imageUrl = image ? { uri: image } : photoUrl ? { uri: photoUrl } : avatar
 
 	async function updateAvatar() {
 		const result = await launchImageLibraryAsync({
@@ -69,10 +75,7 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 		<View className="items-center">
 			<TouchableNativeFeedback onPress={updateAvatar} useForeground>
 				<View className="size-36 rounded-full border border-neutral-100 bg-white p-1">
-					<Image
-						source={{ uri: renderedImage ? renderedImage.uri : photoUrl }}
-						className="h-full w-full rounded-full"
-					/>
+					<Image source={imageUrl} className="h-full w-full rounded-full" />
 					<View className="mt-[-35px] h-10 w-10 items-center justify-center self-end rounded-full bg-zinc-900">
 						<Feather name="edit" color={'#ffff'} size={14} />
 					</View>

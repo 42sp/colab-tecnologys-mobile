@@ -13,22 +13,25 @@ import { useNavigation } from '@react-navigation/native'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
 import { DrawerParamList } from '@/_layouts/drawer/drawer'
 import { resetAuth } from '@/libs/redux/auth/auth-slice'
+import { LogoutModal } from '@/components/ui/logout-modal'
+import { useState } from 'react'
 
 export default function ProfileScreen() {
 	const user = useSelector((state: RootState) => state.userProfile)
 	type ProfileScreenNavigationProp = DrawerNavigationProp<DrawerParamList>
 	const navigation = useNavigation<ProfileScreenNavigationProp>()
 	const dispatch = useDispatch()
+	const [isModalVisible, setIsModalVisible] = useState(false)
 
-	function onLogout() {
-		// pop up pra confirmar que quer fazer logout
+	function confirmLogout() {
+		setIsModalVisible(false)
 		dispatch(resetAuth())
 	}
 
 	return (
 		<ScrollView showsVerticalScrollIndicator={false}>
 			<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] p-5">
-				<ProfileAvatar avatar="https://randomuser.me/portraits/men/1.jpg" name={user.name || ''} />
+				<ProfileAvatar avatar={require('@/assets/default-avatar.png')} name={user.name || ''} />
 
 				<Card className="flex-1">
 					<Card.Header>
@@ -78,9 +81,14 @@ export default function ProfileScreen() {
 					</TouchableOpacity>
 				</View>
 
-				<Button variant="red" title="Deslogar" onPress={onLogout}>
+				<Button variant="red" title="Sair" onPress={() => setIsModalVisible(true)}>
 					<Feather name="log-out" size={20} color={'#ef4444'} className="mr-3" />
 				</Button>
+				<LogoutModal
+					visible={isModalVisible}
+					onClose={() => setIsModalVisible(false)}
+					onConfirm={confirmLogout}
+				/>
 			</SafeAreaView>
 		</ScrollView>
 	)
