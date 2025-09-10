@@ -31,7 +31,7 @@ interface GetServicesResponse {
 	data: Services[]
 }
 
-export async function getRoles() {
+export async function getServices() {
 	const response = await api.get<GetServicesResponse>('/services')
 	return response.data
 }
