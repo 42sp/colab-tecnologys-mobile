@@ -82,9 +82,10 @@ export function Dropdown({
 
 			{open && (
 				<ScrollView
-					showsVerticalScrollIndicator={false}
+					showsVerticalScrollIndicator={true}
 					contentContainerStyle={{ paddingVertical: 4 }}
 					className="rounded-lg border border-neutral-300"
+					style={{ maxHeight: 200 }}
 				>
 					{options.map((item) => (
 						<TouchableOpacity

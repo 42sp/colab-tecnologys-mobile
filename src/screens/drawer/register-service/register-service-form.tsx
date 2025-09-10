@@ -49,6 +49,10 @@ export function RegisterServiceForm({
 	const towers = currentResidential?.torres?.data ?? []
 	const towerOptions = towers.map((t) => ({ label: t.name }))
 
+	const pavimento = Array.from({ length: 27 }, (_, i) => ({
+		label: `PAV ${i + 1}`,
+	  }));
+
 	const selectedTowerName = useWatch({ control, name: 'tower' }) as string
 	const selectedTower = towers.find((t) => t.name === selectedTowerName)
 
@@ -165,7 +169,7 @@ export function RegisterServiceForm({
 								IconLeft={'calendar'}
 								IconRight={'chevron-down'}
 								className="self-center"
-								options={floorOptions}
+								options={pavimento}
 								variant="outline"
 								placeholder="Selecione o andar"
 								value={value}
