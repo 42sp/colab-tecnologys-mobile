@@ -22,14 +22,14 @@ type Props = {
 		name: string
 		torres: {
 			total: number
-			data: Array<{
+			data: {
 				id: number
 				name: string
 				andares: {
 					total: number
-					data: Array<{ id: number; name: string; description?: string }>
+					data: { id: number; name: string; description?: string }[]
 				}
-			}>
+			}[]
 		}
 	}
 	setValue: UseFormSetValue<RegisterServiceType>
@@ -43,7 +43,6 @@ export function RegisterServiceForm({
 	setValue,
 	errors,
 }: Props) {
-	const currentDate = new Date().toISOString().split('T')[0]
 	const [isCalendarVisible, setCalendarVisible] = useState(false)
 	const [selectDay, setSelectDay] = useState<DateRangeType>({ start: null, end: null })
 
@@ -109,7 +108,6 @@ export function RegisterServiceForm({
 										<View className="flex-1 items-center justify-center bg-black/40 p-4">
 											<View className="w-full rounded-lg bg-white p-4">
 												<CustomCalendar
-													minDate={currentDate}
 													setDateRange={setSelectDay}
 													markingType="dot"
 												/>
