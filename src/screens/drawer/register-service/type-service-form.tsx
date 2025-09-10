@@ -68,7 +68,6 @@ export function TypeServiceForm({ control, errors }: Props) {
 									<Dropdown
 										IconLeft="list"
 										IconRight="chevron-down"
-
 										options={apartments}
 										variant="outline"
 										placeholder="Selecione os apartamentos"
@@ -107,7 +106,9 @@ export function TypeServiceForm({ control, errors }: Props) {
 						)}
 					/>
 					{errors.classification && (
-						<Text className="mb-2 text-xs text-red-500">{errors.classification.message as string}</Text>
+						<Text className="mb-2 text-xs text-red-500">
+							{errors.classification.message as string}
+						</Text>
 					)}
 
 					<Controller

@@ -111,11 +111,11 @@ export default function ForgotPasswordScreen() {
 					</View>
 
 					<ErrorModal
-        visible={modalVisible}
-        message="Ocorreu um erro"
-        description="Não foi possível completar a solicitação."
-        onClose={() => setModalVisible(false)}
-      />
+						visible={modalVisible}
+						message="Ocorreu um erro"
+						description="Não foi possível completar a solicitação."
+						onClose={() => setModalVisible(false)}
+					/>
 				</ScrollView>
 			</KeyboardAvoidingView>
 		</SafeAreaView>

@@ -1,4 +1,4 @@
-import { Text, View, Image } from 'react-native'
+import { Text, View } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Card from '@/components/ui/card'

@@ -1,4 +1,4 @@
-import { Text, View, Image } from 'react-native'
+import { Text, View } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Card from '@/components/ui/card'
@@ -146,11 +146,11 @@ export function ResetPasswordForm() {
 				</Card.Body>
 			</Card>
 			<ErrorModal
-        visible={modalVisible}
-        message="Ocorreu um erro"
-        description="Não foi possível completar a solicitação."
-        onClose={() => setModalVisible(false)}
-      />
+				visible={modalVisible}
+				message="Ocorreu um erro"
+				description="Não foi possível completar a solicitação."
+				onClose={() => setModalVisible(false)}
+			/>
 		</View>
 	)
 }

@@ -1,5 +1,5 @@
 import { Image, Text, TouchableNativeFeedback, View } from 'react-native'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Feather } from '@expo/vector-icons'
 import { uploads } from '@/api/post-uploads'
 import { getProfile } from '@/api/get-profile'
@@ -70,7 +70,7 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 			<TouchableNativeFeedback onPress={updateAvatar} useForeground>
 				<View className="size-36 rounded-full border border-neutral-100 bg-white p-1">
 					<Image
-						source={{ uri: renderedImage ? renderedImage.uri : photoUrl}}
+						source={{ uri: renderedImage ? renderedImage.uri : photoUrl }}
 						className="h-full w-full rounded-full"
 					/>
 					<View className="mt-[-35px] h-10 w-10 items-center justify-center self-end rounded-full bg-zinc-900">

@@ -61,7 +61,7 @@ export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 			const base64 = result.assets[0].base64
 			setManipulatedImage({
 				image: `data:image/png;base64,${base64}`,
-				options: { width: 300, height: 300, compress: 0.5, format: 'jpeg'},
+				options: { width: 300, height: 300, compress: 0.5, format: 'jpeg' },
 			})
 		}
 	}

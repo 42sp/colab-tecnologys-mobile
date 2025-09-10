@@ -19,7 +19,9 @@ export function useImageManager() {
 		options: { format: 'jpeg' },
 	})
 	const manipulator = ImageManipulator.useImageManipulator(manipulatedImage.image)
-	const [renderedImage, setRenderedImage] = useState<ImageManipulator.ImageResult | undefined>(undefined)
+	const [renderedImage, setRenderedImage] = useState<ImageManipulator.ImageResult | undefined>(
+		undefined,
+	)
 
 	useEffect(() => {
 		if (manipulatedImage.image !== '') {

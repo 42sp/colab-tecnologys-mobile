@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import OTPTextView from 'react-native-otp-textinput'
-import { Text, View, TouchableOpacity } from 'react-native'
+import { Text, View, TouchableOpacity, Image } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { setAuth } from '@/libs/redux/auth/auth-slice'
 import { passwordRecovery } from '@/api/password-recovery'
 import { useDispatch, useSelector } from 'react-redux'
-import { Image } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
@@ -16,9 +15,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { RootState } from '@/libs/redux/store'
 import { ErrorModal } from '@/components/ui/error-modal'
 
-
 const otpSchema = z.object({
-	otp: z.string().length(6, 'O código deve ter 6 dígitos').regex(/^\d{6}$/, 'Apenas números')
+	otp: z
+		.string()
+		.length(6, 'O código deve ter 6 dígitos')
+		.regex(/^\d{6}$/, 'Apenas números'),
 })
 
 type otpForm = z.infer<typeof otpSchema>
@@ -57,14 +58,16 @@ export default function VerifyCode() {
 	}, [timer])
 
 	async function onSubmit(data: otpForm) {
-		console.log("otp data: ",data)
+		console.log('otp data: ', data)
 		try {
 			const response = await passwordRecovery({ cpf, code: data.otp })
 			console.log('response', response)
 
 			dispatch(
 				setAuth({
-				token: response.accessToken ?? null, expiry: '', id: ''
+					token: response.accessToken ?? null,
+					expiry: '',
+					id: '',
 				}),
 			)
 			stack('resetPassword')
@@ -87,9 +90,7 @@ export default function VerifyCode() {
 		const minutes = Math.floor(seconds / 60)
 		const remainingSeconds = seconds % 60
 
-		return `${minutes.toString().padStart(2, '0')}:${remainingSeconds
-			.toString()
-			.padStart(2, '0')}`
+		return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
 	}
 
 	return (
@@ -102,28 +103,29 @@ export default function VerifyCode() {
 						resizeMode="contain"
 					/>
 					<Text className="mt-4 text-center text-2xl font-bold">Verificação de Código</Text>
-					<Text className="mt-4 font-inter text-center text-lg text-gray-500">
+					<Text className="mt-4 text-center font-inter text-lg text-gray-500">
 						Digite o código de 6 digitos enviado para
 					</Text>
 					<View className="mt-2 flex-row items-center justify-center gap-2">
-						<Text className="text-center text-lg font-inter-bold text-gray-500">+55 (11) 9999-****</Text>
+						<Text className="text-center font-inter-bold text-lg text-gray-500">
+							+55 (11) 9999-****
+						</Text>
 						<FontAwesome name="whatsapp" size={24} color="#25D366" />
 					</View>
 				</View>
 
 				<View className="my-6 flex-row justify-center gap-2 ">
-
-						<Controller
-							name="otp"
-							control={control}
-							render={({ field: { onChange } }) => (
-								<View>
+					<Controller
+						name="otp"
+						control={control}
+						render={({ field: { onChange } }) => (
+							<View>
 								<OTPTextView
 									handleTextChange={onChange}
 									// handleCellTextChange={handleCellTextChange}
 									inputCount={6}
 									keyboardType="numeric"
-									tintColor={"#d16a32"}
+									tintColor={'#d16a32'}
 									textInputStyle={{
 										borderWidth: 1,
 										borderColor: '#ccc',
@@ -131,22 +133,20 @@ export default function VerifyCode() {
 										width: 42,
 										height: 52,
 										backgroundColor: '#fff',
-									  }}/>
-							  </ View>
-							)}
-						/>
-
+									}}
+								/>
+							</View>
+						)}
+					/>
 				</View>
 
 				{errors.otp && (
-					<Text className="pb-2 font-inter text-center text-red-500">
-						{errors.otp.message}
-					</Text>
+					<Text className="pb-2 text-center font-inter text-red-500">{errors.otp.message}</Text>
 				)}
 
 				<Button title="Verificar" onPress={handleSubmit(onSubmit)} />
 
-				<Text className="mt-4 font-inter text-center font-bold text-blue-400">
+				<Text className="mt-4 text-center font-inter font-bold text-blue-400">
 					Aguarde {formatTimer(timer)} para enviar novamente
 				</Text>
 
@@ -167,11 +167,11 @@ export default function VerifyCode() {
 					</Text>
 				</TouchableOpacity>
 				<ErrorModal
-        visible={modalVisible}
-        message="Ocorreu um erro"
-        description="Não foi possível completar a solicitação."
-        onClose={() => setModalVisible(false)}
-      />
+					visible={modalVisible}
+					message="Ocorreu um erro"
+					description="Não foi possível completar a solicitação."
+					onClose={() => setModalVisible(false)}
+				/>
 			</View>
 		</SafeAreaView>
 	)

@@ -19,7 +19,7 @@ export function Input({
 	...rest
 }: InputProps) {
 	const errorClass = hasError ? 'border-2 border-red-400' : ''
-	const iconColorStyle = hasError ? '#ef4444' : (iconColor ? iconColor : '#d4d4d4')
+	const iconColorStyle = hasError ? '#ef4444' : iconColor ? iconColor : '#d4d4d4'
 
 	return (
 		<View
@@ -31,11 +31,7 @@ export function Input({
 
 			{IconRight && (
 				<Pressable onPress={iconPress}>
-					<Feather
-						name={IconRight}
-						size={20}
-						color={iconColorStyle}
-					/>
+					<Feather name={IconRight} size={20} color={iconColorStyle} />
 				</Pressable>
 			)}
 		</View>
