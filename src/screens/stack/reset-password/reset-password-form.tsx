@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
 import { clearPasswordRecovery } from '@/libs/redux/password-recovery/password-recovery-slice'
 import { ErrorModal } from '@/components/ui/error-modal'
+import { setAuth } from '@/libs/redux/auth/auth-slice'
 
 const SecuritySettingsSchema = z
 	.object({
@@ -28,7 +29,6 @@ const SecuritySettingsSchema = z
 type SecuritySettingsType = z.infer<typeof SecuritySettingsSchema>
 
 export function ResetPasswordForm() {
-	const token = useSelector((state: RootState) => state.auth.token)
 	const [modalVisible, setModalVisible] = useState(false)
 	const { cpf, userId } = useSelector((state: RootState) => state.passwordRecovery)
 	const dispatch = useDispatch()
@@ -49,7 +49,7 @@ export function ResetPasswordForm() {
 			await patchUsers({ id: userId, cpf: cpf, password: newPassword })
 
 			dispatch(clearPasswordRecovery())
-
+			dispatch(setAuth({ token: null, expiry: null, id: null}))
 			stack('signIn')
 		} catch (error) {
 			console.log(error)
