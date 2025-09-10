@@ -19,8 +19,10 @@ export function ErrorModal({ visible, message, description, onClose }: ErrorModa
 						</Pressable>
 					</View>
 
-					<Text className="mb-2 pr-8 text-lg font-bold text-[#B73131]">{message}</Text>
-					{description ? <Text className="text-base text-gray-700">{description}</Text> : null}
+					<Text className="mb-2 pr-8 font-inter-bold text-lg text-[#B73131]">{message}</Text>
+					{description ? (
+						<Text className="font-inter text-base text-gray-700">{description}</Text>
+					) : null}
 				</View>
 			</View>
 		</Modal>
