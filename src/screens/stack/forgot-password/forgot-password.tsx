@@ -2,7 +2,16 @@ import { z } from 'zod'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ErrorModal } from '@/components/ui/error-modal'
-import { Image, Text, View, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native'
+import {
+	Image,
+	Text,
+	View,
+	TouchableOpacity,
+	KeyboardAvoidingView,
+	Platform,
+	Modal,
+	ActivityIndicator,
+} from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useState } from 'react'
@@ -116,6 +125,11 @@ export default function ForgotPasswordScreen() {
 						description="Não foi possível completar a solicitação."
 						onClose={() => setModalVisible(false)}
 					/>
+					<Modal transparent={true} animationType="none" visible={isSubmitting}>
+						<View className="flex-1 items-center justify-center">
+							<ActivityIndicator size={52} color="#FF6700" />
+						</View>
+					</Modal>
 				</ScrollView>
 			</KeyboardAvoidingView>
 		</SafeAreaView>

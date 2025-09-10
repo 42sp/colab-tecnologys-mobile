@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Modal, Text, TouchableOpacity, View } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { z } from 'zod'
@@ -129,6 +129,11 @@ export function SignInForm() {
 					</TouchableOpacity>
 				</View>
 			</View>
+			<Modal transparent={true} animationType="none" visible={isSubmitting}>
+				<View className="flex-1 items-center justify-center">
+					<ActivityIndicator size={52} color="#FF6700" />
+				</View>
+			</Modal>
 		</View>
 	)
 }

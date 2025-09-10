@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import OTPTextView from 'react-native-otp-textinput'
-import { Text, View, TouchableOpacity, Image } from 'react-native'
+import { Text, View, TouchableOpacity, Image, Modal, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { setAuth } from '@/libs/redux/auth/auth-slice'
 import { passwordRecovery } from '@/api/password-recovery'
@@ -37,7 +37,7 @@ export default function VerifyCode() {
 	const {
 		control,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting },
 	} = useForm<otpForm>({
 		resolver: zodResolver(otpSchema),
 		defaultValues: {
@@ -144,7 +144,7 @@ export default function VerifyCode() {
 					<Text className="pb-2 text-center font-inter text-red-500">{errors.otp.message}</Text>
 				)}
 
-				<Button title="Verificar" onPress={handleSubmit(onSubmit)} />
+				<Button title="Verificar" onPress={handleSubmit(onSubmit)} disabled={isSubmitting} />
 
 				<Text className="mt-4 text-center font-inter font-bold text-blue-400">
 					Aguarde {formatTimer(timer)} para enviar novamente
@@ -172,6 +172,11 @@ export default function VerifyCode() {
 					description="Não foi possível completar a solicitação."
 					onClose={() => setModalVisible(false)}
 				/>
+				<Modal transparent={true} animationType="none" visible={isSubmitting}>
+					<View className="flex-1 items-center justify-center">
+						<ActivityIndicator size={52} color="#FF6700" />
+					</View>
+				</Modal>
 			</View>
 		</SafeAreaView>
 	)

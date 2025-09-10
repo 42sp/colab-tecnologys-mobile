@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native'
+import { ActivityIndicator, Modal, Text, View } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Card from '@/components/ui/card'
@@ -36,7 +36,7 @@ export function ResetPasswordForm() {
 	const {
 		control,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting },
 	} = useForm<SecuritySettingsType>({
 		resolver: zodResolver(SecuritySettingsSchema),
 	})
@@ -127,7 +127,7 @@ export function ResetPasswordForm() {
 					</View>
 				</Card.Footer>
 			</Card>
-			<Button className="flex-1" onPress={handleSubmit(onSubmit)}>
+			<Button className="flex-1" onPress={handleSubmit(onSubmit)} disabled={isSubmitting}>
 				<Text className="font-inter-medium text-xl text-neutral-100">Salvar alterações</Text>
 			</Button>
 			<Card className="gap-5">
@@ -151,6 +151,11 @@ export function ResetPasswordForm() {
 				description="Não foi possível completar a solicitação."
 				onClose={() => setModalVisible(false)}
 			/>
+			<Modal transparent={true} animationType="none" visible={isSubmitting}>
+				<View className="flex-1 items-center justify-center">
+					<ActivityIndicator size={52} color="#FF6700" />
+				</View>
+			</Modal>
 		</View>
 	)
 }
