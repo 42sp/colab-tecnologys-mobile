@@ -11,6 +11,7 @@ import { setAuth } from '@/libs/redux/auth/auth-slice'
 import { signIn } from '@/api/sign-in'
 import { getProfile } from '@/api/get-profile'
 import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
+import { ErrorModal } from '@/components/ui/error-modal'
 
 const signInSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve conter 11 caracteres'),
@@ -23,6 +24,7 @@ export function SignInForm() {
 	const { stack, drawer } = useNavigate()
 	const [hidePassword, setHidePassword] = useState(true)
 	const dispatch = useDispatch()
+	const [showErrorModal, setShowErrorModal] = useState(false)
 
 	const {
 		control,
@@ -60,6 +62,7 @@ export function SignInForm() {
 			)
 			drawer('home')
 		} catch (error) {
+			setShowErrorModal(true)
 			console.log(error)
 		}
 	}
@@ -134,6 +137,12 @@ export function SignInForm() {
 					<ActivityIndicator size={52} color="#FF6700" />
 				</View>
 			</Modal>
+			<ErrorModal
+				visible={showErrorModal}
+				message="CPF ou senha incorretos"
+				description="Verifique os dados e tente novamente."
+				onClose={() => setShowErrorModal(false)}
+			/>
 		</View>
 	)
 }

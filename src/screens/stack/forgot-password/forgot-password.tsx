@@ -44,7 +44,7 @@ export default function ForgotPasswordScreen() {
 	async function onSubmit({ cpf }: ForgotPasswordType) {
 		try {
 			const response = await passwordRecovery({ cpf })
-			console.log('response', response)
+			console.log('response from forgot password: ', response)
 
 			dispatch(
 				setPasswordRecovery({
@@ -121,8 +121,8 @@ export default function ForgotPasswordScreen() {
 
 					<ErrorModal
 						visible={modalVisible}
-						message="Ocorreu um erro"
-						description="Não foi possível completar a solicitação."
+						message="CPF incorreto"
+						description="Verifique os dados e tente novamente."
 						onClose={() => setModalVisible(false)}
 					/>
 					<Modal transparent={true} animationType="none" visible={isSubmitting}>

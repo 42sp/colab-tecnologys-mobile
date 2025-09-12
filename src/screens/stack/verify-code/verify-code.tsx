@@ -28,9 +28,9 @@ export default function VerifyCode() {
 	const { stack } = useNavigate()
 	const [baseTimer, setBaseTimer] = useState(30)
 	const cpf = useSelector((state: RootState) => state.passwordRecovery.cpf)
+	// const phone = useSelector((state: RootState) => state.passwordRecovery.phone) // está faltando como response no back
 	const dispatch = useDispatch()
 	const [modalVisible, setModalVisible] = useState(false)
-	// const input = useRef<OTPTextView>(null);
 	const [timer, setTimer] = useState(30)
 	const [isButtonDisabled, setIsButtonDisabled] = useState(true)
 
@@ -74,6 +74,7 @@ export default function VerifyCode() {
 		} catch (error) {
 			console.log(error)
 			setModalVisible(true)
+			stack('resetPassword')
 		}
 	}
 
@@ -103,12 +104,12 @@ export default function VerifyCode() {
 						resizeMode="contain"
 					/>
 					<Text className="mt-4 text-center text-2xl font-bold">Verificação de Código</Text>
-					<Text className="mt-4 text-center font-inter text-lg text-gray-500">
+					<Text className="text-md mt-4 text-center font-inter text-gray-500">
 						Digite o código de 6 digitos enviado para
 					</Text>
 					<View className="mt-2 flex-row items-center justify-center gap-2">
-						<Text className="text-center font-inter-bold text-lg text-gray-500">
-							+55 (11) 9999-****
+						<Text className="text-center font-inter-bold text-xl text-gray-500">
+							(xx) xxxx-7890
 						</Text>
 						<FontAwesome name="whatsapp" size={24} color="#25D366" />
 					</View>
@@ -168,8 +169,8 @@ export default function VerifyCode() {
 				</TouchableOpacity>
 				<ErrorModal
 					visible={modalVisible}
-					message="Ocorreu um erro"
-					description="Não foi possível completar a solicitação."
+					message="Código incorreto"
+					description="Tente novamente."
 					onClose={() => setModalVisible(false)}
 				/>
 				<Modal transparent={true} animationType="none" visible={isSubmitting}>
