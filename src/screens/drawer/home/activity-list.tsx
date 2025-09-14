@@ -1,8 +1,6 @@
-import { SectionList, SectionListProps, Text, View } from 'react-native'
+import { SectionList, Text, View } from 'react-native'
 import { ActivityCard } from './activity-card'
 import { ActivityService } from '@/mock'
-import { SummaryCard } from './summary-card'
-import { he } from 'zod/locales'
 
 const ColorDotVariants: Record<'parede' | 'contrapiso' | 'pintura', { color: string }> = {
 	parede: {

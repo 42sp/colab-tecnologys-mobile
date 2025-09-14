@@ -6,14 +6,7 @@ import { ActivityService } from '@/mock'
 
 interface ActivityCardProps extends ActivityService {}
 
-export function ActivityCard({
-	title,
-	serviceType,
-	employee,
-	location,
-	locationType,
-	time,
-}: ActivityCardProps) {
+export function ActivityCard({ title, serviceType, employee, location, time }: ActivityCardProps) {
 	function getJobTypeIcon() {
 		switch (serviceType) {
 			case 'parede':
@@ -53,11 +46,7 @@ export function ActivityCard({
 					</View>
 					<View>
 						<View className="flex-row gap-2">
-							{locationType === 'house' ? (
-								<House size={14} color="black" />
-							) : (
-								<Building2 size={14} color="black" />
-							)}
+							<Building2 size={14} color="black" />
 							<Text className="flex-1 font-inter text-sm">{location}</Text>
 						</View>
 						<View className="flex-row gap-2">
