@@ -9,7 +9,6 @@ import { ErrorModal } from '@/components/ui/error-modal'
 import { useState } from 'react'
 
 export default function SignInScreen() {
-	const { drawer } = useNavigate()
 	const [modalVisible, setModalVisible] = useState(false)
 
 	return (

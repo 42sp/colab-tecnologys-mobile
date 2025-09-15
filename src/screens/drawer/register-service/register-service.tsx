@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Image, Text, View, Pressable, ScrollView, Modal } from 'react-native'
+import { KeyboardAvoidingView, Image, Text, View, Pressable, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Card from '@/components/ui/card'
 import { useState, useEffect } from 'react'
