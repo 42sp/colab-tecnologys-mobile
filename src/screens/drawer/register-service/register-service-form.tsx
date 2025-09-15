@@ -1,7 +1,7 @@
 import Card from '@/components/ui/card'
 import { Dropdown } from '@/components/ui/dropdown'
 import { Text, View, Modal, Pressable } from 'react-native'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
 	Controller,
 	type UseFormResetField,
@@ -13,54 +13,48 @@ import {
 import type { RegisterServiceType } from './register-service'
 import { Feather } from '@expo/vector-icons'
 import { CustomCalendar, DateRangeType } from '@/components/ui/calendar'
+import { Services } from '@/api/get-services'
 
 type Props = {
 	control: Control<RegisterServiceType>
 	resetField: UseFormResetField<RegisterServiceType>
-	currentResidential?: {
-		id: number
-		name: string
-		torres: {
-			total: number
-			data: {
-				id: number
-				name: string
-				andares: {
-					total: number
-					data: { id: number; name: string; description?: string }[]
-				}
-			}[]
-		}
-	}
+	services: Services[]
+	reset: () => void
 	setValue: UseFormSetValue<RegisterServiceType>
 	errors: FieldErrors<RegisterServiceType>
 }
 
-export function RegisterServiceForm({
-	control,
-	currentResidential,
-	resetField,
-	setValue,
-	errors,
-}: Props) {
+export function RegisterServiceForm({ control, services, resetField, setValue, errors }: Props) {
 	const [isCalendarVisible, setCalendarVisible] = useState(false)
 	const [selectDay, setSelectDay] = useState<DateRangeType>({ start: null, end: null })
 
-	const towers = currentResidential?.torres?.data ?? []
-	const towerOptions = towers.map((t) => ({ label: t.name }))
+	const selectedTower = useWatch({ control, name: 'tower' })
 
-	const pavimento = Array.from({ length: 27 }, (_, i) => ({
-		label: `PAV ${i + 1}`,
-	  }));
+	const towerOptions = useMemo(() => {
+		return [...new Set(services.map((s) => s.tower?.toString().trim()))]
+			.filter(Boolean)
+			.map((tower) => ({
+				label: `${tower}`,
+				value: tower,
+			}))
+	}, [services])
 
-	const selectedTowerName = useWatch({ control, name: 'tower' }) as string
-	const selectedTower = towers.find((t) => t.name === selectedTowerName)
+	const floorOptions = useMemo(() => {
+		if (!selectedTower) return []
 
-	const totalFloors = selectedTower?.andares?.total ?? 0
-	const floorOptions =
-		totalFloors > 0
-			? Array.from({ length: totalFloors }, (_, i) => ({ label: `${i + 1}º Floor` }))
-			: []
+		const filtered = services.filter(
+			(s) => s.tower?.toString().trim() === selectedTower?.toString().trim(),
+		)
+
+		const uniqueFloors = [...new Set(filtered.map((s) => s.floor?.toString().trim()))]
+			.filter(Boolean)
+			.map((floor) => ({
+				label: floor,
+				value: floor,
+			}))
+
+		return uniqueFloors
+	}, [selectedTower, services])
 
 	useEffect(() => {
 		if (selectDay.start && !selectDay.end) {
@@ -111,10 +105,7 @@ export function RegisterServiceForm({
 									<Modal visible={isCalendarVisible} transparent animationType="slide">
 										<View className="flex-1 items-center justify-center bg-black/40 p-4">
 											<View className="w-full rounded-lg bg-white p-4">
-												<CustomCalendar
-													setDateRange={setSelectDay}
-													markingType="dot"
-												/>
+												<CustomCalendar setDateRange={setSelectDay} markingType="dot" />
 												<Pressable
 													onPress={() => setCalendarVisible(false)}
 													className="mt-4 items-center rounded-lg border-2 border-gray-200 bg-transparent p-3"
@@ -169,7 +160,7 @@ export function RegisterServiceForm({
 								IconLeft={'calendar'}
 								IconRight={'chevron-down'}
 								className="self-center"
-								options={pavimento}
+								options={floorOptions}
 								variant="outline"
 								placeholder="Selecione o andar"
 								value={value}

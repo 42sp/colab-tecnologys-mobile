@@ -1,7 +1,7 @@
 import { KeyboardAvoidingView, Image, Text, View, Pressable, ScrollView, Modal } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Card from '@/components/ui/card'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { RegisterServiceForm } from '@/screens/drawer/register-service/register-service-form'
 import { RadioCheckOption } from '@/components/ui/input-radio'
 import { useForm, Controller } from 'react-hook-form'
@@ -12,8 +12,8 @@ import { WorkersForm } from '@/screens/drawer/register-service/workers-form'
 import { TypeServiceForm } from './type-service-form'
 import { residencialMock } from '@/mock'
 import { ChooseResidentialModal } from '@/screens/drawer/register-service/choose-residential-modal'
-import { useEffect } from 'react'
-import { getServices } from '@/api/get-services'
+import { getServices, Services } from '@/api/get-services'
+import { getServiceTypes, ServiceTypes } from '@/api/get-service-types'
 
 const registerServiceSchema = z
 	.object({
@@ -53,6 +53,8 @@ export type RegisterServiceType = z.infer<typeof registerServiceSchema>
 
 export default function RegisterServiceScreen() {
 	const [modalVisible, setModalVisible] = useState(false)
+	const [allServices, setAllServices] = useState<Services[]>([])
+	const [serviceTypes, setServiceTypes] = useState<ServiceTypes[]>([])
 
 	const residentials = residencialMock.data
 	const [resIndex, setResIndex] = useState(0)
@@ -83,16 +85,18 @@ export default function RegisterServiceScreen() {
 
 	useEffect(() => {
 		const fetchServices = async () => {
-		  try {
-			const services = await getServices();
-			console.log(services);
-		  } catch (error) {
-			console.error("Erro ao buscar serviços:", error);
-		  }
-		};
+			try {
+				const services = await getServices()
+				const serviceType = await getServiceTypes()
+				setServiceTypes(serviceType.data)
+				setAllServices(services)
+			} catch (error) {
+				console.error(error)
+			}
+		}
 
-		fetchServices();
-	  }, []);
+		fetchServices()
+	}, [])
 
 	function onSubmit(data: RegisterServiceType) {
 		console.log('Dados do Serviço: ', JSON.stringify(data))
@@ -101,8 +105,8 @@ export default function RegisterServiceScreen() {
 	}
 
 	function handleSelectResidential(index: number) {
-		resetField('tower')
-		resetField('floor')
+		// resetField('tower')
+		// resetField('floor')
 		setResIndex(index)
 		setModalVisible(false)
 	}
@@ -141,7 +145,8 @@ export default function RegisterServiceScreen() {
 
 					<RegisterServiceForm
 						control={control}
-						currentResidential={currentResidential}
+						services={allServices}
+						reset={reset}
 						resetField={resetField}
 						setValue={setValue}
 						errors={errors}
@@ -149,7 +154,13 @@ export default function RegisterServiceScreen() {
 
 					<WorkersForm control={control} errors={errors} />
 
-					<TypeServiceForm control={control} errors={errors} />
+					<TypeServiceForm
+						services={allServices}
+						serviceTypes={serviceTypes}
+						resetField={resetField}
+						control={control}
+						errors={errors}
+					/>
 
 					<Card className="m-6">
 						<Card.Body>

@@ -1,28 +1,187 @@
 import Card from '@/components/ui/card'
 import { Dropdown } from '@/components/ui/dropdown'
-import { Controller, useWatch, type Control, type FieldErrors } from 'react-hook-form'
-import { Text, View } from 'react-native'
+import {
+	Controller,
+	useWatch,
+	type Control,
+	type FieldErrors,
+	type UseFormResetField,
+} from 'react-hook-form'
+import { Text, View, Pressable } from 'react-native'
 import { RadioCheckOption } from '@/components/ui/input-radio'
 import { TableList } from '@/components/ui/table-list'
+import { useState, useMemo } from 'react'
 import { Feather } from '@expo/vector-icons'
 import type { RegisterServiceType } from './register-service'
-import { serviceTypeMock, serviceMock } from '@/mock'
+import { Services } from '@/api/get-services'
+import { ServiceTypes } from '@/api/get-service-types'
 
-const apartments = [{ label: '1' }, { label: '2' }, { label: '3' }, { label: '4' }, { label: '5' }]
-const unitMeasure = [{ label: 'SALA' }, { label: 'DORMITÓRIO 1' }, { label: 'DORMITÓRIO 2' }, { label: 'BANHO 1' }, { label: 'BANHO 2' }, { label: 'COZINHA' }, { label: 'LAVABO' }, { label: 'ÁREA COMUM' }, {label: 'ÁREA DE SERVIÇO'}]
-const radioOptions = [{ label: 'Externo' }, { label: 'Interno' }]
+const radioOptions = [{ label: 'EXTERNA' }, { label: 'INTERNA' }]
 
 type Props = {
 	control: Control<RegisterServiceType>
 	errors: FieldErrors<RegisterServiceType>
+	resetField: UseFormResetField<RegisterServiceType>
+	services: Services[]
+	serviceTypes: ServiceTypes[]
 }
 
-export function TypeServiceForm({ control, errors }: Props) {
-	const serviceTypeOptions = serviceMock.map((s) => ({ label: s.name }))
-	const services = serviceTypeMock.map((s) => ({ label: s.name }))
+const serviceMap: Record<string, string> = {
+	C: 'Contrapiso',
+	M: 'Marcação',
+	E: 'Elevação',
+	F: 'Fixação',
+	EX: 'Serviço Extra',
+}
 
-	const selectedServiceName = useWatch({ control, name: 'services' })
-	const selectedService = serviceTypeMock.find((s) => s.name === selectedServiceName)
+export function TypeServiceForm({ control, errors, services, serviceTypes, resetField }: Props) {
+	const selectedTower = useWatch({ name: 'tower', control })
+	const selectedFloor = useWatch({ name: 'floor', control })
+	const selectedServiceType = useWatch({ name: 'typeOfService', control })
+	const selectedApartments = useWatch({ name: 'apartments', control })
+	const selectedMeasurementUnit = useWatch({ name: 'measurementUnit', control })
+	const selectedEnvironmentType = useWatch({ name: 'classification', control })
+	const selectedService = useWatch({ name: 'services', control })
+	const [selectedStage, setSelectedStage] = useState<string | null>(null)
+
+	const serviceTypeOptions = useMemo(() => {
+		if (!services.length || !serviceTypes.length) return []
+		if (!selectedTower || !selectedFloor) return []
+
+		const ids = new Set(
+			services
+				.filter(
+					(s) =>
+						s.tower?.toString().trim() === selectedTower?.toString().trim() &&
+						s.floor?.toString().trim() === selectedFloor?.toString().trim(),
+				)
+				.map((s) => String(s.service_type_id).trim()),
+		)
+
+		return Array.from(ids).map((id) => {
+			const type = serviceTypes.find((t) => String(t.id).trim() === id)
+			return {
+				label: type?.service_name || id,
+				value: id,
+			}
+		})
+	}, [services, serviceTypes, selectedTower, selectedFloor])
+
+	const apartmentOptions = useMemo(() => {
+		if (!selectedTower || !selectedFloor || !selectedServiceType) return []
+
+		const filtered = services.filter(
+			(s) =>
+				s.tower?.toString().trim() === selectedTower?.toString().trim() &&
+				s.floor?.toString().trim() === selectedFloor?.toString().trim() &&
+				String(s.service_type_id).trim() === String(selectedServiceType).trim(),
+		)
+
+		const apartments = [
+			...new Set(filtered.map((s) => s.apartment?.toString().trim()).filter(Boolean)),
+		]
+
+		return apartments.map((apartment) => ({
+			label: apartment,
+			value: apartment,
+		}))
+	}, [selectedTower, selectedFloor, selectedServiceType, services])
+
+	const measurementUnitOptions = useMemo(() => {
+		if (!selectedTower || !selectedFloor || !selectedServiceType || !selectedApartments) return []
+
+		return [
+			...new Set(
+				services
+					.filter(
+						(s) =>
+							s.tower?.toString().trim() === selectedTower &&
+							s.floor?.toString().trim() === selectedFloor &&
+							s.service_type_id?.toString().trim() === selectedServiceType &&
+							selectedApartments.includes(s.apartment?.toString().trim() ?? ''),
+					)
+					.map((s) => s.measurement_unit?.toString().trim()),
+			),
+		]
+			.filter(Boolean)
+			.map((unit) => ({
+				label: unit,
+				value: unit,
+			}))
+	}, [selectedTower, selectedFloor, selectedServiceType, selectedApartments, services])
+
+	const serviceOptions = useMemo(() => {
+		if (
+			!selectedTower ||
+			!selectedFloor ||
+			!selectedServiceType ||
+			!selectedApartments?.length ||
+			!selectedMeasurementUnit ||
+			!selectedEnvironmentType
+		)
+			return []
+		const filtered = services.filter(
+			(s) =>
+				s.tower?.toString().trim() === selectedTower &&
+				s.floor?.toString().trim() === selectedFloor &&
+				s.service_type_id?.toString().trim() === selectedServiceType &&
+				selectedApartments.includes(s.apartment?.toString().trim() ?? '') &&
+				s.measurement_unit?.toString().trim() === selectedMeasurementUnit &&
+				s.environment_type?.toUpperCase() === selectedEnvironmentType.toUpperCase(),
+		)
+
+		const uniqueAcronyms = [...new Set(filtered.map((s) => s.acronym?.toString().trim()))].filter(
+			Boolean,
+		)
+
+		const options = uniqueAcronyms.map((acronym) => ({
+			label: serviceMap[acronym] || acronym,
+			value: acronym,
+		}))
+
+		return options
+	}, [
+		selectedTower,
+		selectedFloor,
+		selectedServiceType,
+		selectedApartments,
+		selectedMeasurementUnit,
+		selectedEnvironmentType,
+		services,
+	])
+
+	const filteredServices = useMemo(() => {
+		if (
+			!selectedTower ||
+			!selectedFloor ||
+			!selectedServiceType ||
+			!selectedApartments?.length ||
+			!selectedMeasurementUnit ||
+			!selectedEnvironmentType ||
+			!selectedService
+		)
+			return []
+
+		return services.filter(
+			(s) =>
+				s.tower?.toString().trim() === selectedTower &&
+				s.floor?.toString().trim() === selectedFloor &&
+				s.service_type_id?.toString().trim() === selectedServiceType &&
+				selectedApartments.includes(s.apartment?.toString().trim() ?? '') &&
+				s.measurement_unit?.toString().trim() === selectedMeasurementUnit &&
+				s.environment_type?.toUpperCase() === selectedEnvironmentType.toUpperCase() &&
+				s.acronym?.toString().trim() === selectedService,
+		)
+	}, [
+		selectedTower,
+		selectedFloor,
+		selectedServiceType,
+		selectedApartments,
+		selectedMeasurementUnit,
+		selectedEnvironmentType,
+		selectedService,
+		services,
+	])
 
 	return (
 		<View>
@@ -41,8 +200,13 @@ export function TypeServiceForm({ control, errors }: Props) {
 								options={serviceTypeOptions}
 								variant="outline"
 								placeholder="Selecione o tipo de serviço"
-								value={value}
-								onChangeText={onChange}
+								value={serviceTypeOptions.find((opt) => opt.value === value)?.label || ''}
+								onChangeText={(label) => {
+									const matched = serviceTypeOptions.find((opt) => opt.label === label)
+									const id = matched?.value ?? label
+									onChange(id)
+									resetField('apartments')
+								}}
 								hasError={!!errors.typeOfService}
 							/>
 						)}
@@ -57,10 +221,13 @@ export function TypeServiceForm({ control, errors }: Props) {
 						render={({
 							field: { value: selectedApartments = [], onChange: updateSelectedApartments },
 						}) => {
-							const addApartment = (apartment: string) => {
-								if (!apartment) return
-								if (!selectedApartments.includes(apartment)) {
-									updateSelectedApartments([...selectedApartments, apartment])
+							const addApartment = (label: string) => {
+								const matched = apartmentOptions.find((opt) => opt.label === label)
+								const val = matched?.value ?? label
+
+								if (!val) return
+								if (!selectedApartments.includes(val)) {
+									updateSelectedApartments([...selectedApartments, val])
 								}
 							}
 
@@ -69,7 +236,7 @@ export function TypeServiceForm({ control, errors }: Props) {
 									<Dropdown
 										IconLeft="list"
 										IconRight="chevron-down"
-										options={apartments}
+										options={apartmentOptions}
 										variant="outline"
 										placeholder="Selecione os apartamentos"
 										value=""
@@ -90,7 +257,7 @@ export function TypeServiceForm({ control, errors }: Props) {
 						<Text className="text-xs text-red-500">{errors.apartments.message as string}</Text>
 					)}
 
-<Controller
+					<Controller
 						control={control}
 						name="measurementUnit"
 						render={({ field: { onChange, value } }) => (
@@ -98,17 +265,17 @@ export function TypeServiceForm({ control, errors }: Props) {
 								IconLeft={'list'}
 								IconRight={'chevron-down'}
 								className="mt-2"
-								options={unitMeasure}
+								options={measurementUnitOptions}
 								variant="outline"
 								placeholder="Selecione a unidade de medida"
 								value={value}
 								onChangeText={onChange}
-								hasError={!!errors.services}
+								hasError={!!errors.measurementUnit}
 							/>
 						)}
 					/>
-					{errors.services && (
-						<Text className="text-xs text-red-500">{errors.services.message}</Text>
+					{errors.measurementUnit && (
+						<Text className="text-xs text-red-500">{errors.measurementUnit.message}</Text>
 					)}
 
 					<Controller
@@ -134,7 +301,6 @@ export function TypeServiceForm({ control, errors }: Props) {
 						</Text>
 					)}
 
-
 					<Controller
 						control={control}
 						name="services"
@@ -143,33 +309,65 @@ export function TypeServiceForm({ control, errors }: Props) {
 								IconLeft={'list'}
 								IconRight={'chevron-down'}
 								className="mt-2"
-								options={services}
+								options={serviceOptions}
 								variant="outline"
 								placeholder="Selecione os serviços"
-								value={value}
-								onChangeText={onChange}
+								value={serviceOptions.find((opt) => opt.value === value)?.label || ''}
+								onChangeText={(label) => {
+									const matched = serviceOptions.find((opt) => opt.label === label)
+									const val = matched?.value ?? label
+									onChange(val)
+								}}
 								hasError={!!errors.services}
 							/>
 						)}
 					/>
-					{errors.services && (
-						<Text className="text-xs text-red-500">{errors.services.message}</Text>
-					)}
 
 					{selectedService && (
-						<View className="mt-4 flex-row items-center rounded-lg border border-red-500 bg-red-100 p-4">
-							<View>
-								<Text className="font-inter-bold text-4xl text-red-500">{selectedService.id}</Text>
-							</View>
-							<View className="flex-1 px-4">
-								<Text className="font-inter-bold text-red-500">
-									{selectedService.name} - Apartment 1
-								</Text>
-								<Text className="text-red-500">6.368m - Elevation</Text>
-							</View>
-							<View className="h-6 w-6 items-center justify-center rounded-full bg-red-500">
-								<Feather name="check" size={14} color="#fff" />
-							</View>
+						<View className="mt-4">
+							{filteredServices
+								.sort((a, b) => Number(a.stage) - Number(b.stage))
+								.map((service) => {
+									const isSelected = selectedStage === service.stage
+									const serviceName = serviceMap[service.acronym] || service.acronym
+
+									return (
+										<Pressable
+											key={service.id}
+											onPress={() => setSelectedStage(service.stage)}
+											className={`mt-2 flex-row items-center rounded-lg border p-4 ${
+												isSelected ? 'border-red-500 bg-red-100' : 'border-neutral-300 bg-white'
+											}`}
+										>
+											<Text
+												className={`font-inter-bold text-2xl ${
+													isSelected ? 'text-red-500' : 'text-black'
+												}`}
+											>
+												{service.stage}
+											</Text>
+
+											<View className="flex-1 px-4">
+												<Text
+													className={`font-inter-bold ${
+														isSelected ? 'text-red-500' : 'text-black'
+													}`}
+												>
+													{service.tower}º {service.floor} - Apartamento {service.apartment}
+												</Text>
+												<Text className={`${isSelected ? 'text-red-500' : 'text-neutral-500'}`}>
+													{service.labor_quantity} - {serviceName}
+												</Text>
+											</View>
+
+											{isSelected && (
+												<View className="h-6 w-6 items-center justify-center rounded-full bg-red-500">
+													<Feather name="check" size={14} color="#fff" />
+												</View>
+											)}
+										</Pressable>
+									)
+								})}
 						</View>
 					)}
 				</Card.Body>
