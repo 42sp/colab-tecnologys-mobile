@@ -24,6 +24,7 @@ type Props = {
 	resetField: UseFormResetField<RegisterServiceType>
 	services: Services[]
 	serviceTypes: ServiceTypes[]
+	onServiceSelected?: (serviceId: string | null) => void
 }
 
 const serviceMap: Record<string, string> = {
@@ -34,7 +35,7 @@ const serviceMap: Record<string, string> = {
 	EX: 'Serviço Extra',
 }
 
-export function TypeServiceForm({ control, errors, services, serviceTypes, resetField }: Props) {
+export function TypeServiceForm({ control, errors, services, serviceTypes, onServiceSelected, resetField }: Props) {
 	const selectedTower = useWatch({ name: 'tower', control })
 	const selectedFloor = useWatch({ name: 'floor', control })
 	const selectedServiceType = useWatch({ name: 'typeOfService', control })
@@ -334,7 +335,10 @@ export function TypeServiceForm({ control, errors, services, serviceTypes, reset
 									return (
 										<Pressable
 											key={service.id}
-											onPress={() => setSelectedStage(service.stage)}
+											onPress={() => {
+												setSelectedStage(service.stage)
+												onServiceSelected?.(service.id)
+											}}
 											className={`mt-2 flex-row items-center rounded-lg border p-4 ${
 												isSelected ? 'border-red-500 bg-red-100' : 'border-neutral-300 bg-white'
 											}`}

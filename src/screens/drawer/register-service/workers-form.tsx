@@ -3,12 +3,13 @@ import { Controller, FieldErrors, useFieldArray, useWatch, type Control } from '
 import type { RegisterServiceType } from '@/screens/drawer/register-service/register-service'
 import Card from '@/components/ui/card'
 import { Dropdown } from '@/components/ui/dropdown'
-import { tarefeiros } from '@/mock'
 import { Feather } from '@expo/vector-icons'
+import { AllProfileResponse } from '@/api/get-profile'
 
 type Props = {
 	control: Control<RegisterServiceType>
 	errors: FieldErrors<RegisterServiceType>
+	profiles: AllProfileResponse[]
 }
 
 const MAX_WORKERS = 4
@@ -17,8 +18,6 @@ const percentOptions = Array.from({ length: 11 }, (_, i) => {
 	const v = i * 10
 	return { label: `${v}%`, value: `${v}%` }
 })
-
-const workerOptions = tarefeiros.data.map((t) => ({ label: t.name }))
 
 function distributeEvenly(n: number): number[] {
 	if (n <= 0) return []
@@ -36,7 +35,13 @@ function distributeEvenly(n: number): number[] {
 	return result
 }
 
-export function WorkersForm({ control, errors }: Props) {
+export function WorkersForm({ control, errors, profiles }: Props) {
+	const workerOptions = profiles.map((t) => {
+		const nameParts = t.name.split(' ')
+		const shortName = nameParts.slice(0, 2).join(' ')
+		return { label: shortName, value: t.id }
+	})
+
 	const { fields, append, update, remove } = useFieldArray({
 		control,
 		name: 'workers',
@@ -116,12 +121,12 @@ export function WorkersForm({ control, errors }: Props) {
 										render={({ field: { onChange, value } }) => {
 											const allWorkers = useWatch({ control, name: 'workers' })
 
-											const selectedNames = allWorkers
+											const selectedIds = allWorkers
 												.map((w, i) => (i !== idx ? w.worker : null))
 												.filter(Boolean)
 
 											const availableWorkerOptions = workerOptions.filter(
-												(opt) => !selectedNames.includes(opt.label),
+												(opt) => !selectedIds.includes(opt.value),
 											)
 
 											return (
@@ -131,8 +136,11 @@ export function WorkersForm({ control, errors }: Props) {
 													options={availableWorkerOptions}
 													variant="outline"
 													placeholder="Executor"
-													value={value}
-													onChangeText={onChange}
+													value={value ? availableWorkerOptions.find(opt => opt.value === value)?.label || '' : ''}
+													onChangeText={(selectedLabel) => {
+														const selectedOption = availableWorkerOptions.find(opt => opt.label === selectedLabel)
+														onChange(selectedOption?.value || '')
+													}}
 													hasError={!!rowError?.worker}
 												/>
 											)

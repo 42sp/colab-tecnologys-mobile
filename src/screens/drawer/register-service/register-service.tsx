@@ -10,10 +10,12 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { WorkersForm } from '@/screens/drawer/register-service/workers-form'
 import { TypeServiceForm } from './type-service-form'
-import { residencialMock } from '@/mock'
 import { ChooseResidentialModal } from '@/screens/drawer/register-service/choose-residential-modal'
 import { getServices, Services } from '@/api/get-services'
 import { getServiceTypes, ServiceTypes } from '@/api/get-service-types'
+import { getConstructions, Construction } from '@/api/get-constructions'
+import { getAllProfiles, AllProfileResponse } from '@/api/get-profile'
+import { createTask } from '@/api/post-tasks'
 
 const registerServiceSchema = z
 	.object({
@@ -55,9 +57,11 @@ export default function RegisterServiceScreen() {
 	const [modalVisible, setModalVisible] = useState(false)
 	const [allServices, setAllServices] = useState<Services[]>([])
 	const [serviceTypes, setServiceTypes] = useState<ServiceTypes[]>([])
+	const [residentials, setResidentials ] = useState<Construction[]>([])
+	const [profiles, setProfiles ] = useState<AllProfileResponse[]>([])
+	const [resIndex, setResIndex] = useState(0);
+	const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
 
-	const residentials = residencialMock.data
-	const [resIndex, setResIndex] = useState(0)
 	const currentResidential = residentials[resIndex]
 
 	const {
@@ -84,10 +88,14 @@ export default function RegisterServiceScreen() {
 	})
 
 	useEffect(() => {
-		const fetchServices = async () => {
+		const fetchData = async () => {
 			try {
 				const services = await getServices()
 				const serviceType = await getServiceTypes()
+				const construction = await getConstructions()
+				const profile = await getAllProfiles()
+				setProfiles(profile)
+				setResidentials(construction.data)
 				setServiceTypes(serviceType.data)
 				setAllServices(services)
 			} catch (error) {
@@ -95,13 +103,36 @@ export default function RegisterServiceScreen() {
 			}
 		}
 
-		fetchServices()
+		fetchData()
 	}, [])
 
-	function onSubmit(data: RegisterServiceType) {
-		console.log('Dados do Serviço: ', JSON.stringify(data))
-		reset()
-		setResIndex(0)
+	async function onSubmit(data: RegisterServiceType) {
+		try {
+			console.log('Dados do Serviço: ', JSON.stringify(data))
+
+			if (!selectedServiceId) {
+				console.error('No service has been selected')
+				return
+			}
+
+			const tasks = await Promise.all(
+				data.workers.map(async (worker) => {
+					const taskData = {
+						service_id: selectedServiceId,
+						worker_id: worker.worker,
+						completion_date: data.dateOfService,
+						task_percentage: worker.percent,
+						status: 'pending' as const
+					}
+					return await createTask(taskData)
+				})
+			)
+			reset()
+			setResIndex(0)
+			setSelectedServiceId(null)
+		} catch (error) {
+			console.error('Error creating tasks:', error)
+		}
 	}
 
 	function handleSelectResidential(index: number) {
@@ -152,7 +183,7 @@ export default function RegisterServiceScreen() {
 						errors={errors}
 					></RegisterServiceForm>
 
-					<WorkersForm control={control} errors={errors} />
+					<WorkersForm control={control} errors={errors} profiles={profiles}/>
 
 					<TypeServiceForm
 						services={allServices}
@@ -160,6 +191,7 @@ export default function RegisterServiceScreen() {
 						resetField={resetField}
 						control={control}
 						errors={errors}
+						onServiceSelected={setSelectedServiceId}
 					/>
 
 					<Card className="m-6">
