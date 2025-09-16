@@ -154,12 +154,14 @@ export default function Home() {
 							value={activityDataList.pendding}
 							label="Pendentes"
 						/>
-						<SummaryCard
-							icon="bar-chart"
-							SumaryVariant="green"
-							value={activityDataList.percent + '%'}
-							label="Produtividade"
-						/>
+						<TouchableOpacity onPress={() => navigation.navigate('productivity')}>
+							<SummaryCard
+								icon="bar-chart"
+								SumaryVariant="green"
+								value={activityDataList.percent + '%'}
+								label="Produtividade"
+							/>
+						</TouchableOpacity>
 					</View>
 				}
 			/>
