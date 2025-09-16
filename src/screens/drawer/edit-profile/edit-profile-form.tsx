@@ -6,11 +6,13 @@ import { z } from 'zod'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Card from '@/components/ui/card'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
 import { useNavigation } from '@react-navigation/native'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
 import { DrawerParamList } from '@/_layouts/drawer/drawer'
+import { EditProfile } from '@/api/edit-profile'
+import { updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
 
 const editProfileSchema = z.object({
 	name: z.string().nonempty('Nome completo é obrigatório'),
@@ -23,7 +25,8 @@ const editProfileSchema = z.object({
 type EditProfileType = z.infer<typeof editProfileSchema>
 
 export function EditProfileForm() {
-	const user = useSelector((state: RootState) => state.userProfile)
+	const profile = useSelector((state: RootState) => state.userProfile)
+
 	const {
 		control,
 		handleSubmit,
@@ -32,28 +35,61 @@ export function EditProfileForm() {
 	} = useForm<EditProfileType>({
 		resolver: zodResolver(editProfileSchema),
 		defaultValues: {
-			name: user.name || '',
-			email: user.email || '',
-			phone: user.phone || '',
-			dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('pt-BR') : '',
-			address: user.address || '',
+			name: profile.name || '',
+			email: profile.email || '',
+			phone: profile.phone || '',
+			dateOfBirth: profile.dateOfBirth
+				? new Date(profile.dateOfBirth).toLocaleDateString('pt-BR')
+				: '',
+			address: profile.address || '',
 		},
 	})
 	type ProfileScreenNavigationProp = DrawerNavigationProp<DrawerParamList>
 	const navigation = useNavigation<ProfileScreenNavigationProp>()
+	const dispatch = useDispatch()
+	async function onSubmit(data: EditProfileType) {
+		try {
+			const payload: any = {
+				name: data.name,
+				phone: data.phone,
+				address: data.address,
+				date_of_birth: data.dateOfBirth
+					? new Date(data.dateOfBirth.split('/').reverse().join('-')).toISOString().split('T')[0]
+					: undefined,
+			}
+			if (data.email && data.email.trim() !== '') {
+				payload.email = data.email
+			}
 
-	function onSubmit(data: EditProfileType) {
-		console.log('Dados de Registro: ', JSON.stringify(data))
-		// implementar requisição
+			const updated = await EditProfile(payload)
+			dispatch(
+				updateProfile({
+					name: updated.name,
+					dateOfBirth: updated.date_of_birth,
+					registrationCode: updated.registration_code,
+					phone: updated.phone,
+					address: updated.address,
+					city: updated.city,
+					state: updated.state,
+					postcode: updated.postcode,
+					photo: updated.photo,
+					updatedAt: updated.updated_at,
+				}),
+			)
+		} catch (error) {
+			console.log(error)
+		}
 	}
 
 	function onCancel() {
 		reset({
-			name: user.name || '',
-			email: user.email || '',
-			phone: user.phone || '',
-			dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('pt-BR') : '',
-			address: user.address || '',
+			name: profile.name || '',
+			email: profile.email || '',
+			phone: profile.phone || '',
+			dateOfBirth: profile.dateOfBirth
+				? new Date(profile.dateOfBirth).toLocaleDateString('pt-BR')
+				: '',
+			address: profile.address || '',
 		})
 		navigation.navigate('profile')
 	}
