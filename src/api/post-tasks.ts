@@ -5,7 +5,7 @@ interface TaskData {
 	worker_id: string
 	completion_date: string
 	task_percentage: number
-	status?: 'pending' | 'in_progress' | 'completed' | 'approved' | 'rejected'
+	status: string
 	approver_id?: string
 }
 
@@ -15,10 +15,10 @@ interface TaskResponse {
 	worker_id: string
 	approver_id?: string
 	status: string
-	completion_date: string
+	completion_date: Date
 	task_percentage: number
-	created_at: string
-	updated_at: string
+	created_at: Date
+	updated_at: Date
 	worker_name: string
 	construction_name: string
 	construction_address: string
