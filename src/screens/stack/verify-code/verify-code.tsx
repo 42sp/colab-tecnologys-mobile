@@ -13,7 +13,7 @@ import { z } from 'zod'
 // import Clipboard from 'expo-clipboard';
 import { zodResolver } from '@hookform/resolvers/zod'
 import { RootState } from '@/libs/redux/store'
-import { ErrorModal } from '@/components/ui/error-modal'
+import { LogModal } from '@/components/ui/log-modal'
 
 const otpSchema = z.object({
 	otp: z
@@ -30,7 +30,13 @@ export default function VerifyCode() {
 	const cpf = useSelector((state: RootState) => state.passwordRecovery.cpf)
 	// const phone = useSelector((state: RootState) => state.passwordRecovery.phone) // está faltando como response no back
 	const dispatch = useDispatch()
-	const [modalVisible, setModalVisible] = useState(false)
+	const [modal, setModal] = useState<{
+		visible: boolean
+		description: string
+	}>({
+		visible: false,
+		description: '',
+	})
 	const [timer, setTimer] = useState(30)
 	const [isButtonDisabled, setIsButtonDisabled] = useState(true)
 
@@ -73,7 +79,10 @@ export default function VerifyCode() {
 			stack('resetPassword')
 		} catch (error) {
 			console.log(error)
-			setModalVisible(true)
+			setModal({
+				visible: true,
+				description: 'Código inválido. Tente novamente.',
+			})
 			stack('resetPassword')
 		}
 	}
@@ -167,11 +176,10 @@ export default function VerifyCode() {
 						Reenviar código
 					</Text>
 				</TouchableOpacity>
-				<ErrorModal
-					visible={modalVisible}
-					message="Código incorreto"
-					description="Tente novamente."
-					onClose={() => setModalVisible(false)}
+				<LogModal
+					visible={modal.visible}
+					description={modal.description}
+					onClose={() => setModal({ visible: false, description: '' })}
 				/>
 				<Modal transparent={true} animationType="none" visible={isSubmitting}>
 					<View className="flex-1 items-center justify-center">

@@ -15,6 +15,7 @@ import { setAuth } from '@/libs/redux/auth/auth-slice'
 import { createProfile } from '@/api/create-profile'
 import { setUser } from '@/libs/redux/user/user-slice'
 import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
+import { LogModal } from '@/components/ui/log-modal'
 
 const signUpSchema = z
 	.object({
@@ -40,6 +41,13 @@ type RolesType = {
 export function SignUpForm() {
 	const { stack, drawer } = useNavigate()
 	const [hidePassword, setHidePassword] = useState(true)
+	const [modal, setModal] = useState<{
+		visible: boolean
+		description: string
+	}>({
+		visible: false,
+		description: '',
+	})
 
 	const {
 		control,
@@ -60,7 +68,7 @@ export function SignUpForm() {
 	const [rolesList, setRolesList] = useState<RolesType[]>([])
 	const dispatch = useDispatch()
 
-	const fetchRolesList = async () => {
+	async function fetchRolesList() {
 		try {
 			const roles = await getRoles()
 			const list = roles.data.map(({ id, role_name }) => ({ id, label: role_name }))
@@ -89,7 +97,7 @@ export function SignUpForm() {
 
 			const newProfile = await createProfile({
 				name: profile.name,
-				phone: profile.name,
+				phone: profile.phone,
 			})
 
 			dispatch(
@@ -121,6 +129,10 @@ export function SignUpForm() {
 			drawer('home')
 		} catch (error) {
 			console.log(error)
+			setModal({
+				visible: true,
+				description: 'Não foi possível criar uma conta. Tente novamente mais tarde.',
+			})
 		}
 	}
 
@@ -281,7 +293,7 @@ export function SignUpForm() {
 					Já tem uma conta?
 					<Text
 						onPress={() => {
-							stack('signUp')
+							stack('signIn')
 						}}
 						className="font-inter-bold text-blue-500"
 					>
@@ -290,6 +302,11 @@ export function SignUpForm() {
 					</Text>
 				</Text>
 			</View>
+			<LogModal
+				visible={modal.visible}
+				description={modal.description}
+				onClose={() => setModal({ visible: false, description: '' })}
+			/>
 			<Modal transparent={true} animationType="none" visible={isSubmitting}>
 				<View className="flex-1 items-center justify-center">
 					<ActivityIndicator size={52} color="#FF6700" />

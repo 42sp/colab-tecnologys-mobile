@@ -4,12 +4,32 @@ import { SignInDivisor } from './sign-in-divisor'
 import { Button } from '@/components/ui/button'
 import { SignInForm } from './sign-in-form'
 import { ScrollView } from 'react-native-gesture-handler'
-import { useNavigate } from '@/libs/react-navigation/useNavigate'
-import { ErrorModal } from '@/components/ui/error-modal'
+import { LogModal } from '@/components/ui/log-modal'
 import { useState } from 'react'
 
 export default function SignInScreen() {
-	const [modalVisible, setModalVisible] = useState(false)
+	const [modal, setModal] = useState<{
+		visible: boolean
+		//status: 'success' | 'error'
+		description: string
+	}>({
+		visible: false,
+		//status: 'error',
+		description: '',
+	})
+
+	function handleGoogle() {
+		// try {
+
+		// } catch(error) {
+
+		setModal({
+			visible: true,
+			//status: 'error',
+			description: 'Não foi possível entrar com o Google. Tente novamente mais tarde.',
+		})
+		// }
+	}
 
 	return (
 		<SafeAreaView className="h-full bg-white p-10">
@@ -26,9 +46,7 @@ export default function SignInScreen() {
 
 					<Button
 						title="Entrar com o Google"
-						onPress={() => {
-							setModalVisible(true)
-						}}
+						onPress={handleGoogle}
 						variant="outline"
 						className="my-5 self-center"
 					>
@@ -38,11 +56,10 @@ export default function SignInScreen() {
 					<SignInDivisor text="ou" className="my-5" />
 
 					<SignInForm />
-					<ErrorModal
-						visible={modalVisible}
-						message="Ocorreu um erro"
-						description="Não foi possível entrar com o Google. Tente novamente mais tarde."
-						onClose={() => setModalVisible(false)}
+					<LogModal
+						visible={modal.visible}
+						description={modal.description}
+						onClose={() => setModal({ visible: false, description: '' })}
 					/>
 				</ScrollView>
 			</KeyboardAvoidingView>

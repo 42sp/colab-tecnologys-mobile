@@ -4,14 +4,14 @@ import { Feather } from '@expo/vector-icons'
 import Card from './card'
 import { FadeBackgroundModal } from './fade-background-modal'
 
-type ErrorModalProps = {
+type LogModalProps = {
 	visible: boolean
-	message: string
 	description?: string
 	onClose: () => void
+	status?: 'success' | 'error'
 }
 
-export function ErrorModal({ visible, message, description, onClose }: ErrorModalProps) {
+export function LogModal({ visible, description, onClose, status = 'error' }: LogModalProps) {
 	const [showCard, setShowCard] = useState(visible)
 	useEffect(() => {
 		if (visible) setShowCard(true)
@@ -31,7 +31,13 @@ export function ErrorModal({ visible, message, description, onClose }: ErrorModa
 					<View className="p-10">
 						<Card className="w-full">
 							<View className="flex-row justify-between">
-								<Text className="font-inter-bold text-lg text-red-700">{message}</Text>
+								<Text
+									className={`font-inter-bold text-lg ${
+										status === 'success' ? 'text-green-700' : 'text-red-700'
+									}`}
+								>
+									{status === 'success' ? 'Sucesso' : 'Ocorreu um erro'}
+								</Text>
 								<TouchableOpacity onPress={onClose} hitSlop={10}>
 									<Feather name="x" size={20} color="#333" />
 								</TouchableOpacity>
