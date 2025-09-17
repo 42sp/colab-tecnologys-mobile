@@ -13,6 +13,8 @@ import { DrawerNavigationProp } from '@react-navigation/drawer'
 import { DrawerParamList } from '@/_layouts/drawer/drawer'
 import { EditProfile } from '@/api/edit-profile'
 import { updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
+import { useState } from 'react'
+import { LogModal } from '@/components/ui/log-modal'
 
 const editProfileSchema = z.object({
 	name: z.string().nonempty('Nome completo é obrigatório'),
@@ -47,6 +49,12 @@ export function EditProfileForm() {
 	type ProfileScreenNavigationProp = DrawerNavigationProp<DrawerParamList>
 	const navigation = useNavigation<ProfileScreenNavigationProp>()
 	const dispatch = useDispatch()
+	const [modal, setModal] = useState<{
+		visible: boolean
+		status: 'error' | 'success'
+		description: string
+	}>({ visible: false, status: 'error', description: '' })
+
 	async function onSubmit(data: EditProfileType) {
 		try {
 			const payload: any = {
@@ -76,8 +84,14 @@ export function EditProfileForm() {
 					updatedAt: updated.updated_at,
 				}),
 			)
+			setModal({ visible: true, status: 'success', description: 'Perfil atualizado!' })
 		} catch (error) {
 			console.log(error)
+			setModal({
+				visible: true,
+				status: 'error',
+				description: 'Não foi possível editar o perfil. Tente novamente mais tarde.',
+			})
 		}
 	}
 
@@ -209,6 +223,12 @@ export function EditProfileForm() {
 					</View>
 				</Card.Body>
 			</Card>
+			<LogModal
+				visible={modal.visible}
+				status={modal.status}
+				description={modal.description}
+				onClose={() => setModal({ visible: false, status: 'error', description: '' })}
+			/>
 			<Modal transparent={true} animationType="none" visible={isSubmitting}>
 				<View className="flex-1 items-center justify-center">
 					<ActivityIndicator size={52} color="#FF6700" />

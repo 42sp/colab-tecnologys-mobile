@@ -9,6 +9,7 @@ import { useImageManager } from '@/hook/useImageManager'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
 import { updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
+import { LogModal } from '@/components/ui/log-modal'
 
 type ProfileAvatarProps = {
 	avatar: number
@@ -19,10 +20,15 @@ const API_URL = env.EXPO_PUBLIC_API_URL
 
 export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 	const { setManipulatedImage, renderedImage } = useImageManager()
-	const [_status, _requestPermission] = useMediaLibraryPermissions()
+	//const [_status, _requestPermission] = useMediaLibraryPermissions()
 	const profile = useSelector((state: RootState) => state.userProfile)
 	const dispatch = useDispatch()
 	const [image, setImage] = useState<string | null>(null)
+	const [modal, setModal] = useState<{
+		visible: boolean
+		status: 'error' | 'success'
+		description: string
+	}>({ visible: false, status: 'error', description: '' })
 
 	useEffect(() => {
 		const handleRenderedImage = async () => {
@@ -34,10 +40,20 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 					const user = await getProfile()
 					dispatch(updateProfile({ photo: user.data[0].photo, updatedAt: user.data[0].updated_at }))
 					setImage(null)
+					setModal({
+						visible: true,
+						status: 'success',
+						description: 'Foto de perfil alterada!',
+					})
 				}
 			} catch (error) {
 				console.log('error returned profile-avatar: ', error)
 				setImage(null)
+				setModal({
+					visible: true,
+					status: 'error',
+					description: 'Não foi possível alterar sua foto de perfil.',
+				})
 			}
 		}
 		handleRenderedImage()
@@ -84,6 +100,12 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 			<View className="my-3 items-center">
 				<Text className="font-inter-bold text-3xl">{name}</Text>
 			</View>
+			<LogModal
+				visible={modal.visible}
+				status={modal.status}
+				description={modal.description}
+				onClose={() => setModal({ visible: false, status: 'error', description: '' })}
+			/>
 		</View>
 	)
 }
