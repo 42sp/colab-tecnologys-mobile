@@ -10,6 +10,7 @@ import { getProfile } from '@/api/get-profile'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
 import { updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
+import { LogModal } from '@/components/ui/log-modal'
 
 type EditProfileAvatarProps = {
 	avatar: number
@@ -19,10 +20,15 @@ const API_URL = env.EXPO_PUBLIC_API_URL
 
 export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 	const { setManipulatedImage, renderedImage } = useImageManager()
-	const [_status, _requestPermission] = useMediaLibraryPermissions()
+	//const [_status, _requestPermission] = useMediaLibraryPermissions()
 	const profile = useSelector((state: RootState) => state.userProfile)
 	const dispatch = useDispatch()
 	const [image, setImage] = useState<string | null>(null)
+	const [modal, setModal] = useState<{
+		visible: boolean
+		status: 'error' | 'success'
+		description: string
+	}>({ visible: false, status: 'error', description: '' })
 
 	useEffect(() => {
 		const handleRenderedImage = async () => {
@@ -34,10 +40,20 @@ export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 					const user = await getProfile()
 					dispatch(updateProfile({ photo: user.data[0].photo, updatedAt: user.data[0].updated_at }))
 					setImage(null)
+					setModal({
+						visible: true,
+						status: 'success',
+						description: 'Foto de perfil alterada!',
+					})
 				}
 			} catch (error) {
 				console.log('error returned edit-profile-avatar: ', error)
 				setImage(null)
+				setModal({
+					visible: true,
+					status: 'error',
+					description: 'Não foi possível alterar sua foto de perfil.',
+				})
 			}
 		}
 		handleRenderedImage()
@@ -86,6 +102,12 @@ export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 			<TouchableOpacity onPress={updateAvatar}>
 				<Text className="font-inter-bold text-xl text-gray-500">Alterar foto de perfil</Text>
 			</TouchableOpacity>
+			<LogModal
+				visible={modal.visible}
+				status={modal.status}
+				description={modal.description}
+				onClose={() => setModal({ visible: false, status: 'error', description: '' })}
+			/>
 		</View>
 	)
 }

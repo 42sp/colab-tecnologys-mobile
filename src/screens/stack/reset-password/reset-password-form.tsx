@@ -13,7 +13,7 @@ import { patchUsers } from '@/api/patch-users'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
 import { clearPasswordRecovery } from '@/libs/redux/password-recovery/password-recovery-slice'
-import { ErrorModal } from '@/components/ui/error-modal'
+import { LogModal } from '@/components/ui/log-modal'
 import { resetAuth } from '@/libs/redux/auth/auth-slice'
 
 const SecuritySettingsSchema = z
@@ -29,9 +29,15 @@ const SecuritySettingsSchema = z
 type SecuritySettingsType = z.infer<typeof SecuritySettingsSchema>
 
 export function ResetPasswordForm() {
-	const [modalVisible, setModalVisible] = useState(false)
 	const { cpf, userId } = useSelector((state: RootState) => state.passwordRecovery)
 	const dispatch = useDispatch()
+	const [modal, setModal] = useState<{
+		visible: boolean
+		description: string
+	}>({
+		visible: false,
+		description: '',
+	})
 
 	const {
 		control,
@@ -45,7 +51,12 @@ export function ResetPasswordForm() {
 
 	async function onSubmit({ newPassword }: SecuritySettingsType) {
 		try {
-			if (!userId || !cpf) setModalVisible(true)
+			if (!userId || !cpf) {
+				setModal({
+					visible: true,
+					description: 'Não foi possível resetar sua senha. Tente novamente mais tarde.',
+				})
+			}
 			await patchUsers({ id: userId, cpf: cpf, password: newPassword })
 
 			dispatch(clearPasswordRecovery())
@@ -53,7 +64,10 @@ export function ResetPasswordForm() {
 			stack('signIn')
 		} catch (error) {
 			console.log(error)
-			setModalVisible(true)
+			setModal({
+				visible: true,
+				description: 'Não foi possível resetar sua senha. Tente novamente mais tarde.',
+			})
 		}
 	}
 
@@ -145,11 +159,10 @@ export function ResetPasswordForm() {
 					<Text className="font-inter text-gray-500">{'\u2022'} Mude sua senha regularmente</Text>
 				</Card.Body>
 			</Card>
-			<ErrorModal
-				visible={modalVisible}
-				message="Ocorreu um erro"
-				description="Não foi possível completar a solicitação."
-				onClose={() => setModalVisible(false)}
+			<LogModal
+				visible={modal.visible}
+				description={modal.description}
+				onClose={() => setModal({ visible: false, description: '' })}
 			/>
 			<Modal transparent={true} animationType="none" visible={isSubmitting}>
 				<View className="flex-1 items-center justify-center">

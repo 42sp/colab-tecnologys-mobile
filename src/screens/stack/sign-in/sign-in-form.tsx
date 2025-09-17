@@ -11,7 +11,7 @@ import { setAuth } from '@/libs/redux/auth/auth-slice'
 import { signIn } from '@/api/sign-in'
 import { getProfile } from '@/api/get-profile'
 import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
-import { ErrorModal } from '@/components/ui/error-modal'
+import { LogModal } from '@/components/ui/log-modal'
 
 const signInSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve conter 11 caracteres'),
@@ -137,7 +137,7 @@ export function SignInForm() {
 					<ActivityIndicator size={52} color="#FF6700" />
 				</View>
 			</Modal>
-			<ErrorModal
+			<LogModal
 				visible={showErrorModal}
 				message="CPF ou senha incorretos"
 				description="Verifique os dados e tente novamente."

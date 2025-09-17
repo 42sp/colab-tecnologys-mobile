@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ErrorModal } from '@/components/ui/error-modal'
+import { LogModal } from '@/components/ui/log-modal'
 import {
 	Image,
 	Text,
@@ -29,9 +29,15 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordType = z.infer<typeof forgotPasswordSchema>
 
 export default function ForgotPasswordScreen() {
-	const [modalVisible, setModalVisible] = useState(false)
 	const { stack } = useNavigate()
 	const dispatch = useDispatch()
+	const [modal, setModal] = useState<{
+		visible: boolean
+		description: string
+	}>({
+		visible: false,
+		description: '',
+	})
 
 	const {
 		control,
@@ -56,7 +62,10 @@ export default function ForgotPasswordScreen() {
 			stack('verifyCode')
 		} catch (error) {
 			console.log(error)
-			setModalVisible(true)
+			setModal({
+				visible: true,
+				description: 'CPF incorreto. Tente novamente.',
+			})
 		}
 	}
 
@@ -119,11 +128,10 @@ export default function ForgotPasswordScreen() {
 						</TouchableOpacity>
 					</View>
 
-					<ErrorModal
-						visible={modalVisible}
-						message="CPF incorreto"
-						description="Verifique os dados e tente novamente."
-						onClose={() => setModalVisible(false)}
+					<LogModal
+						visible={modal.visible}
+						description={modal.description}
+						onClose={() => setModal({ visible: false, description: '' })}
 					/>
 					<Modal transparent={true} animationType="none" visible={isSubmitting}>
 						<View className="flex-1 items-center justify-center">
