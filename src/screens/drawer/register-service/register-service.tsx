@@ -1,7 +1,7 @@
 import { KeyboardAvoidingView, Image, Text, View, Pressable, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Card from '@/components/ui/card'
-import { useState, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { RegisterServiceForm } from '@/screens/drawer/register-service/register-service-form'
 import { RadioCheckOption } from '@/components/ui/input-radio'
 import { useForm, Controller } from 'react-hook-form'
@@ -16,16 +16,18 @@ import { getServiceTypes, ServiceTypes } from '@/api/get-service-types'
 import { getConstructions, Construction } from '@/api/get-constructions'
 import { getAllProfiles, AllProfileResponse } from '@/api/get-profile'
 import { createTask } from '@/api/post-tasks'
+import { useFocusEffect } from '@react-navigation/native'
+import { LogModal } from '@/components/ui/log-modal'
 
 const registerServiceSchema = z
 	.object({
-		dateOfService: z.string().nonempty('Selecione uma data.'),
+		dateOfService: z.string('Selecione uma data.'),
 		tower: z.string().nonempty('Selecione a torre.'),
 		floor: z.string().nonempty('Selecione o andar.'),
 		workers: z.array(
 			z.object({
 				percent: z.number('Insira o percentual do serviço.').min(0).max(100),
-				worker: z.string().nonempty('Selecione um tarefeiro.'),
+				worker_id: z.string().nonempty('Selecione um tarefeiro.'),
 			}),
 		),
 		typeOfService: z.string().nonempty('Tipo de serviço é obrigatório.'),
@@ -61,6 +63,13 @@ export default function RegisterServiceScreen() {
 	const [profiles, setProfiles ] = useState<AllProfileResponse[]>([])
 	const [resIndex, setResIndex] = useState(0);
 	const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+	const [modal, setModal] = useState<{
+		visible: boolean
+		description: string
+	}>({
+		visible: false,
+		description: '',
+	})
 
 	const currentResidential = residentials[resIndex]
 
@@ -74,55 +83,53 @@ export default function RegisterServiceScreen() {
 	} = useForm<RegisterServiceType>({
 		resolver: zodResolver(registerServiceSchema),
 		defaultValues: {
-			dateOfService: '',
-			tower: '',
-			floor: '',
-			workers: [{ percent: 100, worker: '' }],
-			typeOfService: '',
-			apartments: [],
-			measurementUnit: '',
-			classification: '',
-			services: '',
-			confirmed: false,
+			workers: [{ percent: 100, worker_id: '' }],
 		},
 	})
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const services = await getServices()
-				const serviceType = await getServiceTypes()
-				const construction = await getConstructions()
-				const profile = await getAllProfiles()
-				setProfiles(profile)
-				setResidentials(construction.data)
-				setServiceTypes(serviceType.data)
-				setAllServices(services)
-			} catch (error) {
-				console.error(error)
+	useFocusEffect(
+		useCallback(() => {
+			const fetchData = async () => {
+				try {
+					const [services, serviceType, construction, profile] = await Promise.all([
+						getServices(),
+						getServiceTypes(),
+						getConstructions(),
+						getAllProfiles(),
+					])
+					setProfiles(profile)
+					setResidentials(construction.data)
+					setServiceTypes(serviceType.data)
+					setAllServices(services)
+				} catch (error) {
+					console.error('Failed to fetch initial data:', error)
+				}
 			}
-		}
-
-		fetchData()
-	}, [])
+			fetchData()
+		}, []),
+	)
 
 	async function onSubmit(data: RegisterServiceType) {
 		try {
 			console.log('Dados do Serviço: ', JSON.stringify(data))
 
 			if (!selectedServiceId) {
+				setModal({
+					visible: true,
+					description: 'Não foi possível registrar o serviço. Tente novamente mais tarde.',
+				})
 				console.error('No service has been selected')
 				return
 			}
 
-			const tasks = await Promise.all(
+			await Promise.all(
 				data.workers.map(async (worker) => {
 					const taskData = {
 						service_id: selectedServiceId,
-						worker_id: worker.worker,
 						completion_date: data.dateOfService,
 						task_percentage: worker.percent,
-						status: 'pending' as const
+						worker_id: worker.worker_id,
+						status: "pending"
 					}
 					return await createTask(taskData)
 				})
@@ -131,14 +138,18 @@ export default function RegisterServiceScreen() {
 			setResIndex(0)
 			setSelectedServiceId(null)
 		} catch (error) {
+			setModal({
+				visible: true,
+				description: 'Não foi possível registrar o serviço. Tente novamente mais tarde.',
+			})
 			console.error('Error creating tasks:', error)
 		}
 	}
 
 	function handleSelectResidential(index: number) {
-		// resetField('tower')
-		// resetField('floor')
+		reset()
 		setResIndex(index)
+		setSelectedServiceId(null)
 		setModalVisible(false)
 	}
 
@@ -183,7 +194,7 @@ export default function RegisterServiceScreen() {
 						errors={errors}
 					></RegisterServiceForm>
 
-					<WorkersForm control={control} errors={errors} profiles={profiles}/>
+					<WorkersForm control={control} errors={errors} profiles={profiles} />
 
 					<TypeServiceForm
 						services={allServices}
@@ -219,6 +230,11 @@ export default function RegisterServiceScreen() {
 							onPress={handleSubmit(onSubmit)}
 						/>
 					</View>
+					<LogModal
+				visible={modal.visible}
+				description={modal.description}
+				onClose={() => setModal({ visible: false, description: '' })}
+			/>
 				</KeyboardAvoidingView>
 			</SafeAreaView>
 		</ScrollView>

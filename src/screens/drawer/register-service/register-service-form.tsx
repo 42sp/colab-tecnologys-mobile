@@ -58,8 +58,7 @@ export function RegisterServiceForm({ control, services, resetField, setValue, e
 
 	useEffect(() => {
 		if (selectDay.start && !selectDay.end) {
-			const selectedDate = selectDay.start.toISOString().split('T')[0]
-			setValue('dateOfService', selectedDate)
+			setValue("dateOfService", selectDay.start.toISOString().split('T')[0])
 			setCalendarVisible(false)
 		}
 	}, [selectDay])
@@ -76,6 +75,7 @@ export function RegisterServiceForm({ control, services, resetField, setValue, e
 						control={control}
 						name="dateOfService"
 						render={({ field: { value } }) => {
+
 							const formattedDate = value
 								? new Date(`${value}T00:00:00`).toLocaleDateString('pt-BR')
 								: ''
