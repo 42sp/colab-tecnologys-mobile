@@ -29,7 +29,7 @@ export function CustomDrawerContent(props: any) {
 	return (
 		<DrawerContentScrollView
 			{...props}
-			contentContainerStyle={{ paddingTop: 0, paddingEnd: 0, paddingStart: 0 }}
+			contentContainerStyle={{ flex: 1, paddingTop: 0, paddingEnd: 0, paddingStart: 0 }}
 		>
 			<View className="h-24">
 				<LinearGradient
