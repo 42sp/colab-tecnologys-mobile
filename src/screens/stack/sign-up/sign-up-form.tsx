@@ -1,4 +1,4 @@
-import { ActivityIndicator, Modal, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { z } from 'zod'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -17,6 +17,7 @@ import { setUser } from '@/libs/redux/user/user-slice'
 import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { LogModal } from '@/components/ui/log-modal'
 import { saveAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
+import { LoadingModal } from '@/components/ui/loading-modal'
 
 const signUpSchema = z
 	.object({
@@ -308,16 +309,12 @@ export function SignUpForm() {
 					</Text>
 				</Text>
 			</View>
+			<LoadingModal visible={isSubmitting} />
 			<LogModal
 				visible={modal.visible}
 				description={modal.description}
 				onClose={() => setModal({ visible: false, description: '' })}
 			/>
-			<Modal transparent={true} animationType="none" visible={isSubmitting}>
-				<View className="flex-1 items-center justify-center">
-					<ActivityIndicator size={52} color="#FF6700" />
-				</View>
-			</Modal>
 		</View>
 	)
 }

@@ -2,16 +2,7 @@ import { z } from 'zod'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LogModal } from '@/components/ui/log-modal'
-import {
-	Image,
-	Text,
-	View,
-	TouchableOpacity,
-	KeyboardAvoidingView,
-	Platform,
-	Modal,
-	ActivityIndicator,
-} from 'react-native'
+import { Image, Text, View, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useState } from 'react'
@@ -21,6 +12,7 @@ import { useNavigate } from '@/libs/react-navigation/useNavigate'
 import { passwordRecovery } from '@/api/password-recovery'
 import { useDispatch } from 'react-redux'
 import { setPasswordRecovery } from '@/libs/redux/password-recovery/password-recovery-slice'
+import { LoadingModal } from '@/components/ui/loading-modal'
 
 const forgotPasswordSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve ser válido'),
@@ -127,17 +119,12 @@ export default function ForgotPasswordScreen() {
 							</Text>
 						</TouchableOpacity>
 					</View>
-
+					<LoadingModal visible={isSubmitting} />
 					<LogModal
 						visible={modal.visible}
 						description={modal.description}
 						onClose={() => setModal({ visible: false, description: '' })}
 					/>
-					<Modal transparent={true} animationType="none" visible={isSubmitting}>
-						<View className="flex-1 items-center justify-center">
-							<ActivityIndicator size={52} color="#FF6700" />
-						</View>
-					</Modal>
 				</ScrollView>
 			</KeyboardAvoidingView>
 		</SafeAreaView>

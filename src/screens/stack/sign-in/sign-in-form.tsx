@@ -1,4 +1,4 @@
-import { ActivityIndicator, Modal, Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { z } from 'zod'
@@ -13,6 +13,7 @@ import { getProfile } from '@/api/get-profile'
 import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { LogModal } from '@/components/ui/log-modal'
 import { saveAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
+import { LoadingModal } from '@/components/ui/loading-modal'
 
 const signInSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve conter 11 caracteres'),
@@ -138,11 +139,7 @@ export function SignInForm() {
 					</TouchableOpacity>
 				</View>
 			</View>
-			<Modal transparent={true} animationType="none" visible={isSubmitting}>
-				<View className="flex-1 items-center justify-center">
-					<ActivityIndicator size={52} color="#FF6700" />
-				</View>
-			</Modal>
+			<LoadingModal visible={isSubmitting} />
 			<LogModal
 				visible={showErrorModal}
 				description="Verifique os dados e tente novamente."

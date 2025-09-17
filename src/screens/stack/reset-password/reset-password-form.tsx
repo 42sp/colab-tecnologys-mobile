@@ -1,4 +1,4 @@
-import { ActivityIndicator, Modal, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Card from '@/components/ui/card'
@@ -15,6 +15,7 @@ import { RootState } from '@/libs/redux/store'
 import { clearPasswordRecovery } from '@/libs/redux/password-recovery/password-recovery-slice'
 import { LogModal } from '@/components/ui/log-modal'
 import { resetAuth } from '@/libs/redux/auth/auth-slice'
+import { LoadingModal } from '@/components/ui/loading-modal'
 
 const SecuritySettingsSchema = z
 	.object({
@@ -159,16 +160,12 @@ export function ResetPasswordForm() {
 					<Text className="font-inter text-gray-500">{'\u2022'} Mude sua senha regularmente</Text>
 				</Card.Body>
 			</Card>
+			<LoadingModal visible={isSubmitting} />
 			<LogModal
 				visible={modal.visible}
 				description={modal.description}
 				onClose={() => setModal({ visible: false, description: '' })}
 			/>
-			<Modal transparent={true} animationType="none" visible={isSubmitting}>
-				<View className="flex-1 items-center justify-center">
-					<ActivityIndicator size={52} color="#FF6700" />
-				</View>
-			</Modal>
 		</View>
 	)
 }

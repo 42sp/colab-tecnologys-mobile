@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import OTPTextView from 'react-native-otp-textinput'
-import { Text, View, TouchableOpacity, Image, Modal, ActivityIndicator } from 'react-native'
+import { Text, View, TouchableOpacity, Image } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { setAuth } from '@/libs/redux/auth/auth-slice'
 import { passwordRecovery } from '@/api/password-recovery'
@@ -14,6 +14,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { RootState } from '@/libs/redux/store'
 import { LogModal } from '@/components/ui/log-modal'
+import { LoadingModal } from '@/components/ui/loading-modal'
 
 const otpSchema = z.object({
 	otp: z
@@ -181,11 +182,7 @@ export default function VerifyCode() {
 					description={modal.description}
 					onClose={() => setModal({ visible: false, description: '' })}
 				/>
-				<Modal transparent={true} animationType="none" visible={isSubmitting}>
-					<View className="flex-1 items-center justify-center">
-						<ActivityIndicator size={52} color="#FF6700" />
-					</View>
-				</Modal>
+				<LoadingModal visible={isSubmitting} />
 			</View>
 		</SafeAreaView>
 	)

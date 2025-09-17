@@ -1,4 +1,4 @@
-import { ActivityIndicator, Modal, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Card from '@/components/ui/card'
@@ -12,6 +12,7 @@ import { DrawerNavigationProp } from '@react-navigation/drawer'
 import { DrawerParamList } from '@/_layouts/drawer/drawer'
 import { useNavigation } from '@react-navigation/native'
 import { LogModal } from '@/components/ui/log-modal'
+import { LoadingModal } from '@/components/ui/loading-modal'
 
 const SecuritySettingsSchema = z
 	.object({
@@ -184,17 +185,13 @@ export function SecuritySettingsForm() {
 					<Text className="font-inter text-gray-500">{'\u2022'} Mude sua senha regularmente</Text>
 				</Card.Body>
 			</Card>
+			<LoadingModal visible={isSubmitting} />
 			<LogModal
 				visible={modal.visible}
 				status={modal.status}
 				description={modal.description}
 				onClose={() => setModal({ visible: false, status: 'error', description: '' })}
 			/>
-			<Modal transparent={true} animationType="none" visible={isSubmitting}>
-				<View className="flex-1 items-center justify-center">
-					<ActivityIndicator size={52} color="#FF6700" />
-				</View>
-			</Modal>
 		</View>
 	)
 }

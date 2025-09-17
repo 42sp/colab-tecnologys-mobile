@@ -1,4 +1,4 @@
-import { ActivityIndicator, Modal, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Feather } from '@expo/vector-icons'
@@ -15,6 +15,7 @@ import { EditProfile } from '@/api/edit-profile'
 import { updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { useState } from 'react'
 import { LogModal } from '@/components/ui/log-modal'
+import { LoadingModal } from '@/components/ui/loading-modal'
 
 const editProfileSchema = z.object({
 	name: z.string().nonempty('Nome completo é obrigatório'),
@@ -223,17 +224,13 @@ export function EditProfileForm() {
 					</View>
 				</Card.Body>
 			</Card>
+			<LoadingModal visible={isSubmitting} />
 			<LogModal
 				visible={modal.visible}
 				status={modal.status}
 				description={modal.description}
 				onClose={() => setModal({ visible: false, status: 'error', description: '' })}
 			/>
-			<Modal transparent={true} animationType="none" visible={isSubmitting}>
-				<View className="flex-1 items-center justify-center">
-					<ActivityIndicator size={52} color="#FF6700" />
-				</View>
-			</Modal>
 		</View>
 	)
 }
