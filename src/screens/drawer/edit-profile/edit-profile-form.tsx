@@ -58,6 +58,7 @@ export function EditProfileForm() {
 
 	async function onSubmit(data: EditProfileType) {
 		try {
+			await new Promise((resolve) => setTimeout(resolve, 5000))
 			const payload: any = {
 				name: data.name,
 				phone: data.phone,
