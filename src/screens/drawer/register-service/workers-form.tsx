@@ -39,7 +39,7 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 	const workerOptions = profiles.map((t) => {
 		const nameParts = t.name.split(' ')
 		const shortName = nameParts.slice(0, 2).join(' ')
-		return { label: shortName, value: t.id }
+		return { label: shortName, value: t.user_id }
 	})
 
 	const { fields, append, update, remove } = useFieldArray({
@@ -63,7 +63,7 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 
 		append({
 			percent: newDistribution[newTotal - 1],
-			worker: '',
+			worker_id: '',
 		})
 	}
 
@@ -117,12 +117,12 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 								<View className="flex-[3]">
 									<Controller
 										control={control}
-										name={`workers.${idx}.worker` as const}
+										name={`workers.${idx}.worker_id` as const}
 										render={({ field: { onChange, value } }) => {
 											const allWorkers = useWatch({ control, name: 'workers' })
 
 											const selectedIds = allWorkers
-												.map((w, i) => (i !== idx ? w.worker : null))
+												.map((w, i) => (i !== idx ? w.worker_id : null))
 												.filter(Boolean)
 
 											const availableWorkerOptions = workerOptions.filter(
