@@ -16,6 +16,7 @@ import { createProfile } from '@/api/create-profile'
 import { setUser } from '@/libs/redux/user/user-slice'
 import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { LogModal } from '@/components/ui/log-modal'
+import { saveAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
 
 const signUpSchema = z
 	.object({
@@ -83,7 +84,7 @@ export function SignUpForm() {
 	}, [])
 
 	async function onSubmit(profile: SignUpType) {
-		console.log('Dados de registro ', profile.jobTitle)
+		console.log('Dados de registro ', profile)
 		try {
 			const user = await createUser({
 				cpf: profile.cpf,
@@ -93,6 +94,11 @@ export function SignUpForm() {
 			const auth = await signIn({ cpf: profile.cpf, password: profile.password })
 
 			const { payload } = auth.authentication
+			await saveAuthSecureStore([
+				{ key: 'token', value: auth.accessToken },
+				{ key: 'expiryDate', value: payload.exp.toString() },
+				{ key: 'userid', value: payload.sub.toString() },
+			])
 			dispatch(setAuth({ token: auth.accessToken, expiry: payload.exp, id: payload.sub }))
 
 			const newProfile = await createProfile({

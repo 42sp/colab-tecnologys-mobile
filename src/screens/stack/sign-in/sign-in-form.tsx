@@ -12,6 +12,7 @@ import { signIn } from '@/api/sign-in'
 import { getProfile } from '@/api/get-profile'
 import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { LogModal } from '@/components/ui/log-modal'
+import { saveAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
 
 const signInSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve conter 11 caracteres'),
@@ -43,6 +44,11 @@ export function SignInForm() {
 			const auth = await signIn({ ...user })
 			const { accessToken } = auth
 			const { payload } = auth.authentication
+			await saveAuthSecureStore([
+				{ key: 'token', value: accessToken },
+				{ key: 'expiryDate', value: payload.exp.toString() },
+				{ key: 'userid', value: payload.sub.toString() },
+			])
 			dispatch(setAuth({ token: accessToken, expiry: payload.exp, id: payload.sub }))
 			const profile = await getProfile()
 			const userProfile = profile.data[0]
@@ -139,7 +145,6 @@ export function SignInForm() {
 			</Modal>
 			<LogModal
 				visible={showErrorModal}
-				message="CPF ou senha incorretos"
 				description="Verifique os dados e tente novamente."
 				onClose={() => setShowErrorModal(false)}
 			/>
