@@ -39,6 +39,9 @@ export default function ForgotPasswordScreen() {
 		formState: { errors, isSubmitting },
 	} = useForm<ForgotPasswordType>({
 		resolver: zodResolver(forgotPasswordSchema),
+		defaultValues: {
+			cpf: '',
+		},
 	})
 
 	async function onSubmit({ cpf }: ForgotPasswordType) {

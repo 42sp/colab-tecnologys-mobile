@@ -10,6 +10,7 @@ import { useState } from 'react'
 
 export default function SignInScreen() {
 	const [modalVisible, setModalVisible] = useState(false)
+	const { drawer } = useNavigate()
 
 	return (
 		<SafeAreaView className="h-full bg-white p-10">
@@ -27,7 +28,7 @@ export default function SignInScreen() {
 					<Button
 						title="Entrar com o Google"
 						onPress={() => {
-							setModalVisible(true)
+							drawer('home')
 						}}
 						variant="outline"
 						className="my-5 self-center"
