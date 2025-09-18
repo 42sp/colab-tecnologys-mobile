@@ -5,7 +5,7 @@
 		"version": "1.0.0",
 		"scheme": "tecnologys-app-scheme",
 		"main": "./src/app.tsx",
-		"plugins": ["expo-font"],
+		"plugins": ["expo-font", "expo-secure-store"],
 		"web": {
 			"favicon": "./src/assets/favicon.png"
 		},

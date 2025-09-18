@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import OTPTextView from 'react-native-otp-textinput'
-import { Text, View, TouchableOpacity, Image, Modal, ActivityIndicator } from 'react-native'
+import { Text, View, TouchableOpacity, Image } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { setAuth } from '@/libs/redux/auth/auth-slice'
 import { passwordRecovery } from '@/api/password-recovery'
@@ -13,7 +13,8 @@ import { z } from 'zod'
 // import Clipboard from 'expo-clipboard';
 import { zodResolver } from '@hookform/resolvers/zod'
 import { RootState } from '@/libs/redux/store'
-import { ErrorModal } from '@/components/ui/error-modal'
+import { LogModal } from '@/components/ui/log-modal'
+import { LoadingModal } from '@/components/ui/loading-modal'
 
 const otpSchema = z.object({
 	otp: z
@@ -28,9 +29,15 @@ export default function VerifyCode() {
 	const { stack } = useNavigate()
 	const [baseTimer, setBaseTimer] = useState(30)
 	const cpf = useSelector((state: RootState) => state.passwordRecovery.cpf)
+	// const phone = useSelector((state: RootState) => state.passwordRecovery.phone) // está faltando como response no back
 	const dispatch = useDispatch()
-	const [modalVisible, setModalVisible] = useState(false)
-	// const input = useRef<OTPTextView>(null);
+	const [modal, setModal] = useState<{
+		visible: boolean
+		description: string
+	}>({
+		visible: false,
+		description: '',
+	})
 	const [timer, setTimer] = useState(30)
 	const [isButtonDisabled, setIsButtonDisabled] = useState(true)
 
@@ -73,7 +80,11 @@ export default function VerifyCode() {
 			stack('resetPassword')
 		} catch (error) {
 			console.log(error)
-			setModalVisible(true)
+			setModal({
+				visible: true,
+				description: 'Código inválido. Tente novamente.',
+			})
+			stack('resetPassword')
 		}
 	}
 
@@ -103,12 +114,12 @@ export default function VerifyCode() {
 						resizeMode="contain"
 					/>
 					<Text className="mt-4 text-center text-2xl font-bold">Verificação de Código</Text>
-					<Text className="mt-4 text-center font-inter text-lg text-gray-500">
+					<Text className="text-md mt-4 text-center font-inter text-gray-500">
 						Digite o código de 6 digitos enviado para
 					</Text>
 					<View className="mt-2 flex-row items-center justify-center gap-2">
-						<Text className="text-center font-inter-bold text-lg text-gray-500">
-							+55 (11) 9999-****
+						<Text className="text-center font-inter-bold text-xl text-gray-500">
+							(xx) xxxx-7890
 						</Text>
 						<FontAwesome name="whatsapp" size={24} color="#25D366" />
 					</View>
@@ -166,17 +177,12 @@ export default function VerifyCode() {
 						Reenviar código
 					</Text>
 				</TouchableOpacity>
-				<ErrorModal
-					visible={modalVisible}
-					message="Ocorreu um erro"
-					description="Não foi possível completar a solicitação."
-					onClose={() => setModalVisible(false)}
+				<LogModal
+					visible={modal.visible}
+					description={modal.description}
+					onClose={() => setModal({ visible: false, description: '' })}
 				/>
-				<Modal transparent={true} animationType="none" visible={isSubmitting}>
-					<View className="flex-1 items-center justify-center">
-						<ActivityIndicator size={52} color="#FF6700" />
-					</View>
-				</Modal>
+				<LoadingModal visible={isSubmitting} />
 			</View>
 		</SafeAreaView>
 	)

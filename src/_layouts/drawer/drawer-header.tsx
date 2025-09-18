@@ -17,7 +17,7 @@ export function DrawerHeader({ navigation, options, route }: DrawerHeaderProps) 
 				end={{ x: 1, y: 0.5 }}
 				style={{ height: '100%' }}
 			>
-				<View className=" h-full w-full flex-row items-end justify-between p-4">
+				<View className=" h-full w-full flex-row items-end justify-between p-2">
 					{canGoBack ? (
 						<TouchableOpacity onPress={() => navigation.goBack()}>
 							<Feather name="chevron-left" size={24} color="#fff" />

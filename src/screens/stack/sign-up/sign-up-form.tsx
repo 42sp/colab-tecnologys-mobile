@@ -1,4 +1,4 @@
-import { ActivityIndicator, Modal, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { z } from 'zod'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -15,6 +15,9 @@ import { setAuth } from '@/libs/redux/auth/auth-slice'
 import { createProfile } from '@/api/create-profile'
 import { setUser } from '@/libs/redux/user/user-slice'
 import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
+import { LogModal } from '@/components/ui/log-modal'
+import { saveAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
+import { LoadingModal } from '@/components/ui/loading-modal'
 
 const signUpSchema = z
 	.object({
@@ -40,6 +43,13 @@ type RolesType = {
 export function SignUpForm() {
 	const { stack, drawer } = useNavigate()
 	const [hidePassword, setHidePassword] = useState(true)
+	const [modal, setModal] = useState<{
+		visible: boolean
+		description: string
+	}>({
+		visible: false,
+		description: '',
+	})
 
 	const {
 		control,
@@ -60,7 +70,7 @@ export function SignUpForm() {
 	const [rolesList, setRolesList] = useState<RolesType[]>([])
 	const dispatch = useDispatch()
 
-	const fetchRolesList = async () => {
+	async function fetchRolesList() {
 		try {
 			const roles = await getRoles()
 			const list = roles.data.map(({ id, role_name }) => ({ id, label: role_name }))
@@ -75,7 +85,7 @@ export function SignUpForm() {
 	}, [])
 
 	async function onSubmit(profile: SignUpType) {
-		console.log('Dados de registro ', profile.jobTitle)
+		console.log('Dados de registro ', profile)
 		try {
 			const user = await createUser({
 				cpf: profile.cpf,
@@ -85,11 +95,16 @@ export function SignUpForm() {
 			const auth = await signIn({ cpf: profile.cpf, password: profile.password })
 
 			const { payload } = auth.authentication
+			await saveAuthSecureStore([
+				{ key: 'token', value: auth.accessToken },
+				{ key: 'expiryDate', value: payload.exp.toString() },
+				{ key: 'userid', value: payload.sub.toString() },
+			])
 			dispatch(setAuth({ token: auth.accessToken, expiry: payload.exp, id: payload.sub }))
 
 			const newProfile = await createProfile({
 				name: profile.name,
-				phone: profile.name,
+				phone: profile.phone,
 			})
 
 			dispatch(
@@ -121,6 +136,10 @@ export function SignUpForm() {
 			drawer('home')
 		} catch (error) {
 			console.log(error)
+			setModal({
+				visible: true,
+				description: 'Não foi possível criar uma conta. Tente novamente mais tarde.',
+			})
 		}
 	}
 
@@ -281,7 +300,7 @@ export function SignUpForm() {
 					Já tem uma conta?
 					<Text
 						onPress={() => {
-							stack('signUp')
+							stack('signIn')
 						}}
 						className="font-inter-bold text-blue-500"
 					>
@@ -290,11 +309,12 @@ export function SignUpForm() {
 					</Text>
 				</Text>
 			</View>
-			<Modal transparent={true} animationType="none" visible={isSubmitting}>
-				<View className="flex-1 items-center justify-center">
-					<ActivityIndicator size={52} color="#FF6700" />
-				</View>
-			</Modal>
+			<LoadingModal visible={isSubmitting} />
+			<LogModal
+				visible={modal.visible}
+				description={modal.description}
+				onClose={() => setModal({ visible: false, description: '' })}
+			/>
 		</View>
 	)
 }

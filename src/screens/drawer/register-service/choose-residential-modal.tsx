@@ -1,15 +1,11 @@
 import { Feather } from '@expo/vector-icons'
 import { View, Text, Modal, FlatList, Pressable } from 'react-native'
-
-type Residential = {
-	id: number
-	name: string
-}
+import { Construction } from '@/api/get-constructions'
 
 type Props = {
 	visible: boolean
 	onClose: () => void
-	residentials: Residential[]
+	residentials: Construction[]
 	onSelect: (index: number) => void
 }
 

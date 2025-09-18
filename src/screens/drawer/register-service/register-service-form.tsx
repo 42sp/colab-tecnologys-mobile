@@ -58,8 +58,7 @@ export function RegisterServiceForm({ control, services, resetField, setValue, e
 
 	useEffect(() => {
 		if (selectDay.start && !selectDay.end) {
-			const selectedDate = selectDay.start.toISOString().split('T')[0]
-			setValue('dateOfService', selectedDate)
+			setValue('dateOfService', selectDay.start.toISOString().split('T')[0])
 			setCalendarVisible(false)
 		}
 	}, [selectDay])
@@ -105,6 +104,7 @@ export function RegisterServiceForm({ control, services, resetField, setValue, e
 									<Modal visible={isCalendarVisible} transparent animationType="slide">
 										<View className="flex-1 items-center justify-center bg-black/40 p-4">
 											<View className="w-full rounded-lg bg-white p-4">
+												<CustomCalendar setDateRange={setSelectDay} markingType="dot" />
 												<CustomCalendar setDateRange={setSelectDay} markingType="dot" />
 												<Pressable
 													onPress={() => setCalendarVisible(false)}

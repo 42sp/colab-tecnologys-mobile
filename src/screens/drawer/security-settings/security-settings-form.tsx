@@ -1,4 +1,4 @@
-import { ActivityIndicator, Modal, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Card from '@/components/ui/card'
@@ -11,6 +11,8 @@ import { ScanFace } from 'lucide-react-native'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
 import { DrawerParamList } from '@/_layouts/drawer/drawer'
 import { useNavigation } from '@react-navigation/native'
+import { LogModal } from '@/components/ui/log-modal'
+import { LoadingModal } from '@/components/ui/loading-modal'
 
 const SecuritySettingsSchema = z
 	.object({
@@ -39,6 +41,11 @@ export function SecuritySettingsForm() {
 			confirmPassword: '',
 		},
 	})
+	const [modal, setModal] = useState<{
+		visible: boolean
+		status: 'error' | 'success'
+		description: string
+	}>({ visible: false, status: 'error', description: '' })
 
 	type ProfileScreenNavigationProp = DrawerNavigationProp<DrawerParamList>
 	const navigation = useNavigation<ProfileScreenNavigationProp>()
@@ -46,6 +53,15 @@ export function SecuritySettingsForm() {
 	function onSubmit(data: SecuritySettingsType) {
 		console.log('Dados de Registro: ', JSON.stringify(data))
 		//implementar requisição
+		// try {
+		// 	setModal({ visible: true, status: 'success', description: 'Senha alterada!' })
+		// } catch(error) {
+		setModal({
+			visible: true,
+			status: 'error',
+			description: 'Não foi possível alterar a senha. Tente novamente.',
+		})
+		// }
 		reset({
 			currentPassword: '',
 			newPassword: '',
@@ -169,11 +185,13 @@ export function SecuritySettingsForm() {
 					<Text className="font-inter text-gray-500">{'\u2022'} Mude sua senha regularmente</Text>
 				</Card.Body>
 			</Card>
-			<Modal transparent={true} animationType="none" visible={isSubmitting}>
-				<View className="flex-1 items-center justify-center">
-					<ActivityIndicator size={52} color="#FF6700" />
-				</View>
-			</Modal>
+			<LoadingModal visible={isSubmitting} />
+			<LogModal
+				visible={modal.visible}
+				status={modal.status}
+				description={modal.description}
+				onClose={() => setModal({ visible: false, status: 'error', description: '' })}
+			/>
 		</View>
 	)
 }

@@ -15,6 +15,7 @@ import { DrawerParamList } from '@/_layouts/drawer/drawer'
 import { resetAuth } from '@/libs/redux/auth/auth-slice'
 import { LogoutModal } from '@/components/ui/logout-modal'
 import { useState } from 'react'
+import { deleteAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
 
 export default function ProfileScreen() {
 	const user = useSelector((state: RootState) => state.userProfile)
@@ -23,9 +24,14 @@ export default function ProfileScreen() {
 	const dispatch = useDispatch()
 	const [isModalVisible, setIsModalVisible] = useState(false)
 
-	function confirmLogout() {
-		setIsModalVisible(false)
-		dispatch(resetAuth())
+	async function confirmLogout() {
+		try {
+			setIsModalVisible(false)
+			dispatch(resetAuth())
+			await deleteAuthSecureStore([{ key: 'token' }, { key: 'expiryDate' }, { key: 'userid' }])
+		} catch (error) {
+			console.log('Erro no secure-store ao fazer log out: ', error)
+		}
 	}
 
 	return (

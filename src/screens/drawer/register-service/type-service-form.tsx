@@ -16,15 +16,16 @@ import type { RegisterServiceType } from './register-service'
 import { Services } from '@/api/get-services'
 import { ServiceTypes } from '@/api/get-service-types'
 
-const radioOptions = [{ label: 'EXTERNA' }, { label: 'INTERNA' }]
-
 type Props = {
 	control: Control<RegisterServiceType>
 	errors: FieldErrors<RegisterServiceType>
 	resetField: UseFormResetField<RegisterServiceType>
 	services: Services[]
 	serviceTypes: ServiceTypes[]
+	onServiceSelected?: (serviceId: string | null) => void
 }
+
+const radioOptions = [{ label: 'EXTERNA' }, { label: 'INTERNA' }]
 
 const serviceMap: Record<string, string> = {
 	C: 'Contrapiso',
@@ -34,7 +35,14 @@ const serviceMap: Record<string, string> = {
 	EX: 'Serviço Extra',
 }
 
-export function TypeServiceForm({ control, errors, services, serviceTypes, resetField }: Props) {
+export function TypeServiceForm({
+	control,
+	errors,
+	services,
+	serviceTypes,
+	onServiceSelected,
+	resetField,
+}: Props) {
 	const selectedTower = useWatch({ name: 'tower', control })
 	const selectedFloor = useWatch({ name: 'floor', control })
 	const selectedServiceType = useWatch({ name: 'typeOfService', control })
@@ -44,20 +52,19 @@ export function TypeServiceForm({ control, errors, services, serviceTypes, reset
 	const selectedService = useWatch({ name: 'services', control })
 	const [selectedStage, setSelectedStage] = useState<string | null>(null)
 
-	const serviceTypeOptions = useMemo(() => {
-		if (!services.length || !serviceTypes.length) return []
+	const baseFilteredServices = useMemo(() => {
 		if (!selectedTower || !selectedFloor) return []
-
-		const ids = new Set(
-			services
-				.filter(
-					(s) =>
-						s.tower?.toString().trim() === selectedTower?.toString().trim() &&
-						s.floor?.toString().trim() === selectedFloor?.toString().trim(),
-				)
-				.map((s) => String(s.service_type_id).trim()),
+		return services.filter(
+			(s) =>
+				s.tower?.toString().trim() === selectedTower?.toString().trim() &&
+				s.floor?.toString().trim() === selectedFloor?.toString().trim(),
 		)
+	}, [services, selectedTower, selectedFloor])
 
+	const serviceTypeOptions = useMemo(() => {
+		if (!serviceTypes.length) return []
+
+		const ids = new Set(baseFilteredServices.map((s) => String(s.service_type_id).trim()))
 		return Array.from(ids).map((id) => {
 			const type = serviceTypes.find((t) => String(t.id).trim() === id)
 			return {
@@ -65,74 +72,64 @@ export function TypeServiceForm({ control, errors, services, serviceTypes, reset
 				value: id,
 			}
 		})
-	}, [services, serviceTypes, selectedTower, selectedFloor])
+	}, [baseFilteredServices, serviceTypes])
+
+	const servicesFilteredByServiceType = useMemo(() => {
+		if (!selectedServiceType) return []
+		return baseFilteredServices.filter(
+			(s) => String(s.service_type_id).trim() === String(selectedServiceType).trim(),
+		)
+	}, [baseFilteredServices, selectedServiceType])
 
 	const apartmentOptions = useMemo(() => {
-		if (!selectedTower || !selectedFloor || !selectedServiceType) return []
-
-		const filtered = services.filter(
-			(s) =>
-				s.tower?.toString().trim() === selectedTower?.toString().trim() &&
-				s.floor?.toString().trim() === selectedFloor?.toString().trim() &&
-				String(s.service_type_id).trim() === String(selectedServiceType).trim(),
-		)
-
 		const apartments = [
-			...new Set(filtered.map((s) => s.apartment?.toString().trim()).filter(Boolean)),
+			...new Set(
+				servicesFilteredByServiceType.map((s) => s.apartment?.toString().trim()).filter(Boolean),
+			),
 		]
 
 		return apartments.map((apartment) => ({
 			label: apartment,
 			value: apartment,
 		}))
-	}, [selectedTower, selectedFloor, selectedServiceType, services])
+	}, [servicesFilteredByServiceType])
+
+	const servicesFilteredByApartments = useMemo(() => {
+		if (!selectedApartments?.length) return []
+		return servicesFilteredByServiceType.filter((s) =>
+			selectedApartments.includes(s.apartment?.toString().trim() ?? ''),
+		)
+	}, [servicesFilteredByServiceType, selectedApartments])
 
 	const measurementUnitOptions = useMemo(() => {
-		if (!selectedTower || !selectedFloor || !selectedServiceType || !selectedApartments) return []
-
 		return [
-			...new Set(
-				services
-					.filter(
-						(s) =>
-							s.tower?.toString().trim() === selectedTower &&
-							s.floor?.toString().trim() === selectedFloor &&
-							s.service_type_id?.toString().trim() === selectedServiceType &&
-							selectedApartments.includes(s.apartment?.toString().trim() ?? ''),
-					)
-					.map((s) => s.measurement_unit?.toString().trim()),
-			),
+			...new Set(servicesFilteredByApartments.map((s) => s.measurement_unit?.toString().trim())),
 		]
 			.filter(Boolean)
 			.map((unit) => ({
 				label: unit,
 				value: unit,
 			}))
-	}, [selectedTower, selectedFloor, selectedServiceType, selectedApartments, services])
+	}, [servicesFilteredByApartments])
+
+	const servicesFilteredByUnit = useMemo(() => {
+		if (!selectedMeasurementUnit) return []
+		return servicesFilteredByApartments.filter(
+			(s) => s.measurement_unit?.toString().trim() === selectedMeasurementUnit,
+		)
+	}, [servicesFilteredByApartments, selectedMeasurementUnit])
+
+	const servicesFilteredByEnvType = useMemo(() => {
+		if (!selectedEnvironmentType) return []
+		return servicesFilteredByUnit.filter(
+			(s) => s.environment_type?.toUpperCase() === selectedEnvironmentType.toUpperCase(),
+		)
+	}, [servicesFilteredByUnit, selectedEnvironmentType])
 
 	const serviceOptions = useMemo(() => {
-		if (
-			!selectedTower ||
-			!selectedFloor ||
-			!selectedServiceType ||
-			!selectedApartments?.length ||
-			!selectedMeasurementUnit ||
-			!selectedEnvironmentType
-		)
-			return []
-		const filtered = services.filter(
-			(s) =>
-				s.tower?.toString().trim() === selectedTower &&
-				s.floor?.toString().trim() === selectedFloor &&
-				s.service_type_id?.toString().trim() === selectedServiceType &&
-				selectedApartments.includes(s.apartment?.toString().trim() ?? '') &&
-				s.measurement_unit?.toString().trim() === selectedMeasurementUnit &&
-				s.environment_type?.toUpperCase() === selectedEnvironmentType.toUpperCase(),
-		)
-
-		const uniqueAcronyms = [...new Set(filtered.map((s) => s.acronym?.toString().trim()))].filter(
-			Boolean,
-		)
+		const uniqueAcronyms = [
+			...new Set(servicesFilteredByEnvType.map((s) => s.acronym?.toString().trim())),
+		].filter(Boolean)
 
 		const options = uniqueAcronyms.map((acronym) => ({
 			label: serviceMap[acronym] || acronym,
@@ -140,48 +137,13 @@ export function TypeServiceForm({ control, errors, services, serviceTypes, reset
 		}))
 
 		return options
-	}, [
-		selectedTower,
-		selectedFloor,
-		selectedServiceType,
-		selectedApartments,
-		selectedMeasurementUnit,
-		selectedEnvironmentType,
-		services,
-	])
+	}, [servicesFilteredByEnvType])
 
 	const filteredServices = useMemo(() => {
-		if (
-			!selectedTower ||
-			!selectedFloor ||
-			!selectedServiceType ||
-			!selectedApartments?.length ||
-			!selectedMeasurementUnit ||
-			!selectedEnvironmentType ||
-			!selectedService
-		)
-			return []
+		if (!selectedService) return []
 
-		return services.filter(
-			(s) =>
-				s.tower?.toString().trim() === selectedTower &&
-				s.floor?.toString().trim() === selectedFloor &&
-				s.service_type_id?.toString().trim() === selectedServiceType &&
-				selectedApartments.includes(s.apartment?.toString().trim() ?? '') &&
-				s.measurement_unit?.toString().trim() === selectedMeasurementUnit &&
-				s.environment_type?.toUpperCase() === selectedEnvironmentType.toUpperCase() &&
-				s.acronym?.toString().trim() === selectedService,
-		)
-	}, [
-		selectedTower,
-		selectedFloor,
-		selectedServiceType,
-		selectedApartments,
-		selectedMeasurementUnit,
-		selectedEnvironmentType,
-		selectedService,
-		services,
-	])
+		return servicesFilteredByEnvType.filter((s) => s.acronym?.toString().trim() === selectedService)
+	}, [servicesFilteredByEnvType, selectedService])
 
 	return (
 		<View>
@@ -334,7 +296,10 @@ export function TypeServiceForm({ control, errors, services, serviceTypes, reset
 									return (
 										<Pressable
 											key={service.id}
-											onPress={() => setSelectedStage(service.stage)}
+											onPress={() => {
+												setSelectedStage(service.stage)
+												onServiceSelected?.(service.id)
+											}}
 											className={`mt-2 flex-row items-center rounded-lg border p-4 ${
 												isSelected ? 'border-red-500 bg-red-100' : 'border-neutral-300 bg-white'
 											}`}

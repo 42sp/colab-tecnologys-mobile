@@ -3,18 +3,18 @@ import authReducer from './auth/auth-slice'
 import userReducer from './user/user-slice'
 import userProfileReducer from './user-profile/user-profile-slice'
 import passwordRecoveryReducer from './password-recovery/password-recovery-slice'
+import tasksReducer from '@/libs/redux/tasks/tasks-slice'
 
 const store = configureStore({
 	reducer: {
-		// redux toolkit tem um switch interno para os types
 		auth: authReducer,
 		user: userReducer,
 		userProfile: userProfileReducer,
 		passwordRecovery: passwordRecoveryReducer,
+		tasks: tasksReducer,
 	},
 })
 
-// tipo da store
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
