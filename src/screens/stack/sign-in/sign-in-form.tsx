@@ -11,6 +11,8 @@ import { setAuth } from '@/libs/redux/auth/auth-slice'
 import { signIn } from '@/api/sign-in'
 import { getProfile } from '@/api/get-profile'
 import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
+import { setTasks } from '@/libs/redux/tasks/tasks-slice'
+import { getTasks } from '@/api/get-tasks'
 
 const signInSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve conter 11 caracteres'),
@@ -58,6 +60,9 @@ export function SignInForm() {
 					updatedAt: userProfile.updated_at,
 				}),
 			)
+			const tasks = await getTasks()
+			dispatch(setTasks(tasks))
+
 			drawer('home')
 		} catch (error) {
 			console.log(error)

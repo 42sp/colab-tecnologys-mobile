@@ -2,26 +2,38 @@ import { Text, View } from 'react-native'
 import Card from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PaintRoller, Building2, House, Blocks, BrickWall, User } from 'lucide-react-native'
-import { ActivityService } from '@/mock'
+import { Task } from '@/api/get-tasks'
 
-interface ActivityCardProps extends ActivityService {}
+interface ActivityCardProps extends Task {}
 
-export function ActivityCard({ title, serviceType, employee, location, time }: ActivityCardProps) {
+export function ActivityCard({
+	service_type,
+	construction_name,
+	construction_address,
+	service_stage,
+	service_floor,
+	service_apartment,
+	service_tower,
+	created_at,
+}: ActivityCardProps) {
+	const title = `${service_type} - ${service_stage} ${service_floor}/${service_apartment} - Torre ${service_tower}`
+
+	const time = new Date(created_at as string)
 	function getJobTypeIcon() {
-		switch (serviceType) {
-			case 'parede':
+		switch (service_type) {
+			case 'Alvenaria':
 				return (
 					<View className="size-10 items-center justify-center rounded-full bg-blue-100">
 						<BrickWall size={18} color="#262626" />
 					</View>
 				)
-			case 'contrapiso':
+			case 'Contrapiso':
 				return (
 					<View className="size-10 items-center justify-center rounded-full bg-red-100">
 						<Blocks size={18} color="#262626" />
 					</View>
 				)
-			case 'pintura':
+			case 'Pintura':
 				return (
 					<View className="size-10 items-center justify-center rounded-full bg-amber-100">
 						<PaintRoller size={18} color="#262626" />
@@ -29,6 +41,7 @@ export function ActivityCard({ title, serviceType, employee, location, time }: A
 				)
 		}
 	}
+
 	return (
 		<View className="">
 			<Card className="flex-row">
@@ -47,11 +60,11 @@ export function ActivityCard({ title, serviceType, employee, location, time }: A
 					<View>
 						<View className="flex-row gap-2">
 							<Building2 size={14} color="black" />
-							<Text className="flex-1 font-inter text-sm">{location}</Text>
+							<Text className="flex-1 font-inter text-sm">{construction_address}</Text>
 						</View>
 						<View className="flex-row gap-2">
 							<User size={14} color="black" />
-							<Text className="flex-1 font-inter text-sm">{employee}</Text>
+							<Text className="flex-1 font-inter text-sm">{construction_name}</Text>
 						</View>
 					</View>
 					<View className="hidden pl-14">

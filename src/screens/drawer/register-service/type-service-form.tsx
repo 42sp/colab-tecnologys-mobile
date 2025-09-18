@@ -9,7 +9,17 @@ import type { RegisterServiceType } from './register-service'
 import { serviceTypeMock, serviceMock } from '@/mock'
 
 const apartments = [{ label: '1' }, { label: '2' }, { label: '3' }, { label: '4' }, { label: '5' }]
-const unitMeasure = [{ label: 'SALA' }, { label: 'DORMITÓRIO 1' }, { label: 'DORMITÓRIO 2' }, { label: 'BANHO 1' }, { label: 'BANHO 2' }, { label: 'COZINHA' }, { label: 'LAVABO' }, { label: 'ÁREA COMUM' }, {label: 'ÁREA DE SERVIÇO'}]
+const unitMeasure = [
+	{ label: 'SALA' },
+	{ label: 'DORMITÓRIO 1' },
+	{ label: 'DORMITÓRIO 2' },
+	{ label: 'BANHO 1' },
+	{ label: 'BANHO 2' },
+	{ label: 'COZINHA' },
+	{ label: 'LAVABO' },
+	{ label: 'ÁREA COMUM' },
+	{ label: 'ÁREA DE SERVIÇO' },
+]
 const radioOptions = [{ label: 'Externo' }, { label: 'Interno' }]
 
 type Props = {
@@ -90,7 +100,7 @@ export function TypeServiceForm({ control, errors }: Props) {
 						<Text className="text-xs text-red-500">{errors.apartments.message as string}</Text>
 					)}
 
-<Controller
+					<Controller
 						control={control}
 						name="measurementUnit"
 						render={({ field: { onChange, value } }) => (
@@ -133,7 +143,6 @@ export function TypeServiceForm({ control, errors }: Props) {
 							{errors.classification.message as string}
 						</Text>
 					)}
-
 
 					<Controller
 						control={control}

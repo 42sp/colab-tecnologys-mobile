@@ -1,16 +1,5 @@
+import { Task } from '@/api/get-tasks'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-
-interface Task {
-	id?: string
-	service_id?: string
-	worker_id?: string
-	approver_id?: string
-	status?: 'pending' | 'in_progress' | 'completed' | 'approved' | 'rejected'
-	completion_date?: string
-	task_percentage?: number
-	title?: string
-	address?: string
-}
 
 interface TasksState {
 	tasks: Task[]

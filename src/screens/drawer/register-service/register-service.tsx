@@ -1,7 +1,7 @@
 import { KeyboardAvoidingView, Image, Text, View, Pressable, ScrollView, Modal } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Card from '@/components/ui/card'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { RegisterServiceForm } from '@/screens/drawer/register-service/register-service-form'
 import { RadioCheckOption } from '@/components/ui/input-radio'
 import { useForm, Controller } from 'react-hook-form'
@@ -12,7 +12,7 @@ import { WorkersForm } from '@/screens/drawer/register-service/workers-form'
 import { TypeServiceForm } from './type-service-form'
 import { residencialMock } from '@/mock'
 import { ChooseResidentialModal } from '@/screens/drawer/register-service/choose-residential-modal'
-import { useEffect } from 'react'
+
 import { getServices } from '@/api/get-services'
 
 const registerServiceSchema = z
@@ -83,16 +83,16 @@ export default function RegisterServiceScreen() {
 
 	useEffect(() => {
 		const fetchServices = async () => {
-		  try {
-			const services = await getServices();
-			console.log(services);
-		  } catch (error) {
-			console.error("Erro ao buscar serviços:", error);
-		  }
-		};
+			try {
+				const services = await getServices()
+				console.log(services)
+			} catch (error) {
+				console.error('Erro ao buscar serviços:', error)
+			}
+		}
 
-		fetchServices();
-	  }, []);
+		fetchServices()
+	}, [])
 
 	function onSubmit(data: RegisterServiceType) {
 		console.log('Dados do Serviço: ', JSON.stringify(data))

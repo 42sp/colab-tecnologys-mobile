@@ -51,7 +51,7 @@ export function RegisterServiceForm({
 
 	const pavimento = Array.from({ length: 27 }, (_, i) => ({
 		label: `PAV ${i + 1}`,
-	  }));
+	}))
 
 	const selectedTowerName = useWatch({ control, name: 'tower' }) as string
 	const selectedTower = towers.find((t) => t.name === selectedTowerName)
@@ -111,10 +111,7 @@ export function RegisterServiceForm({
 									<Modal visible={isCalendarVisible} transparent animationType="slide">
 										<View className="flex-1 items-center justify-center bg-black/40 p-4">
 											<View className="w-full rounded-lg bg-white p-4">
-												<CustomCalendar
-													setDateRange={setSelectDay}
-													markingType="dot"
-												/>
+												<CustomCalendar setDateRange={setSelectDay} markingType="dot" />
 												<Pressable
 													onPress={() => setCalendarVisible(false)}
 													className="mt-4 items-center rounded-lg border-2 border-gray-200 bg-transparent p-3"
