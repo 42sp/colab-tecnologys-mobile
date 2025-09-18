@@ -96,6 +96,7 @@ export function Button({
 					style={{
 						borderRadius: 16,
 						flex: 1,
+						justifyContent: 'center',
 					}}
 				>
 					{children}
