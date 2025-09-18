@@ -84,7 +84,7 @@ export function Button({
 		return (
 			<TouchableOpacity
 				onPress={onPress}
-				className={`overflow-hidden rounded-xl ${disabled ? 'opacity-80' : ''} ${className}`}
+				className={`${disabled ? 'opacity-80' : ''} ${className}`}
 				activeOpacity={0.8}
 				{...rest}
 			>
@@ -93,6 +93,7 @@ export function Button({
 					start={gradientStart}
 					end={gradientEnd}
 					className={buttonVariants.gradient.container}
+					style={{ borderRadius: 16 }}
 				>
 					{children}
 					{title && (
