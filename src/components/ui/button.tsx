@@ -93,7 +93,13 @@ export function Button({
 					start={gradientStart}
 					end={gradientEnd}
 					className={buttonVariants.gradient.container}
-					style={{ borderRadius: 16 }}
+					style={{
+						borderRadius: 16,
+						flex: 1,
+						justifyContent: 'center',
+						alignItems: 'center',
+						flexDirection: 'row',
+					}}
 				>
 					{children}
 					{title && (
