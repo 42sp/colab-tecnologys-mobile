@@ -1,11 +1,4 @@
-import {
-	KeyboardAvoidingView,
-	Image,
-	Text,
-	View,
-	Pressable,
-	ScrollView,
-} from 'react-native'
+import { KeyboardAvoidingView, Image, Text, View, Pressable, ScrollView, Modal } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Card from '@/components/ui/card'
 import { useState } from 'react'
@@ -19,6 +12,8 @@ import { WorkersForm } from '@/screens/drawer/register-service/workers-form'
 import { TypeServiceForm } from './type-service-form'
 import { residencialMock } from '@/mock'
 import { ChooseResidentialModal } from '@/screens/drawer/register-service/choose-residential-modal'
+import { useEffect } from 'react'
+import { getServices } from '@/api/get-services'
 
 const registerServiceSchema = z
 	.object({
@@ -33,6 +28,7 @@ const registerServiceSchema = z
 		),
 		typeOfService: z.string().nonempty('Tipo de serviço é obrigatório.'),
 		apartments: z.array(z.string()).min(1, 'Pelo menos um apartamento deve ser selecionado.'),
+		measurementUnit: z.string().nonempty('Unidade de medida é obrigatória.'),
 		classification: z.string().nonempty('Escolha a classificação.'),
 		services: z.string().nonempty('Serviço é obrigatório.'),
 		confirmed: z.boolean().optional(),
@@ -78,11 +74,25 @@ export default function RegisterServiceScreen() {
 			workers: [{ percent: 100, worker: '' }],
 			typeOfService: '',
 			apartments: [],
+			measurementUnit: '',
 			classification: '',
 			services: '',
 			confirmed: false,
 		},
 	})
+
+	useEffect(() => {
+		const fetchServices = async () => {
+		  try {
+			const services = await getServices();
+			console.log(services);
+		  } catch (error) {
+			console.error("Erro ao buscar serviços:", error);
+		  }
+		};
+
+		fetchServices();
+	  }, []);
 
 	function onSubmit(data: RegisterServiceType) {
 		console.log('Dados do Serviço: ', JSON.stringify(data))

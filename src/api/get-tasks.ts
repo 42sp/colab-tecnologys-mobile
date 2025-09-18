@@ -1,6 +1,6 @@
 import { api } from '@/libs/axios/axios'
 
-interface Task {
+export interface Task {
 	id?: string
 	service_id?: string
 	worker_id?: string
@@ -8,8 +8,17 @@ interface Task {
 	status?: 'pending' | 'in_progress' | 'completed' | 'approved' | 'rejected'
 	completion_date?: Date
 	task_percentage?: number
-	updated_at?: Date
-	created_at?: Date
+	updated_at?: string
+	created_at?: string
+
+	worker_name?: string
+	construction_name?: string
+	construction_address?: string
+	service_tower?: string
+	service_apartment?: string
+	service_floor?: string
+	service_stage?: string
+	service_type?: string
 }
 
 export async function getTasks() {

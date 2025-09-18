@@ -6,6 +6,7 @@ import { DrawerHeaderProps } from '@react-navigation/drawer'
 
 export function DrawerHeader({ navigation, options, route }: DrawerHeaderProps) {
 	const title = getHeaderTitle(options, route.name)
+	const canGoBack = navigation.canGoBack()
 
 	return (
 		<View className="h-24 w-full" style={{ backgroundColor: 'transparent' }}>
@@ -17,9 +18,13 @@ export function DrawerHeader({ navigation, options, route }: DrawerHeaderProps) 
 				style={{ height: '100%' }}
 			>
 				<View className=" h-full w-full flex-row items-end justify-between p-4">
-					<TouchableOpacity className="" onPress={() => navigation.goBack()}>
-						<Feather name="chevron-left" size={24} color="#fff" />
-					</TouchableOpacity>
+					{canGoBack ? (
+						<TouchableOpacity onPress={() => navigation.goBack()}>
+							<Feather name="chevron-left" size={24} color="#fff" />
+						</TouchableOpacity>
+					) : (
+						<View className="w-6" />
+					)}
 					<Text className="font-inter-bold text-xl text-white">{title}</Text>
 					<TouchableOpacity className="" onPress={() => navigation.openDrawer()}>
 						<Feather name="menu" size={24} color="#fff" />

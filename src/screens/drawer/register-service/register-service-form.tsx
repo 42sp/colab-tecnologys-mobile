@@ -22,14 +22,14 @@ type Props = {
 		name: string
 		torres: {
 			total: number
-			data: Array<{
+			data: {
 				id: number
 				name: string
 				andares: {
 					total: number
-					data: Array<{ id: number; name: string; description?: string }>
+					data: { id: number; name: string; description?: string }[]
 				}
-			}>
+			}[]
 		}
 	}
 	setValue: UseFormSetValue<RegisterServiceType>
@@ -43,12 +43,15 @@ export function RegisterServiceForm({
 	setValue,
 	errors,
 }: Props) {
-	const currentDate = new Date().toISOString().split('T')[0]
 	const [isCalendarVisible, setCalendarVisible] = useState(false)
 	const [selectDay, setSelectDay] = useState<DateRangeType>({ start: null, end: null })
 
 	const towers = currentResidential?.torres?.data ?? []
 	const towerOptions = towers.map((t) => ({ label: t.name }))
+
+	const pavimento = Array.from({ length: 27 }, (_, i) => ({
+		label: `PAV ${i + 1}`,
+	  }));
 
 	const selectedTowerName = useWatch({ control, name: 'tower' }) as string
 	const selectedTower = towers.find((t) => t.name === selectedTowerName)
@@ -109,7 +112,6 @@ export function RegisterServiceForm({
 										<View className="flex-1 items-center justify-center bg-black/40 p-4">
 											<View className="w-full rounded-lg bg-white p-4">
 												<CustomCalendar
-													minDate={currentDate}
 													setDateRange={setSelectDay}
 													markingType="dot"
 												/>
@@ -167,7 +169,7 @@ export function RegisterServiceForm({
 								IconLeft={'calendar'}
 								IconRight={'chevron-down'}
 								className="self-center"
-								options={floorOptions}
+								options={pavimento}
 								variant="outline"
 								placeholder="Selecione o andar"
 								value={value}

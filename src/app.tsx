@@ -3,7 +3,6 @@ import { Provider } from 'react-redux'
 import store from '@/libs/redux/store'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { NavigationContainer } from '@react-navigation/native'
-import StackLayout from './_layouts/stack/stack'
 import { registerRootComponent } from 'expo'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
@@ -14,6 +13,7 @@ import {
 	Inter_700Bold,
 } from '@expo-google-fonts/inter'
 import '@/global.css'
+import RootNavigator from './_layouts/root-navigator/root-navigator'
 
 enableScreens()
 
@@ -30,7 +30,7 @@ export default function App() {
 			<NavigationContainer>
 				<GestureHandlerRootView>
 					<SafeAreaProvider className="m-0 p-0">
-						<StackLayout />
+						<RootNavigator />
 					</SafeAreaProvider>
 				</GestureHandlerRootView>
 			</NavigationContainer>

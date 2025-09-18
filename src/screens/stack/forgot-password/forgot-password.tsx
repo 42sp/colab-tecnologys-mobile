@@ -1,11 +1,20 @@
 import { z } from 'zod'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-
-import { Image, Text, View, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native'
+import { ErrorModal } from '@/components/ui/error-modal'
+import {
+	Image,
+	Text,
+	View,
+	TouchableOpacity,
+	KeyboardAvoidingView,
+	Platform,
+	Modal,
+	ActivityIndicator,
+} from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { SafeAreaView } from 'react-native-safe-area-context'
-
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
@@ -20,6 +29,7 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordType = z.infer<typeof forgotPasswordSchema>
 
 export default function ForgotPasswordScreen() {
+	const [modalVisible, setModalVisible] = useState(false)
 	const { stack } = useNavigate()
 	const dispatch = useDispatch()
 
@@ -40,11 +50,13 @@ export default function ForgotPasswordScreen() {
 				setPasswordRecovery({
 					cpf,
 					phone: response.phone,
+					userId: response.userId,
 				}),
 			)
 			stack('verifyCode')
 		} catch (error) {
 			console.log(error)
+			setModalVisible(true)
 		}
 	}
 
@@ -106,6 +118,18 @@ export default function ForgotPasswordScreen() {
 							</Text>
 						</TouchableOpacity>
 					</View>
+
+					<ErrorModal
+						visible={modalVisible}
+						message="Ocorreu um erro"
+						description="Não foi possível completar a solicitação."
+						onClose={() => setModalVisible(false)}
+					/>
+					<Modal transparent={true} animationType="none" visible={isSubmitting}>
+						<View className="flex-1 items-center justify-center">
+							<ActivityIndicator size={52} color="#FF6700" />
+						</View>
+					</Modal>
 				</ScrollView>
 			</KeyboardAvoidingView>
 		</SafeAreaView>

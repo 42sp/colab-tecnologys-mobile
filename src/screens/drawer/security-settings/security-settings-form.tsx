@@ -1,4 +1,4 @@
-import { Text, View, Image } from 'react-native'
+import { ActivityIndicator, Modal, Text, View } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Card from '@/components/ui/card'
@@ -7,8 +7,10 @@ import { z } from 'zod'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
-import { useNavigate } from '@/libs/react-navigation/useNavigate'
 import { ScanFace } from 'lucide-react-native'
+import { DrawerNavigationProp } from '@react-navigation/drawer'
+import { DrawerParamList } from '@/_layouts/drawer/drawer'
+import { useNavigation } from '@react-navigation/native'
 
 const SecuritySettingsSchema = z
 	.object({
@@ -16,11 +18,8 @@ const SecuritySettingsSchema = z
 		newPassword: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
 		confirmPassword: z.string().nonempty('A confirmação da senha é obrigatória'),
 	})
-
-	// validar se o currentPassword é igual ao password armazenado
-
 	.refine((data) => data.newPassword === data.confirmPassword, {
-		message: "As senhas não correspondem",
+		message: 'As senhas não correspondem',
 		path: ['confirmPassword'],
 	})
 
@@ -30,7 +29,8 @@ export function SecuritySettingsForm() {
 	const {
 		control,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting },
+		reset,
 	} = useForm<SecuritySettingsType>({
 		resolver: zodResolver(SecuritySettingsSchema),
 		defaultValues: {
@@ -40,11 +40,18 @@ export function SecuritySettingsForm() {
 		},
 	})
 
-	const { drawer } = useNavigate()
+	type ProfileScreenNavigationProp = DrawerNavigationProp<DrawerParamList>
+	const navigation = useNavigation<ProfileScreenNavigationProp>()
 
 	function onSubmit(data: SecuritySettingsType) {
 		console.log('Dados de Registro: ', JSON.stringify(data))
-		drawer('profile')
+		//implementar requisição
+		reset({
+			currentPassword: '',
+			newPassword: '',
+			confirmPassword: '',
+		})
+		navigation.navigate('profile')
 	}
 
 	const [hideCurrentPassword, setHideCurrentPassword] = useState(true)
@@ -136,8 +143,7 @@ export function SecuritySettingsForm() {
 						</View>
 						<View className="flex-1">
 							<Text className="font-inter-medium">Reconhecimento facial</Text>
-							<Text className="font-inter text-gray-500">Use seu rosto para fazer login
-							</Text>
+							<Text className="font-inter text-gray-500">Use seu rosto para fazer login</Text>
 						</View>
 						<View className="p-2">
 							<ToggleButton />
@@ -145,7 +151,7 @@ export function SecuritySettingsForm() {
 					</View>
 				</Card.Footer>
 			</Card>
-			<Button className="flex-1" onPress={handleSubmit(onSubmit)}>
+			<Button className="flex-1" onPress={handleSubmit(onSubmit)} disabled={isSubmitting}>
 				<Text className="font-inter-medium text-xl text-neutral-100">Salvar alterações</Text>
 			</Button>
 			<Card className="gap-5">
@@ -153,20 +159,21 @@ export function SecuritySettingsForm() {
 					<Text className="font-inter-bold text-xl">Dicas de segurança</Text>
 				</Card.Header>
 				<Card.Body>
-					<Text className="font-inter text-gray-500">
-						{'\u2022'} Crie uma senha forte e única
-					</Text>
+					<Text className="font-inter text-gray-500">{'\u2022'} Crie uma senha forte e única</Text>
 					<Text className="font-inter text-gray-500">
 						{'\u2022'} Nunca compartilhe suas credenciais
 					</Text>
 					<Text className="font-inter text-gray-500">
 						{'\u2022'} Ative a autenticação biométrica
 					</Text>
-					<Text className="font-inter text-gray-500">
-						{'\u2022'} Mude sua senha regularmente
-					</Text>
+					<Text className="font-inter text-gray-500">{'\u2022'} Mude sua senha regularmente</Text>
 				</Card.Body>
 			</Card>
+			<Modal transparent={true} animationType="none" visible={isSubmitting}>
+				<View className="flex-1 items-center justify-center">
+					<ActivityIndicator size={52} color="#FF6700" />
+				</View>
+			</Modal>
 		</View>
 	)
 }

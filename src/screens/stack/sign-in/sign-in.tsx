@@ -5,9 +5,13 @@ import { Button } from '@/components/ui/button'
 import { SignInForm } from './sign-in-form'
 import { ScrollView } from 'react-native-gesture-handler'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
+import { ErrorModal } from '@/components/ui/error-modal'
+import { useState } from 'react'
 
 export default function SignInScreen() {
 	const { drawer } = useNavigate()
+	const [modalVisible, setModalVisible] = useState(false)
+
 	return (
 		<SafeAreaView className="h-full bg-white p-10">
 			<KeyboardAvoidingView behavior={'height'}>
@@ -24,7 +28,7 @@ export default function SignInScreen() {
 					<Button
 						title="Entrar com o Google"
 						onPress={() => {
-							drawer('home')
+							setModalVisible(true)
 						}}
 						variant="outline"
 						className="my-5 self-center"
@@ -35,6 +39,12 @@ export default function SignInScreen() {
 					<SignInDivisor text="ou" className="my-5" />
 
 					<SignInForm />
+					<ErrorModal
+						visible={modalVisible}
+						message="Ocorreu um erro"
+						description="Não foi possível entrar com o Google. Tente novamente mais tarde."
+						onClose={() => setModalVisible(false)}
+					/>
 				</ScrollView>
 			</KeyboardAvoidingView>
 		</SafeAreaView>

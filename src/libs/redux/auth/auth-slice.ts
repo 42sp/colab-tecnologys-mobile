@@ -20,10 +20,11 @@ const authSlice = createSlice({
 	name: 'auth',
 	initialState,
 	reducers: {
-		setAuth(state, action: PayloadAction<AuthState>) {
-			state.token = action.payload.token
-			state.expiry = action.payload.expiry
-			state.id = action.payload.id
+		setAuth(state, { payload }: PayloadAction<AuthState>) {
+			return { ...state, ...payload }
+		},
+		resetAuth() {
+			return initialState
 		},
 	},
 })
@@ -33,4 +34,4 @@ export default authSlice.reducer
 export const selectToken = (state: RootState) => state.auth.token
 export const selectExpiry = (state: RootState) => state.auth.expiry
 export const selectId = (state: RootState) => state.auth.id
-export const { setAuth } = authSlice.actions
+export const { setAuth, resetAuth } = authSlice.actions

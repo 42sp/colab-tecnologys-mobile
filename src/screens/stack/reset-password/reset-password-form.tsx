@@ -1,4 +1,4 @@
-import { Text, View, Image } from 'react-native'
+import { ActivityIndicator, Modal, Text, View } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Card from '@/components/ui/card'
@@ -12,10 +12,9 @@ import { ScanFace } from 'lucide-react-native'
 import { patchUsers } from '@/api/patch-users'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
-import { signIn } from '@/api/sign-in'
-import { setAuth } from '@/libs/redux/auth/auth-slice'
-import { getProfile } from '@/api/get-profile'
-import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
+import { clearPasswordRecovery } from '@/libs/redux/password-recovery/password-recovery-slice'
+import { ErrorModal } from '@/components/ui/error-modal'
+import { resetAuth } from '@/libs/redux/auth/auth-slice'
 
 const SecuritySettingsSchema = z
 	.object({
@@ -30,48 +29,31 @@ const SecuritySettingsSchema = z
 type SecuritySettingsType = z.infer<typeof SecuritySettingsSchema>
 
 export function ResetPasswordForm() {
+	const [modalVisible, setModalVisible] = useState(false)
 	const { cpf, userId } = useSelector((state: RootState) => state.passwordRecovery)
 	const dispatch = useDispatch()
 
 	const {
 		control,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting },
 	} = useForm<SecuritySettingsType>({
 		resolver: zodResolver(SecuritySettingsSchema),
 	})
 
-	const { drawer } = useNavigate()
+	const { stack } = useNavigate()
 
 	async function onSubmit({ newPassword }: SecuritySettingsType) {
 		try {
-			if (!userId || !cpf) throw new Error('Erro inesperado')
+			if (!userId || !cpf) setModalVisible(true)
+			await patchUsers({ id: userId, cpf: cpf, password: newPassword })
 
-			const user = await patchUsers({ id: userId, cpf: cpf, password: newPassword })
-
-			const auth = await signIn({ cpf: user.cpf, password: newPassword })
-			const { accessToken } = auth
-			const { payload } = auth.authentication
-			dispatch(setAuth({ token: accessToken, expiry: payload.exp, id: payload.sub }))
-			const profile = await getProfile()
-			const userProfile = profile.data[0]
-			dispatch(
-				setProfile({
-					name: userProfile.name,
-					dateOfBirth: userProfile.date_of_birth,
-					registrationCode: userProfile.registration_code,
-					phone: userProfile.phone,
-					address: userProfile.address,
-					city: userProfile.city,
-					state: userProfile.state,
-					postcode: userProfile.postcode,
-					photo: userProfile.photo,
-					updatedAt: userProfile.updated_at,
-				}),
-			)
-			drawer('home')
+			dispatch(clearPasswordRecovery())
+			dispatch(resetAuth())
+			stack('signIn')
 		} catch (error) {
 			console.log(error)
+			setModalVisible(true)
 		}
 	}
 
@@ -145,7 +127,7 @@ export function ResetPasswordForm() {
 					</View>
 				</Card.Footer>
 			</Card>
-			<Button className="flex-1" onPress={handleSubmit(onSubmit)}>
+			<Button className="flex-1" onPress={handleSubmit(onSubmit)} disabled={isSubmitting}>
 				<Text className="font-inter-medium text-xl text-neutral-100">Salvar alterações</Text>
 			</Button>
 			<Card className="gap-5">
@@ -163,6 +145,17 @@ export function ResetPasswordForm() {
 					<Text className="font-inter text-gray-500">{'\u2022'} Mude sua senha regularmente</Text>
 				</Card.Body>
 			</Card>
+			<ErrorModal
+				visible={modalVisible}
+				message="Ocorreu um erro"
+				description="Não foi possível completar a solicitação."
+				onClose={() => setModalVisible(false)}
+			/>
+			<Modal transparent={true} animationType="none" visible={isSubmitting}>
+				<View className="flex-1 items-center justify-center">
+					<ActivityIndicator size={52} color="#FF6700" />
+				</View>
+			</Modal>
 		</View>
 	)
 }

@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native'
+import { ActivityIndicator, Modal, Text, View } from 'react-native'
 import { z } from 'zod'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -44,7 +44,7 @@ export function SignUpForm() {
 	const {
 		control,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting },
 	} = useForm<SignUpType>({
 		resolver: zodResolver(signUpSchema),
 		defaultValues: {
@@ -270,7 +270,12 @@ export function SignUpForm() {
 				)}
 			</View>
 
-			<Button title="Criar conta" onPress={handleSubmit(onSubmit)} className="my-5" />
+			<Button
+				title="Criar conta"
+				onPress={handleSubmit(onSubmit)}
+				className="my-5"
+				disabled={isSubmitting}
+			/>
 			<View className="py-5">
 				<Text>
 					Já tem uma conta?
@@ -285,6 +290,11 @@ export function SignUpForm() {
 					</Text>
 				</Text>
 			</View>
+			<Modal transparent={true} animationType="none" visible={isSubmitting}>
+				<View className="flex-1 items-center justify-center">
+					<ActivityIndicator size={52} color="#FF6700" />
+				</View>
+			</Modal>
 		</View>
 	)
 }

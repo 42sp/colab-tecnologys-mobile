@@ -3,14 +3,28 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { type Route } from '@react-navigation/native'
-import { useNavigate } from '@/libs/react-navigation/useNavigate'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
+import { resetAuth } from '@/libs/redux/auth/auth-slice'
+import { env } from '@/libs/env'
+import { useState } from 'react'
+import { LogoutModal } from '@/components/ui/logout-modal'
+const API_URL = env.EXPO_PUBLIC_API_URL
 
 export function CustomDrawerContent(props: any) {
 	const { state } = props
-	const { drawer } = useNavigate()
 	const profile = useSelector((state: RootState) => state.userProfile)
+	const dispatch = useDispatch()
+	const photoUrl = profile?.photo
+		? `${API_URL}images/${profile.photo}?t=${profile.updatedAt}`
+		: null
+	const imageUrl = photoUrl ? { uri: photoUrl } : require('@/assets/default-avatar.png')
+	const [isModalVisible, setIsModalVisible] = useState(false)
+
+	function confirmLogout() {
+		setIsModalVisible(false)
+		dispatch(resetAuth())
+	}
 
 	return (
 		<DrawerContentScrollView
@@ -27,13 +41,7 @@ export function CustomDrawerContent(props: any) {
 
 				<View className="items-center">
 					<View className="relative -mt-6 size-36 rounded-full border border-neutral-100 bg-white p-1">
-						<Image
-							source={{
-								uri: profile?.photo ? profile.photo : 'https://randomuser.me/portraits/men/1.jpg',
-							}}
-							className=" h-full w-full rounded-full"
-							resizeMode="cover"
-						/>
+						<Image source={imageUrl} className=" h-full w-full rounded-full" resizeMode="cover" />
 					</View>
 					<Text className="pt-6 text-lg font-medium">{profile?.name || ''}</Text>
 					<Text className="text-x mb-8 text-gray-500">
@@ -80,11 +88,19 @@ export function CustomDrawerContent(props: any) {
 					)
 				})}
 
-				<TouchableOpacity className="mt-8 flex-row gap-3 px-5 py-4" onPress={() => drawer('home')}>
+				<TouchableOpacity
+					className="mt-8 flex-row gap-3 px-5 py-4"
+					onPress={() => setIsModalVisible(true)}
+				>
 					<Feather name="log-out" color="#6b7280" size={22} />
 					<Text className="text-lg font-medium text-gray-500">Sair</Text>
 				</TouchableOpacity>
 			</View>
+			<LogoutModal
+				visible={isModalVisible}
+				onClose={() => setIsModalVisible(false)}
+				onConfirm={confirmLogout}
+			/>
 		</DrawerContentScrollView>
 	)
 }

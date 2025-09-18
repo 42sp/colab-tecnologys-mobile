@@ -8,7 +8,8 @@ import { Feather } from '@expo/vector-icons'
 import type { RegisterServiceType } from './register-service'
 import { serviceTypeMock, serviceMock } from '@/mock'
 
-const apartments = [{ label: '1' }, { label: '2' }, { label: '3' }, { label: '4' }]
+const apartments = [{ label: '1' }, { label: '2' }, { label: '3' }, { label: '4' }, { label: '5' }]
+const unitMeasure = [{ label: 'SALA' }, { label: 'DORMITÓRIO 1' }, { label: 'DORMITÓRIO 2' }, { label: 'BANHO 1' }, { label: 'BANHO 2' }, { label: 'COZINHA' }, { label: 'LAVABO' }, { label: 'ÁREA COMUM' }, {label: 'ÁREA DE SERVIÇO'}]
 const radioOptions = [{ label: 'Externo' }, { label: 'Interno' }]
 
 type Props = {
@@ -68,7 +69,6 @@ export function TypeServiceForm({ control, errors }: Props) {
 									<Dropdown
 										IconLeft="list"
 										IconRight="chevron-down"
-
 										options={apartments}
 										variant="outline"
 										placeholder="Selecione os apartamentos"
@@ -89,6 +89,28 @@ export function TypeServiceForm({ control, errors }: Props) {
 					{errors.apartments && (
 						<Text className="text-xs text-red-500">{errors.apartments.message as string}</Text>
 					)}
+
+<Controller
+						control={control}
+						name="measurementUnit"
+						render={({ field: { onChange, value } }) => (
+							<Dropdown
+								IconLeft={'list'}
+								IconRight={'chevron-down'}
+								className="mt-2"
+								options={unitMeasure}
+								variant="outline"
+								placeholder="Selecione a unidade de medida"
+								value={value}
+								onChangeText={onChange}
+								hasError={!!errors.services}
+							/>
+						)}
+					/>
+					{errors.services && (
+						<Text className="text-xs text-red-500">{errors.services.message}</Text>
+					)}
+
 					<Controller
 						control={control}
 						name="classification"
@@ -107,8 +129,11 @@ export function TypeServiceForm({ control, errors }: Props) {
 						)}
 					/>
 					{errors.classification && (
-						<Text className="mb-2 text-xs text-red-500">{errors.classification.message as string}</Text>
+						<Text className="mb-2 text-xs text-red-500">
+							{errors.classification.message as string}
+						</Text>
 					)}
+
 
 					<Controller
 						control={control}

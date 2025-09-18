@@ -6,7 +6,7 @@ interface PasswordRecoveryProps {
 }
 
 interface passwordRecoveryResponse {
-	accessTokena?: string
+	accessToken?: string
 	code?: string
 	userId?: string
 	phone?: string
