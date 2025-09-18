@@ -59,10 +59,10 @@ export default function RegisterServiceScreen() {
 	const [modalVisible, setModalVisible] = useState(false)
 	const [allServices, setAllServices] = useState<Services[]>([])
 	const [serviceTypes, setServiceTypes] = useState<ServiceTypes[]>([])
-	const [residentials, setResidentials ] = useState<Construction[]>([])
-	const [profiles, setProfiles ] = useState<AllProfileResponse[]>([])
-	const [resIndex, setResIndex] = useState(0);
-	const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+	const [residentials, setResidentials] = useState<Construction[]>([])
+	const [profiles, setProfiles] = useState<AllProfileResponse[]>([])
+	const [resIndex, setResIndex] = useState(0)
+	const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null)
 	const [modal, setModal] = useState<{
 		visible: boolean
 		description: string
@@ -129,10 +129,10 @@ export default function RegisterServiceScreen() {
 						completion_date: data.dateOfService,
 						task_percentage: worker.percent,
 						worker_id: worker.worker_id,
-						status: "pending"
+						status: 'pending',
 					}
 					return await createTask(taskData)
-				})
+				}),
 			)
 			reset()
 			setResIndex(0)
@@ -231,10 +231,10 @@ export default function RegisterServiceScreen() {
 						/>
 					</View>
 					<LogModal
-				visible={modal.visible}
-				description={modal.description}
-				onClose={() => setModal({ visible: false, description: '' })}
-			/>
+						visible={modal.visible}
+						description={modal.description}
+						onClose={() => setModal({ visible: false, description: '' })}
+					/>
 				</KeyboardAvoidingView>
 			</SafeAreaView>
 		</ScrollView>

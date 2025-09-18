@@ -14,6 +14,8 @@ import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { LogModal } from '@/components/ui/log-modal'
 import { saveAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
 import { LoadingModal } from '@/components/ui/loading-modal'
+import { setTasks } from '@/libs/redux/tasks/tasks-slice'
+import { getTasks } from '@/api/get-tasks'
 
 const signInSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve conter 11 caracteres'),
@@ -67,6 +69,9 @@ export function SignInForm() {
 					updatedAt: userProfile.updated_at,
 				}),
 			)
+			const tasks = await getTasks()
+			dispatch(setTasks(tasks))
+
 			drawer('home')
 		} catch (error) {
 			setShowErrorModal(true)

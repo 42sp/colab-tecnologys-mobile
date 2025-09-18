@@ -1,7 +1,7 @@
 import { Modal, View, Text, TouchableOpacity, Pressable, Animated, Easing } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { Button } from '@/components/ui/button'
-import { FilterType, StatusType } from './home'
+import { FilterType } from './home'
 import { CustomCalendar, DateRangeType } from '@/components/ui/calendar'
 import { useEffect, useState, useRef } from 'react'
 import { FadeBackgroundModal } from '@/components/ui/fade-background-modal'
@@ -17,7 +17,7 @@ export function HomeFilterModal({ isVisible, onClose, setFilter, filter }: Filte
 	const [dateRange, setDateRange] = useState<DateRangeType>({ start: null, end: null })
 	const [hiddenCalendar, setHiddenCalendar] = useState(true)
 
-	const statusLabels: Record<StatusType, string> = {
+	const statusLabels: Record<'pending' | 'approved' | 'completed', string> = {
 		pending: 'Pendente',
 		approved: 'Aprovado',
 		completed: 'Concluído',

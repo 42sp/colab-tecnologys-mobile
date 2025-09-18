@@ -35,7 +35,14 @@ const serviceMap: Record<string, string> = {
 	EX: 'Serviço Extra',
 }
 
-export function TypeServiceForm({ control, errors, services, serviceTypes, onServiceSelected, resetField }: Props) {
+export function TypeServiceForm({
+	control,
+	errors,
+	services,
+	serviceTypes,
+	onServiceSelected,
+	resetField,
+}: Props) {
 	const selectedTower = useWatch({ name: 'tower', control })
 	const selectedFloor = useWatch({ name: 'floor', control })
 	const selectedServiceType = useWatch({ name: 'typeOfService', control })
@@ -76,7 +83,9 @@ export function TypeServiceForm({ control, errors, services, serviceTypes, onSer
 
 	const apartmentOptions = useMemo(() => {
 		const apartments = [
-			...new Set(servicesFilteredByServiceType.map((s) => s.apartment?.toString().trim()).filter(Boolean)),
+			...new Set(
+				servicesFilteredByServiceType.map((s) => s.apartment?.toString().trim()).filter(Boolean),
+			),
 		]
 
 		return apartments.map((apartment) => ({
@@ -118,9 +127,9 @@ export function TypeServiceForm({ control, errors, services, serviceTypes, onSer
 	}, [servicesFilteredByUnit, selectedEnvironmentType])
 
 	const serviceOptions = useMemo(() => {
-		const uniqueAcronyms = [...new Set(servicesFilteredByEnvType.map((s) => s.acronym?.toString().trim()))].filter(
-			Boolean,
-		)
+		const uniqueAcronyms = [
+			...new Set(servicesFilteredByEnvType.map((s) => s.acronym?.toString().trim())),
+		].filter(Boolean)
 
 		const options = uniqueAcronyms.map((acronym) => ({
 			label: serviceMap[acronym] || acronym,
@@ -133,9 +142,7 @@ export function TypeServiceForm({ control, errors, services, serviceTypes, onSer
 	const filteredServices = useMemo(() => {
 		if (!selectedService) return []
 
-		return servicesFilteredByEnvType.filter(
-			(s) => s.acronym?.toString().trim() === selectedService,
-		)
+		return servicesFilteredByEnvType.filter((s) => s.acronym?.toString().trim() === selectedService)
 	}, [servicesFilteredByEnvType, selectedService])
 
 	return (
