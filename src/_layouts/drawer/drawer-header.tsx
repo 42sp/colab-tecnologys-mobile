@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient'
-import { Text, TouchableOpacity, View, StatusBar } from 'react-native'
+import { Text, TouchableOpacity, View, StatusBar, Platform } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { getHeaderTitle } from '@react-navigation/elements'
 import { DrawerHeaderProps } from '@react-navigation/drawer'
@@ -7,6 +7,7 @@ import { DrawerHeaderProps } from '@react-navigation/drawer'
 export function DrawerHeader({ navigation, options, route }: DrawerHeaderProps) {
 	const title = getHeaderTitle(options, route.name)
 	const canGoBack = navigation.canGoBack()
+	const paddingSize = Platform.OS === 'ios' ? 'p-2' : 'p-4'
 
 	return (
 		<View className="h-24 w-full" style={{ backgroundColor: 'transparent' }}>
@@ -17,7 +18,7 @@ export function DrawerHeader({ navigation, options, route }: DrawerHeaderProps) 
 				end={{ x: 1, y: 0.5 }}
 				style={{ height: '100%' }}
 			>
-				<View className=" h-full w-full flex-row items-end justify-between p-2">
+				<View className={`h-full w-full flex-row items-end justify-between ${paddingSize}`}>
 					{canGoBack ? (
 						<TouchableOpacity onPress={() => navigation.goBack()}>
 							<Feather name="chevron-left" size={24} color="#fff" />
