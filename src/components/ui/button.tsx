@@ -94,7 +94,7 @@ export function Button({
 					end={gradientEnd}
 					className={buttonVariants.gradient.container}
 					style={{
-						borderRadius: 16,
+						borderRadius: 10,
 						flex: 1,
 						justifyContent: 'center',
 						alignItems: 'center',
