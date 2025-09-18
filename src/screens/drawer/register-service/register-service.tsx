@@ -157,7 +157,7 @@ export default function RegisterServiceScreen() {
 		<ScrollView showsVerticalScrollIndicator={false}>
 			<SafeAreaView className="bg-[#F9FAFB]">
 				<KeyboardAvoidingView behavior={'height'}>
-					<Card className="ml-6 mr-6 flex-1">
+					<Card className="mx-6 flex-1">
 						<Card.Header>
 							<Image
 								source={require('@/assets/residential.png')}
@@ -221,7 +221,7 @@ export default function RegisterServiceScreen() {
 							/>
 						</Card.Body>
 					</Card>
-					<View className="m-6 flex-row gap-2">
+					<View className="m-6 flex-row gap-4">
 						<Button title="Cancelar" variant="outline" className="flex-1" onPress={() => {}} />
 						<Button
 							title="Enviar"
