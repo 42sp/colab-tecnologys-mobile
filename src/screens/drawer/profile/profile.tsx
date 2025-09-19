@@ -35,8 +35,8 @@ export default function ProfileScreen() {
 	}
 
 	return (
-		<ScrollView showsVerticalScrollIndicator={false}>
-			<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] p-5">
+		<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] p-5">
+			<ScrollView showsVerticalScrollIndicator={false}>
 				<ProfileAvatar avatar={require('@/assets/default-avatar.png')} name={user.name || ''} />
 
 				<Card className="flex-1">
@@ -95,7 +95,7 @@ export default function ProfileScreen() {
 					onClose={() => setIsModalVisible(false)}
 					onConfirm={confirmLogout}
 				/>
-			</SafeAreaView>
-		</ScrollView>
+			</ScrollView>
+		</SafeAreaView>
 	)
 }
