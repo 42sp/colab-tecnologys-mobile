@@ -16,7 +16,10 @@ export function StackHeader({ navigation, route, options }: StackHeaderProps) {
 				style={{ height: '100%' }}
 			>
 				<View className={`h-full w-full flex-row items-end ${paddingSize}`}>
-					<TouchableOpacity className="absolute" onPress={() => navigation.goBack()}>
+					<TouchableOpacity
+						className={`absolute left-0 ${paddingSize}`}
+						onPress={() => navigation.goBack()}
+					>
 						<Feather name="chevron-left" size={24} color="#fff" />
 					</TouchableOpacity>
 					<Text className=" mx-auto font-inter-bold text-xl text-white">{title}</Text>
