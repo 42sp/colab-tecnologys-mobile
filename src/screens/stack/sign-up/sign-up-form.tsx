@@ -144,7 +144,7 @@ export function SignUpForm() {
 	}
 
 	return (
-		<View className="h-full items-center justify-between gap-5 ">
+		<View className="gap-5 p-10 ">
 			<View className="gap-1">
 				<Text>Nome completo</Text>
 				<Controller
@@ -295,7 +295,7 @@ export function SignUpForm() {
 				className="my-5"
 				disabled={isSubmitting}
 			/>
-			<View className="py-5">
+			<View className="items-center pb-5">
 				<Text>
 					Já tem uma conta?
 					<Text
