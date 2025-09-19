@@ -17,6 +17,7 @@ import { LogModal } from '@/components/ui/log-modal'
 import { LoadingModal } from '@/components/ui/loading-modal'
 import { ScrollView } from 'react-native-gesture-handler'
 import Card from '@/components/ui/card'
+import { updatePasswordRecovery } from '@/libs/redux/password-recovery/password-recovery-slice'
 
 const otpSchema = z.object({
 	otp: z
@@ -29,10 +30,11 @@ type otpForm = z.infer<typeof otpSchema>
 
 export default function VerifyCode() {
 	const { stack } = useNavigate()
-	const [baseTimer, setBaseTimer] = useState(30)
-	const cpf = useSelector((state: RootState) => state.passwordRecovery.cpf)
-	// const phone = useSelector((state: RootState) => state.passwordRecovery.phone) // está faltando como response no back
 	const dispatch = useDispatch()
+	const [baseTimer, setBaseTimer] = useState(30)
+	const { phone, cpf } = useSelector((state: RootState) => state.passwordRecovery)
+	const lastFourDigits = phone?.slice(-4)
+
 	const [modal, setModal] = useState<{
 		visible: boolean
 		description: string
@@ -67,18 +69,17 @@ export default function VerifyCode() {
 	}, [timer])
 
 	async function onSubmit(data: otpForm) {
-		console.log('otp data: ', data)
 		try {
 			const response = await passwordRecovery({ cpf, code: data.otp })
 			console.log('response', response)
 
 			dispatch(
-				setAuth({
-					token: response.accessToken ?? null,
-					expiry: '',
-					id: '',
+				updatePasswordRecovery({
+					accessToken: response.accessToken,
+					exp: response.exp,
 				}),
 			)
+
 			stack('resetPassword')
 		} catch (error) {
 			console.log(error)
@@ -86,7 +87,6 @@ export default function VerifyCode() {
 				visible: true,
 				description: 'Código inválido. Tente novamente.',
 			})
-			stack('resetPassword')
 		}
 	}
 
@@ -123,7 +123,9 @@ export default function VerifyCode() {
 									Digite o código de 6 digitos enviado para
 								</Text>
 								<View className="mt-2 flex-row justify-center gap-2">
-									<Text className="font-inter-bold text-xl text-gray-500">(xx) xxxx-7890</Text>
+									<Text className="font-inter-bold text-xl text-gray-500">
+										(xx) xxxx-${lastFourDigits}
+									</Text>
 									<FontAwesome name="whatsapp" size={24} color="#25D366" />
 								</View>
 							</View>

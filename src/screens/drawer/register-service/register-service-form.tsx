@@ -105,7 +105,6 @@ export function RegisterServiceForm({ control, services, resetField, setValue, e
 										<View className="flex-1 items-center justify-center bg-black/40 p-4">
 											<View className="w-full rounded-lg bg-white p-4">
 												<CustomCalendar setDateRange={setSelectDay} markingType="dot" />
-												<CustomCalendar setDateRange={setSelectDay} markingType="dot" />
 												<Pressable
 													onPress={() => setCalendarVisible(false)}
 													className="mt-4 items-center rounded-lg border-2 border-gray-200 bg-transparent p-3"
