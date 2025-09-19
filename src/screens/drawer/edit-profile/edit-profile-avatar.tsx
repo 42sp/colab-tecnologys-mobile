@@ -89,7 +89,7 @@ export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 	}
 
 	return (
-		<View className="items-center gap-3">
+		<View className="items-center gap-5 p-5">
 			<View className="items-center">
 				<View className="size-36 rounded-full border border-neutral-100 bg-white p-1">
 					<Image source={imageUrl} className="h-full w-full rounded-full" />
