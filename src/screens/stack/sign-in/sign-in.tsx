@@ -32,9 +32,9 @@ export default function SignInScreen() {
 	}
 
 	return (
-		<KeyboardAvoidingView behavior={'height'} style={{ flex: 1, backgroundColor: 'blue' }}>
+		<KeyboardAvoidingView behavior={'height'} style={{ flex: 1, backgroundColor: 'white' }}>
 			<View className="bg-red-200">
-				<SafeAreaView className=" bg-white" edges={['top']}>
+				<SafeAreaView className=" bg-white">
 					<ScrollView showsVerticalScrollIndicator={false}>
 						<View className="p-10">
 							<Image
