@@ -62,71 +62,73 @@ export default function ForgotPasswordScreen() {
 	}
 
 	return (
-		<SafeAreaView className="h-full bg-white p-10">
-			<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+		<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+			<SafeAreaView className="h-full bg-white" edges={['bottom']}>
 				<ScrollView showsVerticalScrollIndicator={false}>
-					<Image source={require('@/assets/tecnologys-logo.png')} className="mb-5 self-center" />
-					<View className="my-5 items-center">
-						<Text className="font-inter-bold text-3xl">Esqueci minha senha</Text>
-						<Text className="mt-2 text-center font-inter text-lg text-neutral-500">
-							Informe seu CPF para receber uma nova senha
-						</Text>
-					</View>
-
-					<View className="mt-10">
-						<Controller
-							control={control}
-							name="cpf"
-							render={({ field: { onChange, onBlur, value } }) => (
-								<View>
-									<Input
-										keyboardType="numeric"
-										autoCapitalize="none"
-										IconLeft="mail"
-										placeholder="Informe seu CPF"
-										onBlur={onBlur}
-										onChangeText={onChange}
-										value={value}
-										hasError={!!errors.cpf}
-									/>
-									{errors.cpf && (
-										<Text className="mt-1 font-inter text-sm text-red-500">
-											{errors.cpf.message}
-										</Text>
-									)}
-								</View>
-							)}
-						/>
-
-						<Text className="mt-4 text-center font-inter text-sm leading-5 text-neutral-500">
-							Enviaremos uma mensagem ao seu celular com um código de ativação
-						</Text>
-
-						<Button
-							className="mt-8"
-							title="Resetar a senha"
-							onPress={handleSubmit(onSubmit)}
-							disabled={isSubmitting}
-						/>
-
-						<TouchableOpacity
-							className="mt-6 self-center"
-							activeOpacity={0.5}
-							onPress={() => stack('signIn')}
-						>
-							<Text className="text-center font-inter-bold text-base leading-6 text-blue-600">
-								Voltar para o Login
+					<View className="p-10">
+						<Image source={require('@/assets/tecnologys-logo.png')} className="mb-5 self-center" />
+						<View className="my-5 items-center">
+							<Text className="font-inter-bold text-3xl">Esqueci minha senha</Text>
+							<Text className="mt-2 text-center font-inter text-lg text-neutral-500">
+								Informe seu CPF para receber uma nova senha
 							</Text>
-						</TouchableOpacity>
+						</View>
+
+						<View className="mt-10">
+							<Controller
+								control={control}
+								name="cpf"
+								render={({ field: { onChange, onBlur, value } }) => (
+									<View>
+										<Input
+											keyboardType="numeric"
+											autoCapitalize="none"
+											IconLeft="mail"
+											placeholder="Informe seu CPF"
+											onBlur={onBlur}
+											onChangeText={onChange}
+											value={value}
+											hasError={!!errors.cpf}
+										/>
+										{errors.cpf && (
+											<Text className="mt-1 font-inter text-sm text-red-500">
+												{errors.cpf.message}
+											</Text>
+										)}
+									</View>
+								)}
+							/>
+
+							<Text className="mt-4 text-center font-inter text-sm leading-5 text-neutral-500">
+								Enviaremos uma mensagem ao seu celular com um código de ativação
+							</Text>
+
+							<Button
+								className="mt-8"
+								title="Resetar a senha"
+								onPress={handleSubmit(onSubmit)}
+								disabled={isSubmitting}
+							/>
+
+							<TouchableOpacity
+								className="mt-6 self-center"
+								activeOpacity={0.5}
+								onPress={() => stack('signIn')}
+							>
+								<Text className="text-center font-inter-bold text-base leading-6 text-blue-600">
+									Voltar para o Login
+								</Text>
+							</TouchableOpacity>
+						</View>
+						<LoadingModal visible={isSubmitting} />
+						<LogModal
+							visible={modal.visible}
+							description={modal.description}
+							onClose={() => setModal({ visible: false, description: '' })}
+						/>
 					</View>
-					<LoadingModal visible={isSubmitting} />
-					<LogModal
-						visible={modal.visible}
-						description={modal.description}
-						onClose={() => setModal({ visible: false, description: '' })}
-					/>
 				</ScrollView>
-			</KeyboardAvoidingView>
-		</SafeAreaView>
+			</SafeAreaView>
+		</KeyboardAvoidingView>
 	)
 }

@@ -1,4 +1,4 @@
-import { Image, KeyboardAvoidingView, Text, View } from 'react-native'
+import { Image, KeyboardAvoidingView, Platform, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { SignInDivisor } from './sign-in-divisor'
 import { Button } from '@/components/ui/button'
@@ -32,37 +32,44 @@ export default function SignInScreen() {
 	}
 
 	return (
-		<SafeAreaView className="h-full bg-white p-10">
-			<KeyboardAvoidingView behavior={'height'}>
-				<ScrollView showsVerticalScrollIndicator={false}>
-					<Image source={require('@/assets/tecnologys-logo.png')} className="mb-5 self-center" />
+		<KeyboardAvoidingView behavior={'height'} style={{ flex: 1, backgroundColor: 'blue' }}>
+			<View className="bg-red-200">
+				<SafeAreaView className=" bg-white" edges={['top']}>
+					<ScrollView showsVerticalScrollIndicator={false}>
+						<View className="p-10">
+							<Image
+								source={require('@/assets/tecnologys-logo.png')}
+								className="mb-5 self-center"
+							/>
 
-					<View className="my-5 items-center">
-						<Text className="font-inter-bold text-3xl">Bem vindo ao SEGY</Text>
-						<Text className="mt-2 text-center font-inter text-lg text-neutral-500">
-							Faça login para continuar
-						</Text>
-					</View>
+							<View className="my-5 items-center">
+								<Text className="font-inter-bold text-3xl">Bem vindo ao SEGY</Text>
+								<Text className="mt-2 text-center font-inter text-lg text-neutral-500">
+									Faça login para continuar
+								</Text>
+							</View>
 
-					<Button
-						title="Entrar com o Google"
-						onPress={handleGoogle}
-						variant="outline"
-						className="my-5 self-center"
-					>
-						<Image source={require('@/assets/google-logo.png')} className="mr-2" />
-					</Button>
+							<Button
+								title="Entrar com o Google"
+								onPress={handleGoogle}
+								variant="outline"
+								className="my-5 self-center"
+							>
+								<Image source={require('@/assets/google-logo.png')} className="mr-2" />
+							</Button>
 
-					<SignInDivisor text="ou" className="my-5" />
+							<SignInDivisor text="ou" className="my-5" />
 
-					<SignInForm />
-					<LogModal
-						visible={modal.visible}
-						description={modal.description}
-						onClose={() => setModal({ visible: false, description: '' })}
-					/>
-				</ScrollView>
-			</KeyboardAvoidingView>
-		</SafeAreaView>
+							<SignInForm />
+							<LogModal
+								visible={modal.visible}
+								description={modal.description}
+								onClose={() => setModal({ visible: false, description: '' })}
+							/>
+						</View>
+					</ScrollView>
+				</SafeAreaView>
+			</View>
+		</KeyboardAvoidingView>
 	)
 }
