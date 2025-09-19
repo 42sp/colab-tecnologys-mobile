@@ -6,7 +6,7 @@ import { DrawerHeaderProps } from '@react-navigation/drawer'
 
 export function DrawerHeader({ navigation, options, route }: DrawerHeaderProps) {
 	const title = getHeaderTitle(options, route.name)
-	const canGoBack = navigation.canGoBack()
+	const hideBackButton = route.name === 'home' || route.name === 'sidebar'
 	const paddingSize = Platform.OS === 'ios' ? 'p-2' : 'p-4'
 
 	return (
@@ -19,7 +19,7 @@ export function DrawerHeader({ navigation, options, route }: DrawerHeaderProps) 
 				style={{ height: '100%' }}
 			>
 				<View className={`h-full w-full flex-row items-end justify-between ${paddingSize}`}>
-					{canGoBack ? (
+					{!hideBackButton ? (
 						<TouchableOpacity onPress={() => navigation.goBack()}>
 							<Feather name="chevron-left" size={24} color="#fff" />
 						</TouchableOpacity>
@@ -28,7 +28,7 @@ export function DrawerHeader({ navigation, options, route }: DrawerHeaderProps) 
 					)}
 					<Text className="font-inter-bold text-xl text-white">{title}</Text>
 					<TouchableOpacity className="" onPress={() => navigation.openDrawer()}>
-						<Feather name="menu" size={24} color="#fff" />
+						<Feather name="menu" size={24} color="#fff" hitslop={{ size: 10 }} />
 					</TouchableOpacity>
 				</View>
 			</LinearGradient>
