@@ -32,44 +32,42 @@ export default function SignInScreen() {
 	}
 
 	return (
-		<KeyboardAvoidingView behavior={'height'} style={{ flex: 1, backgroundColor: 'white' }}>
-			<View className="bg-red-200">
-				<SafeAreaView className=" bg-white">
-					<ScrollView showsVerticalScrollIndicator={false}>
-						<View className="p-10">
-							<Image
-								source={require('@/assets/tecnologys-logo.png')}
-								className="mb-5 self-center"
-							/>
+		<SafeAreaView className="h-full bg-white" edges={['bottom']}>
+			<KeyboardAvoidingView
+				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+				style={{ backgroundColor: 'white' }}
+			>
+				<ScrollView showsVerticalScrollIndicator={false}>
+					<View className="p-10">
+						<Image source={require('@/assets/tecnologys-logo.png')} className="mb-5 self-center" />
 
-							<View className="my-5 items-center">
-								<Text className="font-inter-bold text-3xl">Bem vindo ao SEGY</Text>
-								<Text className="mt-2 text-center font-inter text-lg text-neutral-500">
-									Faça login para continuar
-								</Text>
-							</View>
-
-							<Button
-								title="Entrar com o Google"
-								onPress={handleGoogle}
-								variant="outline"
-								className="my-5 self-center"
-							>
-								<Image source={require('@/assets/google-logo.png')} className="mr-2" />
-							</Button>
-
-							<SignInDivisor text="ou" className="my-5" />
-
-							<SignInForm />
-							<LogModal
-								visible={modal.visible}
-								description={modal.description}
-								onClose={() => setModal({ visible: false, description: '' })}
-							/>
+						<View className="my-5 items-center">
+							<Text className="font-inter-bold text-3xl">Bem vindo ao SEGY</Text>
+							<Text className="mt-2 text-center font-inter text-lg text-neutral-500">
+								Faça login para continuar
+							</Text>
 						</View>
-					</ScrollView>
-				</SafeAreaView>
-			</View>
-		</KeyboardAvoidingView>
+
+						<Button
+							title="Entrar com o Google"
+							onPress={handleGoogle}
+							variant="outline"
+							className="my-5 self-center"
+						>
+							<Image source={require('@/assets/google-logo.png')} className="mr-2" />
+						</Button>
+
+						<SignInDivisor text="ou" className="my-5" />
+
+						<SignInForm />
+						<LogModal
+							visible={modal.visible}
+							description={modal.description}
+							onClose={() => setModal({ visible: false, description: '' })}
+						/>
+					</View>
+				</ScrollView>
+			</KeyboardAvoidingView>
+		</SafeAreaView>
 	)
 }

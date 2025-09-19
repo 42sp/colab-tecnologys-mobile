@@ -62,8 +62,8 @@ export default function ForgotPasswordScreen() {
 	}
 
 	return (
-		<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-			<SafeAreaView className="h-full bg-white" edges={['bottom']}>
+		<SafeAreaView className="h-full bg-white" edges={['bottom']}>
+			<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
 				<ScrollView showsVerticalScrollIndicator={false}>
 					<View className="p-10">
 						<Image source={require('@/assets/tecnologys-logo.png')} className="mb-5 self-center" />
@@ -128,7 +128,7 @@ export default function ForgotPasswordScreen() {
 						/>
 					</View>
 				</ScrollView>
-			</SafeAreaView>
-		</KeyboardAvoidingView>
+			</KeyboardAvoidingView>
+		</SafeAreaView>
 	)
 }
