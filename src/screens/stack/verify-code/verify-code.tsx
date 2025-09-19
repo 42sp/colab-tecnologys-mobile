@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import OTPTextView from 'react-native-otp-textinput'
-import { Text, View, TouchableOpacity, Image } from 'react-native'
+import { Text, View, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { setAuth } from '@/libs/redux/auth/auth-slice'
 import { passwordRecovery } from '@/api/password-recovery'
@@ -15,6 +15,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { RootState } from '@/libs/redux/store'
 import { LogModal } from '@/components/ui/log-modal'
 import { LoadingModal } from '@/components/ui/loading-modal'
+import { ScrollView } from 'react-native-gesture-handler'
+import Card from '@/components/ui/card'
 
 const otpSchema = z.object({
 	otp: z
@@ -105,85 +107,88 @@ export default function VerifyCode() {
 	}
 
 	return (
-		<SafeAreaView>
-			<View className="mx-4 rounded-lg bg-white p-10">
-				<View className="my-4 px-4">
-					<Image
-						source={require('@/assets/fingerprint-icon.png')}
-						className="h-20 w-20 self-center"
-						resizeMode="contain"
-					/>
-					<Text className="mt-4 text-center text-2xl font-bold">Verificação de Código</Text>
-					<Text className="text-md mt-4 text-center font-inter text-gray-500">
-						Digite o código de 6 digitos enviado para
-					</Text>
-					<View className="mt-2 flex-row items-center justify-center gap-2">
-						<Text className="text-center font-inter-bold text-xl text-gray-500">
-							(xx) xxxx-7890
-						</Text>
-						<FontAwesome name="whatsapp" size={24} color="#25D366" />
-					</View>
-				</View>
-
-				<View className="my-6 flex-row justify-center gap-2 ">
-					<Controller
-						name="otp"
-						control={control}
-						render={({ field: { onChange } }) => (
+		<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+			<SafeAreaView className="mb-10" edges={['bottom']}>
+				<ScrollView showsVerticalScrollIndicator={false}>
+					<Card className="m-5">
+						<View className="items-center gap-4 p-4">
+							<Image
+								source={require('@/assets/fingerprint-icon.png')}
+								className="h-20 w-20 self-center"
+								resizeMode="contain"
+							/>
+							<Text className="mt-4 font-inter-bold text-2xl">Verificação de Código</Text>
 							<View>
-								<OTPTextView
-									handleTextChange={onChange}
-									// handleCellTextChange={handleCellTextChange}
-									inputCount={6}
-									keyboardType="numeric"
-									tintColor={'#d16a32'}
-									textInputStyle={{
-										borderWidth: 1,
-										borderColor: '#ccc',
-										borderRadius: 8,
-										width: 42,
-										height: 52,
-										backgroundColor: '#fff',
-									}}
-								/>
+								<Text className="text-md mt-4 font-inter text-gray-500">
+									Digite o código de 6 digitos enviado para
+								</Text>
+								<View className="mt-2 flex-row justify-center gap-2">
+									<Text className="font-inter-bold text-xl text-gray-500">(xx) xxxx-7890</Text>
+									<FontAwesome name="whatsapp" size={24} color="#25D366" />
+								</View>
 							</View>
+						</View>
+
+						<View className="my-6 flex-row justify-center gap-2 ">
+							<Controller
+								name="otp"
+								control={control}
+								render={({ field: { onChange } }) => (
+									<View>
+										<OTPTextView
+											handleTextChange={onChange}
+											// handleCellTextChange={handleCellTextChange}
+											inputCount={6}
+											keyboardType="numeric"
+											tintColor={'#d16a32'}
+											textInputStyle={{
+												borderWidth: 1,
+												borderColor: '#ccc',
+												borderRadius: 8,
+												width: 42,
+												height: 52,
+												backgroundColor: '#fff',
+											}}
+										/>
+									</View>
+								)}
+							/>
+						</View>
+
+						{errors.otp && (
+							<Text className="pb-2 text-center font-inter text-red-500">{errors.otp.message}</Text>
 						)}
-					/>
-				</View>
 
-				{errors.otp && (
-					<Text className="pb-2 text-center font-inter text-red-500">{errors.otp.message}</Text>
-				)}
+						<Button title="Verificar" onPress={handleSubmit(onSubmit)} disabled={isSubmitting} />
 
-				<Button title="Verificar" onPress={handleSubmit(onSubmit)} disabled={isSubmitting} />
+						<View className=" items-center gap-4 p-4">
+							<Text className=" font-inter font-bold text-blue-400">
+								Aguarde {formatTimer(timer)} para enviar novamente
+							</Text>
 
-				<Text className="mt-4 text-center font-inter font-bold text-blue-400">
-					Aguarde {formatTimer(timer)} para enviar novamente
-				</Text>
-
-				<TouchableOpacity
-					className="mt-6 self-center font-inter"
-					activeOpacity={0.5}
-					onPress={() => {
-						console.log('Reenviar código')
-						const newBase = baseTimer * 2
-						setBaseTimer(newBase)
-						setTimer(newBase)
-						setIsButtonDisabled(true)
-					}}
-					disabled={isButtonDisabled}
-				>
-					<Text className="text-center font-inter-bold text-base leading-6 text-blue-400">
-						Reenviar código
-					</Text>
-				</TouchableOpacity>
-				<LogModal
-					visible={modal.visible}
-					description={modal.description}
-					onClose={() => setModal({ visible: false, description: '' })}
-				/>
-				<LoadingModal visible={isSubmitting} />
-			</View>
-		</SafeAreaView>
+							<TouchableOpacity
+								activeOpacity={0.5}
+								onPress={() => {
+									console.log('Reenviar código')
+									const newBase = baseTimer * 2
+									setBaseTimer(newBase)
+									setTimer(newBase)
+									setIsButtonDisabled(true)
+								}}
+								disabled={isButtonDisabled}
+							>
+								<Text className="font-inter-bold text-blue-400">Reenviar código</Text>
+							</TouchableOpacity>
+						</View>
+						<LogModal
+							visible={modal.visible}
+							description={modal.description}
+							onClose={() => setModal({ visible: false, description: '' })}
+						/>
+						<LoadingModal visible={isSubmitting} />
+					</Card>
+				</ScrollView>
+			</SafeAreaView>
+		</KeyboardAvoidingView>
 	)
 }
