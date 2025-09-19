@@ -28,6 +28,7 @@ export default function DrawerLayout() {
 				headerShown: true,
 				drawerPosition: 'right',
 				header: DrawerHeader,
+				drawerType: 'front',
 			}}
 		>
 			<Drawer.Screen
