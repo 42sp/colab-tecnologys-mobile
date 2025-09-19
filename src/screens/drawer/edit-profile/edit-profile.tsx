@@ -7,14 +7,14 @@ import { ScrollView } from 'react-native-gesture-handler'
 export default function EditProfileScreen() {
 	return (
 		<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-			<ScrollView showsVerticalScrollIndicator={false}>
-				<SafeAreaView className="bg-[#F9FAFB] ">
+			<SafeAreaView className="bg-[#F9FAFB] ">
+				<ScrollView showsVerticalScrollIndicator={false}>
 					<View className="gap-4">
 						<EditProfileAvatar avatar={require('@/assets/default-avatar.png')} />
 						<EditProfileForm />
 					</View>
-				</SafeAreaView>
-			</ScrollView>
+				</ScrollView>
+			</SafeAreaView>
 		</KeyboardAvoidingView>
 	)
 }
