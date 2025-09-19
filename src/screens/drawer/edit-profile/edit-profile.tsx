@@ -5,9 +5,11 @@ import { EditProfileForm } from './edit-profile-form'
 import { ScrollView } from 'react-native-gesture-handler'
 
 export default function EditProfileScreen() {
+	const navigationBarEdges: ('top' | 'right' | 'bottom' | 'left')[] =
+		Platform.OS === 'ios' ? [] : ['bottom']
 	return (
 		<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-			<SafeAreaView className="bg-[#F9FAFB]" edges={['bottom']}>
+			<SafeAreaView className="bg-[#F9FAFB]" edges={navigationBarEdges}>
 				<ScrollView showsVerticalScrollIndicator={false} className="">
 					<View className="py-10">
 						<EditProfileAvatar avatar={require('@/assets/default-avatar.png')} />
