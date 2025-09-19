@@ -8,7 +8,7 @@ export default function EditProfileScreen() {
 	return (
 		<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
 			<SafeAreaView className="bg-[#F9FAFB]" edges={['bottom']}>
-				<ScrollView showsVerticalScrollIndicator={false} className="">
+				<ScrollView showsVerticalScrollIndicator={false}>
 					<View className="flex-1 py-10">
 						<EditProfileAvatar avatar={require('@/assets/default-avatar.png')} />
 						<EditProfileForm />

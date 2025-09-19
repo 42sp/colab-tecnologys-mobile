@@ -73,9 +73,8 @@ export function SecuritySettingsForm() {
 	const [hideCurrentPassword, setHideCurrentPassword] = useState(true)
 	const [hideNewPassword, setHideNewPassword] = useState(true)
 	const [hideConfirmPassword, setHideConfirmPassword] = useState(true)
-
 	return (
-		<View className=" mt-6 gap-5 px-4 pb-4 ">
+		<View className="gap-5 p-5 pb-10">
 			<Card className=" gap-5">
 				<Card.Header>
 					<Text className="font-inter-bold text-xl">Gerenciar senha</Text>
