@@ -108,7 +108,7 @@ export default function VerifyCode() {
 
 	return (
 		<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-			<SafeAreaView className="mb-10" edges={['bottom']}>
+			<SafeAreaView className="mb-10 bg-[#F9FAFB]" edges={['bottom']}>
 				<ScrollView showsVerticalScrollIndicator={false}>
 					<Card className="m-5">
 						<View className="items-center gap-4 p-4">
