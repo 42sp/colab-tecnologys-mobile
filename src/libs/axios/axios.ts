@@ -7,11 +7,17 @@ export const api = axios.create({
 	timeout: 5000,
 })
 
+const getAuthHeader = () => {
+	const token = store.getState().auth.token
+	const accessToken = store.getState().passwordRecovery.accessToken
+	return accessToken || token ? `Bearer ${accessToken || token}` : undefined
+}
+
 api.interceptors.request.use(
 	(config) => {
-		const token = store.getState().auth.token
-		if (token) {
-			config.headers.Authorization = `Bearer ${token}`
+		const authHeader = getAuthHeader()
+		if (authHeader) {
+			config.headers.Authorization = authHeader
 		}
 		return config
 	},

@@ -10,6 +10,8 @@ interface passwordRecoveryResponse {
 	code?: string
 	userId?: string
 	phone?: string
+	exp?: string
+	sub?: string
 }
 
 export async function passwordRecovery({ cpf, code }: PasswordRecoveryProps) {
