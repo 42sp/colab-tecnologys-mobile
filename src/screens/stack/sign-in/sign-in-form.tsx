@@ -7,15 +7,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
 import { useDispatch } from 'react-redux'
-import { setAuth } from '@/libs/redux/auth/auth-slice'
 import { signIn } from '@/api/sign-in'
-import { getProfile } from '@/api/get-profile'
-import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { LogModal } from '@/components/ui/log-modal'
 import { saveAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
 import { LoadingModal } from '@/components/ui/loading-modal'
-import { setTasks } from '@/libs/redux/tasks/tasks-slice'
-import { getTasks } from '@/api/get-tasks'
+import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-store'
 
 const signInSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve conter 11 caracteres'),
@@ -52,26 +48,8 @@ export function SignInForm() {
 				{ key: 'expiryDate', value: payload.exp.toString() },
 				{ key: 'userid', value: payload.sub.toString() },
 			])
-			dispatch(setAuth({ token: accessToken, expiry: payload.exp, id: payload.sub }))
-			const profile = await getProfile()
-			const userProfile = profile.data[0]
-			dispatch(
-				setProfile({
-					name: userProfile.name,
-					dateOfBirth: userProfile.date_of_birth,
-					registrationCode: userProfile.registration_code,
-					phone: userProfile.phone,
-					address: userProfile.address,
-					city: userProfile.city,
-					state: userProfile.state,
-					postcode: userProfile.postcode,
-					photo: userProfile.photo,
-					updatedAt: userProfile.updated_at,
-				}),
-			)
-			const tasks = await getTasks()
-			dispatch(setTasks(tasks))
-
+			await loadAuthSecureStore(dispatch)
+			console.log('LOG: Usuário autenticado a partir do login manual')
 			drawer('home')
 		} catch (error) {
 			setShowErrorModal(true)
