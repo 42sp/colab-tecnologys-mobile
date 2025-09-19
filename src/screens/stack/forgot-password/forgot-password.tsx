@@ -62,7 +62,7 @@ export default function ForgotPasswordScreen() {
 	}
 
 	return (
-		<SafeAreaView className="h-full bg-white" edges={['bottom']}>
+		<SafeAreaView className="h-full bg-white">
 			<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
 				<ScrollView showsVerticalScrollIndicator={false}>
 					<View className="p-10">

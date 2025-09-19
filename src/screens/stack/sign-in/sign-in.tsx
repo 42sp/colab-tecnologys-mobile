@@ -32,7 +32,7 @@ export default function SignInScreen() {
 	}
 
 	return (
-		<SafeAreaView className="h-full bg-white" edges={['bottom']}>
+		<SafeAreaView className="h-full bg-white">
 			<KeyboardAvoidingView
 				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
 				style={{ backgroundColor: 'white' }}
