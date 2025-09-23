@@ -29,7 +29,9 @@ const SecuritySettingsSchema = z
 type SecuritySettingsType = z.infer<typeof SecuritySettingsSchema>
 
 export function ResetPasswordForm() {
-	const { userId, cpf, accessToken, exp } = useSelector((state: RootState) => state.passwordRecovery)
+	const { userId, cpf, accessToken, exp } = useSelector(
+		(state: RootState) => state.passwordRecovery,
+	)
 	const isExpired = accessToken && Date.now() > Number(exp) * 1000
 	const dispatch = useDispatch()
 	const [modal, setModal] = useState<{
@@ -84,7 +86,7 @@ export function ResetPasswordForm() {
 	const [hideConfirmPassword, setHideConfirmPassword] = useState(true)
 
 	return (
-		<View className="mb-10 gap-5 p-5">
+		<View className="mb-20 gap-5 p-5">
 			<Card className="gap-5">
 				<Card.Body className="gap-5 pb-10">
 					<View className="gap-1">
