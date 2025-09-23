@@ -1,7 +1,7 @@
 import { View } from 'react-native'
 import { ActivityCardDate } from './activity-card-date'
 import { ActivityCardContent } from './activity-card-content'
-import { Task } from './activity'
+import { Task } from '@/api/get-tasks'
 
 interface ActivityCardProps {
 	date: string

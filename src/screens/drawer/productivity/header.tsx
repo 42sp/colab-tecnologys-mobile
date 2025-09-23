@@ -2,7 +2,6 @@ import { View, Text } from 'react-native'
 import { HeaderInfo } from './header-info'
 import { HeaderChart } from './header-chart'
 
-// Gráfico semanal (mock)
 const weeklyProgress = [
 	{ value: 74, color: '#A0D7FF', text: 'Previsto' },
 	{ value: 19, color: '#007AFF', text: 'Completo' },

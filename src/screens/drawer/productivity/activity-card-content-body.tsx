@@ -1,5 +1,5 @@
 import { Text, View } from 'react-native'
-import { Task } from './activity'
+import { Task } from '@/api/get-tasks'
 import { Home, User } from 'lucide-react-native'
 
 export function ActivityCardContentBody({ task }: { task: Task }) {

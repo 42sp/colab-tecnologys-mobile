@@ -1,7 +1,6 @@
 import { Text, View } from 'react-native'
-import { Task } from './activity'
-import { AlertTriangle, AlertTriangleIcon, FileWarning } from 'lucide-react-native'
-import { MaterialIcons } from '@expo/vector-icons'
+import { Task } from '@/api/get-tasks'
+import { AlertTriangle } from 'lucide-react-native'
 
 export function ActivityCardContentHeader({ task }: { task: Task }) {
 	return (
@@ -9,7 +8,7 @@ export function ActivityCardContentHeader({ task }: { task: Task }) {
 			<Text className="flex-1 text-left text-base font-semibold">
 				{task.service_type} - {task.service_stage}
 			</Text>
-			{task.task_percentage >= 50 && (
+			{task.task_percentage && task.task_percentage >= 50 && (
 				<Text
 					className={`mr-4 text-nowrap text-right text-xl font-bold ${
 						task.task_percentage >= 80 ? 'text-green-600' : 'text-yellow-500'
@@ -18,7 +17,7 @@ export function ActivityCardContentHeader({ task }: { task: Task }) {
 					{task.task_percentage}%
 				</Text>
 			)}
-			{task.task_percentage < 50 && (
+			{task.task_percentage && task.task_percentage < 50 && (
 				<View className="mr-4">
 					<AlertTriangle size={24} fill="#ffcd00" />
 				</View>

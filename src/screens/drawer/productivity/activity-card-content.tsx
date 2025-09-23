@@ -1,5 +1,5 @@
 import { View } from 'react-native'
-import { Task } from './activity'
+import { Task } from '@/api/get-tasks'
 import { ActivityCardContentHeader } from './activity-card-content-header'
 import { ActivityCardContentBody } from './activity-card-content-body'
 import { Blocks, BrickWall, PaintRoller } from 'lucide-react-native'
@@ -41,8 +41,7 @@ export function ActivityCardContent({ task }: ActivityCardContentProps) {
 	return (
 		<View className="mb-4 flex-row rounded-2xl bg-white py-4 shadow">
 			<View className="flex w-[20%] items-center">
-				{/* <Feather name='plus' size={32} color="#000" /> */}
-				<ActivityCardContentIcon serviceType={task.service_type} />
+				<ActivityCardContentIcon serviceType={task.service_type ?? ''} />
 			</View>
 			<View className="flex-1 flex-col">
 				<ActivityCardContentHeader task={task} />
