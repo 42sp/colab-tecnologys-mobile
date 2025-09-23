@@ -68,25 +68,25 @@ export default function VerifyCode() {
 	}, [timer])
 
 	async function onSubmit(data: otpForm) {
-		try {
-			const response = await passwordRecovery({ cpf, code: data.otp })
-			console.log('response', response)
+		// try {
+		// 	const response = await passwordRecovery({ cpf, code: data.otp })
+		// 	console.log('response', response)
 
-			dispatch(
-				updatePasswordRecovery({
-					accessToken: response.accessToken,
-					exp: response.exp,
-				}),
-			)
+		// 	dispatch(
+		// 		updatePasswordRecovery({
+		// 			accessToken: response.accessToken,
+		// 			exp: response.exp,
+		// 		}),
+		// 	)
 
-			stack('resetPassword')
-		} catch (error) {
-			console.log(error)
-			setModal({
-				visible: true,
-				description: 'Código inválido. Tente novamente.',
-			})
-		}
+		stack('resetPassword')
+		// } catch (error) {
+		// 	console.log(error)
+		// 	setModal({
+		// 		visible: true,
+		// 		description: 'Código inválido. Tente novamente.',
+		// 	})
+		// }
 	}
 
 	// const handleCellTextChange = async (text: string, i: number) => {
