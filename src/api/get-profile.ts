@@ -1,6 +1,6 @@
 import { api } from '@/libs/axios/axios'
 
-interface Profile {
+export interface Profile {
 	id: string
 	user_id: string
 	name: string

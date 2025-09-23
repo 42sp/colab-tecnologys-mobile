@@ -87,8 +87,8 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 						const rowError = Array.isArray(errors.workers) ? errors.workers[idx] : undefined
 
 						return (
-							<View key={f._id} className="flex-row items-center gap-2">
-								<View className="flex-[2]">
+							<View key={f._id} className="flex-row gap-2">
+								<View className="flex-[2.2]">
 									<Controller
 										control={control}
 										name={`workers.${idx}.percent` as const}
@@ -163,7 +163,7 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 									</View>
 								</View>
 
-								<Pressable onPress={() => remove(idx)}>
+								<Pressable onPress={() => remove(idx)} className="justify-center">
 									<Feather name="x" size={18} color="#374151" />
 								</Pressable>
 							</View>
