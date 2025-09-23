@@ -10,8 +10,7 @@ export function ActivityCardContentBody({ task }: { task: Task }) {
 					<Home size={20} color="#6B7280" />
 				</View>
 				<Text className="mr-3 text-wrap text-sm text-gray-500">
-					{task.construction_name}, {task.service_tower}, {task.service_apartment},{' '}
-					{task.service_floor}
+					{task.service_floor}, Bloco {task.service_tower}, {task.construction_name}
 				</Text>
 			</View>
 			<View className="flex-row">
