@@ -4,12 +4,12 @@ import type { RegisterServiceType } from '@/screens/drawer/register-service/regi
 import Card from '@/components/ui/card'
 import { Dropdown } from '@/components/ui/dropdown'
 import { Feather } from '@expo/vector-icons'
-import { AllProfileResponse } from '@/api/get-profile'
+import { Profile } from '@/api/get-profile'
 
 type Props = {
 	control: Control<RegisterServiceType>
 	errors: FieldErrors<RegisterServiceType>
-	profiles: AllProfileResponse[]
+	profiles: Profile[]
 }
 
 const MAX_WORKERS = 4
