@@ -37,8 +37,9 @@ function distributeEvenly(n: number): number[] {
 
 export function WorkersForm({ control, errors, profiles }: Props) {
 	const workerOptions = profiles.map((t) => {
-		const nameParts = t.name.split(' ')
-		const shortName = nameParts.slice(0, 2).join(' ')
+		const nameSplit = t.name.split(' ').filter(Boolean);
+		const shortName = nameSplit.length > 1 ? `${nameSplit[0]} ${nameSplit.pop()}` : t.name;
+
 		return { label: shortName, value: t.user_id }
 	})
 
