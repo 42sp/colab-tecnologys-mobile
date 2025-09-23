@@ -17,11 +17,6 @@ interface Profile {
 	updated_at: Date
 }
 
-export interface AllProfileResponse {
-	user_id: string
-	name: string
-}
-
 interface ProfileResponse {
 	total: number
 	limit: number
@@ -31,10 +26,5 @@ interface ProfileResponse {
 
 export async function getProfile() {
 	const response = await api.get<ProfileResponse>('/profile')
-	return response.data
-}
-
-export async function getAllProfiles() {
-	const response = await api.get<AllProfileResponse[]>('/profile?list_workers=true')
 	return response.data
 }

@@ -31,7 +31,7 @@ export default function VerifyCode() {
 	const dispatch = useDispatch()
 	const [baseTimer, setBaseTimer] = useState(30)
 	const { phone, cpf } = useSelector((state: RootState) => state.passwordRecovery)
-	const lastFourDigits = phone?.slice(-4);
+	const lastFourDigits = phone?.slice(-4)
 
 	const [modal, setModal] = useState<{
 		visible: boolean

@@ -37,8 +37,8 @@ function distributeEvenly(n: number): number[] {
 
 export function WorkersForm({ control, errors, profiles }: Props) {
 	const workerOptions = profiles.map((t) => {
-		const nameSplit = t.name.split(' ').filter(Boolean);
-		const shortName = nameSplit.length > 1 ? `${nameSplit[0]} ${nameSplit.pop()}` : t.name;
+		const nameSplit = t.name.split(' ').filter(Boolean)
+		const shortName = nameSplit.length > 1 ? `${nameSplit[0]} ${nameSplit.pop()}` : t.name
 
 		return { label: shortName, value: t.user_id }
 	})
@@ -137,9 +137,16 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 													options={availableWorkerOptions}
 													variant="outline"
 													placeholder="Executor"
-													value={value ? availableWorkerOptions.find(opt => opt.value === value)?.label || '' : ''}
+													value={
+														value
+															? availableWorkerOptions.find((opt) => opt.value === value)?.label ||
+																''
+															: ''
+													}
 													onChangeText={(selectedLabel) => {
-														const selectedOption = availableWorkerOptions.find(opt => opt.label === selectedLabel)
+														const selectedOption = availableWorkerOptions.find(
+															(opt) => opt.label === selectedLabel,
+														)
 														onChange(selectedOption?.value || '')
 													}}
 													hasError={!!rowError?.worker}

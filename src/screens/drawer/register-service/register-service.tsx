@@ -14,7 +14,7 @@ import { ChooseResidentialModal } from '@/screens/drawer/register-service/choose
 import { getServices, Services } from '@/api/get-services'
 import { getServiceTypes, ServiceTypes } from '@/api/get-service-types'
 import { getConstructions, Construction } from '@/api/get-constructions'
-import { getAllProfiles, AllProfileResponse } from '@/api/get-profile'
+import { getProfile, AllProfileResponse } from '@/api/get-profile'
 import { createTask } from '@/api/post-tasks'
 import { useFocusEffect } from '@react-navigation/native'
 import { LogModal } from '@/components/ui/log-modal'
@@ -95,9 +95,9 @@ export default function RegisterServiceScreen() {
 						getServices(),
 						getServiceTypes(),
 						getConstructions(),
-						getAllProfiles(),
+						getProfile(),
 					])
-					setProfiles(profile)
+					setProfiles(profile.data)
 					setResidentials(construction.data)
 					setServiceTypes(serviceType.data)
 					setAllServices(services)
