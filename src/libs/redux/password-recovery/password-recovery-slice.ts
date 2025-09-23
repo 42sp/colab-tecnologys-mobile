@@ -4,6 +4,8 @@ interface PasswordRecoveryState {
 	cpf?: string
 	phone?: string
 	userId?: string
+	accessToken?: string
+	exp?: string
 }
 
 const initialState: PasswordRecoveryState = {}

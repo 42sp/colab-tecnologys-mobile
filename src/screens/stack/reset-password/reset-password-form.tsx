@@ -6,7 +6,7 @@ import { ToggleButton } from '@/components/ui/toggle-button'
 import { z } from 'zod'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from '@/libs/react-navigation/useNavigate'
 import { ScanFace } from 'lucide-react-native'
 import { patchUsers } from '@/api/patch-users'
@@ -14,7 +14,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
 import { clearPasswordRecovery } from '@/libs/redux/password-recovery/password-recovery-slice'
 import { LogModal } from '@/components/ui/log-modal'
-import { resetAuth } from '@/libs/redux/auth/auth-slice'
 import { LoadingModal } from '@/components/ui/loading-modal'
 
 const SecuritySettingsSchema = z
@@ -30,7 +29,8 @@ const SecuritySettingsSchema = z
 type SecuritySettingsType = z.infer<typeof SecuritySettingsSchema>
 
 export function ResetPasswordForm() {
-	const { cpf, userId } = useSelector((state: RootState) => state.passwordRecovery)
+	const { userId, cpf, accessToken, exp } = useSelector((state: RootState) => state.passwordRecovery)
+	const isExpired = accessToken && Date.now() > Number(exp) * 1000
 	const dispatch = useDispatch()
 	const [modal, setModal] = useState<{
 		visible: boolean
@@ -47,8 +47,17 @@ export function ResetPasswordForm() {
 	} = useForm<SecuritySettingsType>({
 		resolver: zodResolver(SecuritySettingsSchema),
 	})
-
 	const { stack } = useNavigate()
+
+	useEffect(() => {
+		if (!accessToken || isExpired) {
+			setModal({
+				visible: true,
+				description: 'Não foi possível resetar sua senha. Tente novamente mais tarde.',
+			})
+			stack('forgotPassword')
+		}
+	}, [])
 
 	async function onSubmit({ newPassword }: SecuritySettingsType) {
 		try {
@@ -61,7 +70,6 @@ export function ResetPasswordForm() {
 			await patchUsers({ id: userId, cpf: cpf, password: newPassword })
 
 			dispatch(clearPasswordRecovery())
-			dispatch(resetAuth())
 			stack('signIn')
 		} catch (error) {
 			console.log(error)
