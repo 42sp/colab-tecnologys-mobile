@@ -52,15 +52,16 @@ export function ResetPasswordForm() {
 	const { stack } = useNavigate()
 
 	useEffect(() => {
-		if (!accessToken || isExpired) {
-			setModal({
-				visible: true,
-				description: 'Não foi possível resetar sua senha. Tente novamente mais tarde.',
-			})
-			stack('forgotPassword')
+		if (accessToken && exp) {
+			if (!accessToken || isExpired) {
+				setModal({
+					visible: true,
+					description: 'Não foi possível resetar sua senha. Tente novamente mais tarde.',
+				})
+				stack('forgotPassword')
+			}
 		}
-	}, [])
-
+	}, [accessToken, exp])
 	async function onSubmit({ newPassword }: SecuritySettingsType) {
 		try {
 			if (!userId || !cpf) {
