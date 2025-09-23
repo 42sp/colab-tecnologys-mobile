@@ -14,7 +14,7 @@ import { ChooseResidentialModal } from '@/screens/drawer/register-service/choose
 import { getServices, Services } from '@/api/get-services'
 import { getServiceTypes, ServiceTypes } from '@/api/get-service-types'
 import { getConstructions, Construction } from '@/api/get-constructions'
-import { getAllProfiles, AllProfileResponse } from '@/api/get-profile'
+import { getProfile, Profile } from '@/api/get-profile'
 import { createTask } from '@/api/post-tasks'
 import { useFocusEffect } from '@react-navigation/native'
 import { LogModal } from '@/components/ui/log-modal'
@@ -60,7 +60,7 @@ export default function RegisterServiceScreen() {
 	const [allServices, setAllServices] = useState<Services[]>([])
 	const [serviceTypes, setServiceTypes] = useState<ServiceTypes[]>([])
 	const [residentials, setResidentials] = useState<Construction[]>([])
-	const [profiles, setProfiles] = useState<AllProfileResponse[]>([])
+	const [profiles, setProfiles] = useState<Profile[]>([])
 	const [resIndex, setResIndex] = useState(0)
 	const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null)
 	const [modal, setModal] = useState<{
@@ -95,9 +95,9 @@ export default function RegisterServiceScreen() {
 						getServices(),
 						getServiceTypes(),
 						getConstructions(),
-						getAllProfiles(),
+						getProfile(),
 					])
-					setProfiles(profile)
+					setProfiles(profile.data)
 					setResidentials(construction.data)
 					setServiceTypes(serviceType.data)
 					setAllServices(services)
