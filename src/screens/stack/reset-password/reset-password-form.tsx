@@ -18,7 +18,13 @@ import { LoadingModal } from '@/components/ui/loading-modal'
 
 const SecuritySettingsSchema = z
 	.object({
-		newPassword: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
+		newPassword: z
+			.string()
+			.min(6, 'Senha deve ter no mínimo 6 caracteres')
+			.regex(/[0-9]/, 'Senha deve conter pelo menos 1 número')
+			.regex(/[a-z]/, 'Senha deve conter pelo menos 1 letra minúscula')
+			.regex(/[A-Z]/, 'Senha deve conter pelo menos 1 letra maiúscula')
+			.regex(/[^A-Za-z0-9]/, 'Senha deve conter pelo menos 1 caractere especial'),
 		confirmPassword: z.string().nonempty('A confirmação da senha é obrigatória'),
 	})
 	.refine((data) => data.newPassword === data.confirmPassword, {
@@ -48,6 +54,10 @@ export function ResetPasswordForm() {
 		formState: { errors, isSubmitting },
 	} = useForm<SecuritySettingsType>({
 		resolver: zodResolver(SecuritySettingsSchema),
+		defaultValues: {
+			newPassword: '',
+			confirmPassword: '',
+		},
 	})
 	const { stack } = useNavigate()
 
