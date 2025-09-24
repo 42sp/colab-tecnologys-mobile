@@ -24,7 +24,17 @@ interface ProfileResponse {
 	data: Profile[]
 }
 
-export async function getProfile() {
-	const response = await api.get<ProfileResponse>('/profile')
+type GetProfileProps = {
+	id?: string
+	userId?: string
+}
+
+export async function getProfile({ id = '', userId }: GetProfileProps) {
+	let response
+	if (userId) {
+		response = await api.get<ProfileResponse>(`/profile?user_id=${userId}`)
+	} else {
+		response = await api.get<ProfileResponse>(`/profile/${id}`)
+	}
 	return response.data
 }

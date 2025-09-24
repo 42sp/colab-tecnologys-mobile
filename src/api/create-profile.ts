@@ -17,6 +17,7 @@ interface CreateProfileProps {
 interface CreateProfileResponse {
 	id: string
 	user_id: string
+	role_id: string
 	name: string
 	email: string
 	registration_code?: string

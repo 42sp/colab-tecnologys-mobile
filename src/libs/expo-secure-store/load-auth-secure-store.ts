@@ -12,14 +12,13 @@ export async function loadAuthSecureStore(dispatch: Dispatch) {
 		{ key: 'expiryDate' },
 		{ key: 'userid' },
 	])
-
+	// data.find((item) => item.key === 'userId')
 	const now = Math.floor(Date.now() / 1000)
 
 	if (data[0].value && data[1].value && parseInt(data[1].value) >= now) {
 		dispatch(setAuth({ token: data[0].value, expiry: data[1].value, id: data[2].value }))
 
-		const profileResponse = await getProfile()
-		// const profileResponse = await getProfileId(data[2].value)
+		const profileResponse = await getProfile({ userId: data[2].value })
 		const userProfile = profileResponse.data[0]
 		dispatch(
 			setProfile({
