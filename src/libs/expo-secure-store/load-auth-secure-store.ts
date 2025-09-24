@@ -3,8 +3,8 @@ import { Dispatch } from 'redux'
 import { getProfile } from '@/api/get-profile'
 import { setAuth } from '@/libs/redux/auth/auth-slice'
 import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
-import { setTasks } from '../redux/tasks/tasks-slice'
 import { getTasks } from '@/api/get-tasks'
+import { setTasks } from '../redux/tasks/tasks-slice'
 
 export async function loadAuthSecureStore(dispatch: Dispatch) {
 	const data = await getAuthSecureStore([

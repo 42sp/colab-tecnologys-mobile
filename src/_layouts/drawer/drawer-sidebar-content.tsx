@@ -10,6 +10,9 @@ import { env } from '@/libs/env'
 import { useState } from 'react'
 import { LogoutModal } from '@/components/ui/logout-modal'
 import { deleteAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
+import { clearTasks } from '@/libs/redux/tasks/tasks-slice'
+import { clearProfile } from '@/libs/redux/user-profile/user-profile-slice'
+import { clearUser } from '@/libs/redux/user/user-slice'
 const API_URL = env.EXPO_PUBLIC_API_URL
 
 export function CustomDrawerContent(props: any) {
@@ -26,6 +29,9 @@ export function CustomDrawerContent(props: any) {
 		try {
 			setIsModalVisible(false)
 			dispatch(resetAuth())
+			dispatch(clearUser())
+			dispatch(clearProfile())
+			dispatch(clearTasks())
 			await deleteAuthSecureStore([{ key: 'token' }, { key: 'expiryDate' }, { key: 'userid' }])
 		} catch (error) {
 			console.log('Erro no secure-store ao fazer log out: ', error)

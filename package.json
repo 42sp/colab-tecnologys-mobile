@@ -33,6 +33,7 @@
     "react-native-element-dropdown": "^2.12.4",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-gifted-charts": "^1.4.64",
+    "react-native-mask-text": "^0.15.0",
     "react-native-otp-textinput": "^1.1.7",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "^5.4.0",

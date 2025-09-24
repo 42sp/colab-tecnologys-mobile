@@ -15,6 +15,7 @@ export interface Profile {
 	postcode: string
 	created_at: Date
 	updated_at: Date
+	role_id: string
 }
 
 interface ProfileResponse {
