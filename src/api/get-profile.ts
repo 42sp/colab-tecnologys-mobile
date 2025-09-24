@@ -15,6 +15,7 @@ export interface Profile {
 	postcode: string
 	created_at: Date
 	updated_at: Date
+	role_id: string
 }
 
 interface ProfileResponse {
@@ -24,7 +25,11 @@ interface ProfileResponse {
 	data: Profile[]
 }
 
-export async function getProfile() {
-	const response = await api.get<ProfileResponse>('/profile')
-	return response.data
+type GetProfileProps = {
+    id?: string
+}
+
+export async function getProfile({ id = '' }: GetProfileProps) {
+    const response = await api.get<ProfileResponse>(`/profile/${id}`)
+    return response.data
 }

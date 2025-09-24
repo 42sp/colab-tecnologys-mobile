@@ -16,8 +16,11 @@ import { getServiceTypes, ServiceTypes } from '@/api/get-service-types'
 import { getConstructions, Construction } from '@/api/get-constructions'
 import { getProfile, Profile } from '@/api/get-profile'
 import { createTask } from '@/api/post-tasks'
+
+import { useNavigate } from '@/libs/react-navigation/useNavigate'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { LogModal } from '@/components/ui/log-modal'
+import { DrawerNavigationProp } from '@react-navigation/drawer'
 
 const registerServiceSchema = z
 	.object({
@@ -57,7 +60,9 @@ export type RegisterServiceType = z.infer<typeof registerServiceSchema>
 
 export default function RegisterServiceScreen() {
 
-	const navigation = useNavigation()
+	const { drawer } = useNavigate()
+	const navigation = useNavigation<DrawerNavigationProp<any>>()
+
 	const [modalVisible, setModalVisible] = useState(false)
 	const [allServices, setAllServices] = useState<Services[]>([])
 	const [serviceTypes, setServiceTypes] = useState<ServiceTypes[]>([])
@@ -102,21 +107,21 @@ export default function RegisterServiceScreen() {
 		useCallback(() => {
 			const fetchData = async () => {
 				try {
-					const [services, serviceType, construction, profile] = await Promise.all([
-						getServices(),
-						getServiceTypes(),
-						getConstructions(),
-						getProfile(),
-					])
-					setProfiles(profile.data)
-					setResidentials(construction.data)
-					setServiceTypes(serviceType.data)
-					setAllServices(services)
+				  const services = await getServices();
+				  const serviceType = await getServiceTypes();
+				  const construction = await getConstructions();
+				  const profile = await getProfile({});
+
+				  setProfiles(profile.data);
+				  setResidentials(construction.data);
+				  setServiceTypes(serviceType.data);
+				  setAllServices(services);
 				} catch (error) {
-					console.error('Failed to fetch initial data:', error)
+				  console.error('Failed to fetch initial data:', error);
 				}
-			}
-			fetchData()
+			  };
+
+			  fetchData();
 		}, []),
 	)
 
@@ -194,7 +199,7 @@ export default function RegisterServiceScreen() {
 						onClose={() => setModalVisible(false)}
 						residentials={residentials}
 						onSelect={handleSelectResidential}
-					/>// @ts-ignore - Bypassing type checking for navigation
+					/>
 
 					<RegisterServiceForm
 						control={control}
