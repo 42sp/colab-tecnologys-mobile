@@ -32,9 +32,7 @@ export function ActivityCard({
 		try {
 			if (!roleId) return
 			const role = await getRoles({ id: roleId })
-			console.log(role)
-
-			if (role.data[0].hierarchy_level >= 50) setIsApprover(true)
+			if (role.data?.[0]?.hierarchy_level >= 50) setIsApprover(true)
 		} catch (error) {
 			console.log(error)
 		}

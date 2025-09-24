@@ -12,7 +12,7 @@ import { LogModal } from '@/components/ui/log-modal'
 import { saveAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
 import { LoadingModal } from '@/components/ui/loading-modal'
 import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-store'
-import { mask, unMask } from 'react-native-mask-text';
+import { mask, unMask } from 'react-native-mask-text'
 
 const signInSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve conter 11 caracteres'),
