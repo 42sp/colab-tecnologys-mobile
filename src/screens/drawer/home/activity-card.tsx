@@ -3,10 +3,16 @@ import Card from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PaintRoller, Building2, House, Blocks, BrickWall, User } from 'lucide-react-native'
 import { Task } from '@/api/get-tasks'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/libs/redux/store'
+import { getRoles } from '@/api/get-roles'
+import { useEffect, useState } from 'react'
+import { patchTasks } from '@/api/patch-tasks'
 
 interface ActivityCardProps extends Task {}
 
 export function ActivityCard({
+	id,
 	service_type,
 	construction_name,
 	construction_address,
@@ -17,8 +23,36 @@ export function ActivityCard({
 	created_at,
 }: ActivityCardProps) {
 	const title = `${service_type} - ${service_stage} ${service_floor}/${service_apartment} - Torre ${service_tower}`
-
 	const time = new Date(created_at as string)
+	const [isApprover, setIsApprover] = useState(false)
+
+	const user = useSelector((state: RootState) => state.user)
+	const validateRole = async () => {
+		try {
+			if (!user.roleId) return
+			const role = await getRoles({ id: user.roleId })
+			console.log(role)
+
+			if (role.data[0].hierarchy_level >= 50) setIsApprover(true)
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	useEffect(() => {
+		validateRole()
+	}, [])
+
+	async function handlePatchTasks() {
+		try {
+			if (!id) return
+			const task = await patchTasks({ id, approver_id: user.id, status: 'completed' })
+			console.log(task)
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
 	function getJobTypeIcon() {
 		switch (service_type) {
 			case 'Alvenaria':
@@ -49,13 +83,12 @@ export function ActivityCard({
 				<Card.Body className="flex-1 justify-between gap-4 ">
 					<View className="flex-row justify-between">
 						<Text className="text-md font-inter-bold ">{title}</Text>
-						{time ? (
-							<Text className="font-inter text-xs">
-								{time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-							</Text>
-						) : (
-							<Text className="font-inter text-xs">00:00</Text>
-						)}
+
+						<Text className="font-inter text-xs">
+							{time
+								? time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+								: '00:00'}
+						</Text>
 					</View>
 					<View>
 						<View className="flex-row gap-2">
@@ -67,8 +100,8 @@ export function ActivityCard({
 							<Text className="flex-1 font-inter text-sm">{construction_name}</Text>
 						</View>
 					</View>
-					<View className="hidden pl-14">
-						<Button variant="green" title="Aprovar" />
+					<View className={`pl-14 ${isApprover ? '' : 'hidden'}`}>
+						<Button variant="green" title="Aprovar" onPress={() => handlePatchTasks()} />
 					</View>
 				</Card.Body>
 			</Card>

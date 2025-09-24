@@ -41,6 +41,7 @@ const userSlice = createSlice({
 			if (state.createdAt !== null) state.createdAt = action.payload.createdAt
 			if (state.updatedAt !== null) state.updatedAt = action.payload.updatedAt
 		},
+		clearUser: () => initialState,
 	},
 })
 
@@ -53,5 +54,5 @@ export const selectProfileId = (state: RootState) => state.user.profileId
 export const selectCreatedAt = (state: RootState) => state.user.createdAt
 export const selectUpdatedAt = (state: RootState) => state.user.updatedAt
 
-export const { setUser, updateUser } = userSlice.actions
+export const { setUser, updateUser, clearUser } = userSlice.actions
 export default userSlice.reducer
