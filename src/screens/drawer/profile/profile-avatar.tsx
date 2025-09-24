@@ -8,7 +8,7 @@ import { launchImageLibraryAsync, useMediaLibraryPermissions } from 'expo-image-
 import { useImageManager } from '@/hook/useImageManager'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
-import { updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
+import { selectUserId, updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { LogModal } from '@/components/ui/log-modal'
 
 type ProfileAvatarProps = {
@@ -29,6 +29,7 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 		status: 'error' | 'success'
 		description: string
 	}>({ visible: false, status: 'error', description: '' })
+	const userId = useSelector(selectUserId)
 
 	useEffect(() => {
 		const handleRenderedImage = async () => {
@@ -37,9 +38,8 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 			try {
 				const result = await uploads({ uri: `data:image/jpeg;base64,${renderedImage.base64}` })
 				if (result) {
-					const user = await getProfile()
+					const user = await getProfile({ userId: userId })
 					dispatch(updateProfile({ photo: user.data[0].photo, updatedAt: user.data[0].updated_at }))
-					setImage(null)
 					setModal({
 						visible: true,
 						status: 'success',
@@ -74,7 +74,7 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 		})
 
 		console.log(
-			'Resultado da imagem:',
+			'Resultado da imagem in profile:',
 			result?.assets && result.assets[0] ? result.assets[0].assetId : null,
 		)
 

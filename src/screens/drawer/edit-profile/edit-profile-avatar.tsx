@@ -9,7 +9,7 @@ import { uploads } from '@/api/post-uploads'
 import { getProfile } from '@/api/get-profile'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
-import { updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
+import { selectUserId, updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { LogModal } from '@/components/ui/log-modal'
 
 type EditProfileAvatarProps = {
@@ -29,6 +29,7 @@ export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 		status: 'error' | 'success'
 		description: string
 	}>({ visible: false, status: 'error', description: '' })
+	const userId = useSelector(selectUserId)
 
 	useEffect(() => {
 		const handleRenderedImage = async () => {
@@ -37,9 +38,8 @@ export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 			try {
 				const result = await uploads({ uri: `data:image/jpeg;base64,${renderedImage.base64}` })
 				if (result) {
-					const user = await getProfile()
+					const user = await getProfile({ userId: userId })
 					dispatch(updateProfile({ photo: user.data[0].photo, updatedAt: user.data[0].updated_at }))
-					setImage(null)
 					setModal({
 						visible: true,
 						status: 'success',
@@ -75,7 +75,7 @@ export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 		})
 
 		console.log(
-			'Resultado da imagem:',
+			'Resultado da imagem em edit-profile:',
 			result?.assets && result.assets[0] ? result.assets[0].assetId : null,
 		)
 
