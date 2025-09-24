@@ -13,6 +13,8 @@ interface UserProfileState {
 	state?: string
 	postcode?: string
 	updatedAt?: Date
+	roleId?: string
+	userId?: string
 }
 
 const initialState: UserProfileState = {}
@@ -42,6 +44,8 @@ export const selectCity = (state: RootState) => state.userProfile.city
 export const selectRegion = (state: RootState) => state.userProfile.state
 export const selectPostcode = (state: RootState) => state.userProfile.postcode
 export const selectUpdatedAt = (state: RootState) => state.userProfile.updatedAt
+export const selectRoleId = (state: RootState) => state.userProfile.roleId
+export const selectUserId = (state: RootState) => state.userProfile.userId
 
 export const { setProfile, updateProfile, clearProfile } = userProfileSlice.actions
 export default userProfileSlice.reducer

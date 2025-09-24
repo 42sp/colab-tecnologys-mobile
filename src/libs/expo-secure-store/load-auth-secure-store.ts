@@ -12,7 +12,7 @@ export async function loadAuthSecureStore(dispatch: Dispatch) {
 		{ key: 'expiryDate' },
 		{ key: 'userid' },
 	])
-	// data.find((item) => item.key === 'userId')
+
 	const now = Math.floor(Date.now() / 1000)
 
 	if (data[0].value && data[1].value && parseInt(data[1].value) >= now) {
@@ -32,7 +32,8 @@ export async function loadAuthSecureStore(dispatch: Dispatch) {
 				postcode: userProfile.postcode,
 				photo: userProfile.photo,
 				updatedAt: userProfile.updated_at,
-				//roleId: userProfile.role_id,
+				roleId: userProfile.role_id || undefined,
+				userId: userProfile.user_id,
 			}),
 		)
 		const tasks = await getTasks()

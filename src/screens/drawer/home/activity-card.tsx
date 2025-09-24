@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/button'
 import { PaintRoller, Building2, House, Blocks, BrickWall, User } from 'lucide-react-native'
 import { Task } from '@/api/get-tasks'
 import { useSelector } from 'react-redux'
-import { RootState } from '@/libs/redux/store'
 import { getRoles } from '@/api/get-roles'
 import { useEffect, useState } from 'react'
 import { patchTasks } from '@/api/patch-tasks'
+import { selectRoleId, selectUserId } from '@/libs/redux/user-profile/user-profile-slice'
 
 interface ActivityCardProps extends Task {}
 
@@ -26,11 +26,12 @@ export function ActivityCard({
 	const time = new Date(created_at as string)
 	const [isApprover, setIsApprover] = useState(false)
 
-	const user = useSelector((state: RootState) => state.user)
+	const userId = useSelector(selectUserId)
+	const roleId = useSelector(selectRoleId)
 	const validateRole = async () => {
 		try {
-			if (!user.roleId) return
-			const role = await getRoles({ id: user.roleId })
+			if (!roleId) return
+			const role = await getRoles({ id: roleId })
 			console.log(role)
 
 			if (role.data[0].hierarchy_level >= 50) setIsApprover(true)
@@ -46,7 +47,7 @@ export function ActivityCard({
 	async function handlePatchTasks() {
 		try {
 			if (!id) return
-			const task = await patchTasks({ id, approver_id: user.id, status: 'completed' })
+			const task = await patchTasks({ id, approver_id: userId, status: 'completed' })
 			console.log(task)
 		} catch (error) {
 			console.log(error)
