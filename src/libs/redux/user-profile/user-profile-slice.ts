@@ -27,6 +27,7 @@ const userProfileSlice = createSlice({
 		updateProfile(state, { payload }: PayloadAction<Partial<UserProfileState>>) {
 			return { ...state, ...payload }
 		},
+		clearProfile: () => initialState,
 	},
 })
 
@@ -42,5 +43,5 @@ export const selectRegion = (state: RootState) => state.userProfile.state
 export const selectPostcode = (state: RootState) => state.userProfile.postcode
 export const selectUpdatedAt = (state: RootState) => state.userProfile.updatedAt
 
-export const { setProfile, updateProfile } = userProfileSlice.actions
+export const { setProfile, updateProfile, clearProfile } = userProfileSlice.actions
 export default userProfileSlice.reducer
