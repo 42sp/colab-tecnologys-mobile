@@ -18,6 +18,7 @@ import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { LogModal } from '@/components/ui/log-modal'
 import { saveAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
 import { LoadingModal } from '@/components/ui/loading-modal'
+import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-store'
 
 const signUpSchema = z
 	.object({
@@ -87,10 +88,11 @@ export function SignUpForm() {
 	async function onSubmit(profile: SignUpType) {
 		console.log('Dados de registro ', profile)
 		try {
-			const user = await createUser({
+			// const user =
+			await createUser({
 				cpf: profile.cpf,
 				password: profile.password,
-				role_id: profile.jobTitle,
+				//role_id: profile.jobTitle,
 			})
 			const auth = await signIn({ cpf: profile.cpf, password: profile.password })
 
@@ -100,39 +102,42 @@ export function SignUpForm() {
 				{ key: 'expiryDate', value: payload.exp.toString() },
 				{ key: 'userid', value: payload.sub.toString() },
 			])
-			dispatch(setAuth({ token: auth.accessToken, expiry: payload.exp, id: payload.sub }))
-
-			const newProfile = await createProfile({
+			// const newProfile =
+			await createProfile({
 				name: profile.name,
 				phone: profile.phone,
+				role_id: profile.jobTitle,
 			})
+			await loadAuthSecureStore(dispatch)
 
-			dispatch(
-				setUser({
-					id: user.id,
-					cpf: user.cpf,
-					roleId: user.role_id,
-					profileId: user.profile_id,
-					isActive: user.is_active,
-					isAvailable: user.is_available,
-					createdAt: user.created_at,
-					updatedAt: user.updated_at,
-				}),
-			)
-			dispatch(
-				setProfile({
-					name: newProfile.name,
-					dateOfBirth: newProfile.date_of_birth,
-					registrationCode: newProfile.registration_code,
-					phone: newProfile.phone,
-					address: newProfile.address,
-					city: newProfile.city,
-					state: newProfile.state,
-					postcode: newProfile.postcode,
-					photo: newProfile.photo,
-					updatedAt: newProfile.updated_at,
-				}),
-			)
+			// dispatch(setAuth({ token: auth.accessToken, expiry: payload.exp, id: payload.sub }))
+
+			// dispatch(
+			// 	setUser({
+			// 		id: user.id,
+			// 		cpf: user.cpf,
+			// 		roleId: user.role_id,
+			// 		profileId: user.profile_id,
+			// 		isActive: user.is_active,
+			// 		isAvailable: user.is_available,
+			// 		createdAt: user.created_at,
+			// 		updatedAt: user.updated_at,
+			// 	}),
+			// )
+			// dispatch(
+			// 	setProfile({
+			// 		name: newProfile.name,
+			// 		dateOfBirth: newProfile.date_of_birth,
+			// 		registrationCode: newProfile.registration_code,
+			// 		phone: newProfile.phone,
+			// 		address: newProfile.address,
+			// 		city: newProfile.city,
+			// 		state: newProfile.state,
+			// 		postcode: newProfile.postcode,
+			// 		photo: newProfile.photo,
+			// 		updatedAt: newProfile.updated_at,
+			// 	}),
+			// )
 			drawer('home')
 		} catch (error) {
 			console.log(error)

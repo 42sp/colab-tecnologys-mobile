@@ -19,6 +19,7 @@ export async function loadAuthSecureStore(dispatch: Dispatch) {
 		dispatch(setAuth({ token: data[0].value, expiry: data[1].value, id: data[2].value }))
 
 		const profileResponse = await getProfile()
+		// const profileResponse = await getProfileId(data[2].value)
 		const userProfile = profileResponse.data[0]
 		dispatch(
 			setProfile({
@@ -32,6 +33,7 @@ export async function loadAuthSecureStore(dispatch: Dispatch) {
 				postcode: userProfile.postcode,
 				photo: userProfile.photo,
 				updatedAt: userProfile.updated_at,
+				//roleId: userProfile.role_id,
 			}),
 		)
 		const tasks = await getTasks()
