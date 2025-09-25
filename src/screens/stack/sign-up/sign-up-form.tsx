@@ -47,7 +47,7 @@ type RolesType = {
 } & ItemType
 
 export function SignUpForm() {
-	const { stack, drawer } = useNavigate()
+	const { goBack } = useNavigate().navigation
 	const [hidePassword, setHidePassword] = useState(true)
 	const [modal, setModal] = useState<{
 		visible: boolean
@@ -111,7 +111,6 @@ export function SignUpForm() {
 				role_id: profile.jobTitle,
 			})
 			await loadAuthSecureStore(dispatch)
-			drawer('home')
 		} catch (error) {
 			console.log(error)
 			setModal({
@@ -278,7 +277,7 @@ export function SignUpForm() {
 					Já tem uma conta?
 					<Text
 						onPress={() => {
-							stack('signIn')
+							goBack()
 						}}
 						className="font-inter-bold text-blue-500"
 					>

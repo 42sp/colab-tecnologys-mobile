@@ -68,25 +68,25 @@ export default function VerifyCode() {
 	}, [timer])
 
 	async function onSubmit(data: otpForm) {
-		// try {
-		// 	const response = await passwordRecovery({ cpf, code: data.otp })
-		// 	console.log('response', response)
+		try {
+			const response = await passwordRecovery({ cpf, code: data.otp })
+			console.log('response', response)
 
-		// 	dispatch(
-		// 		updatePasswordRecovery({
-		// 			accessToken: response.accessToken,
-		// 			exp: response.exp,
-		// 		}),
-		// 	)
+			dispatch(
+				updatePasswordRecovery({
+					accessToken: response.accessToken,
+					exp: response.exp,
+				}),
+			)
 
-		stack('resetPassword')
-		// } catch (error) {
-		// 	console.log(error)
-		// 	setModal({
-		// 		visible: true,
-		// 		description: 'Código inválido. Tente novamente.',
-		// 	})
-		// }
+			stack('resetPassword')
+		} catch (error) {
+			console.log(error)
+			setModal({
+				visible: true,
+				description: 'Código inválido. Tente novamente.',
+			})
+		}
 	}
 
 	// const handleCellTextChange = async (text: string, i: number) => {
@@ -123,7 +123,7 @@ export default function VerifyCode() {
 								</Text>
 								<View className="mt-2 flex-row justify-center gap-2">
 									<Text className="font-inter-bold text-xl text-gray-500">
-										(xx) xxxx-${lastFourDigits}
+										(XX) XXXXX-{lastFourDigits}
 									</Text>
 									<FontAwesome name="whatsapp" size={24} color="#25D366" />
 								</View>

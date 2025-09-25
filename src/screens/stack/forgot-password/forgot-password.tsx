@@ -23,6 +23,7 @@ type ForgotPasswordType = z.infer<typeof forgotPasswordSchema>
 
 export default function ForgotPasswordScreen() {
 	const { stack } = useNavigate()
+	const { goBack } = useNavigate().navigation
 	const dispatch = useDispatch()
 	const [modal, setModal] = useState<{
 		visible: boolean
@@ -117,7 +118,7 @@ export default function ForgotPasswordScreen() {
 							<TouchableOpacity
 								className="mt-6 self-center"
 								activeOpacity={0.5}
-								onPress={() => stack('signIn')}
+								onPress={() => goBack()}
 							>
 								<Text className="text-center font-inter-bold text-base leading-6 text-blue-600">
 									Voltar para o Login

@@ -59,7 +59,7 @@ export function ResetPasswordForm() {
 			confirmPassword: '',
 		},
 	})
-	const { stack } = useNavigate()
+	const { popToTop } = useNavigate().navigation
 
 	useEffect(() => {
 		if (accessToken && exp) {
@@ -68,7 +68,7 @@ export function ResetPasswordForm() {
 					visible: true,
 					description: 'Não foi possível resetar sua senha. Tente novamente mais tarde.',
 				})
-				stack('forgotPassword')
+				popToTop()
 			}
 		}
 	}, [accessToken, exp])
@@ -83,13 +83,14 @@ export function ResetPasswordForm() {
 			await patchUsers({ id: userId, cpf: cpf, password: newPassword })
 
 			dispatch(clearPasswordRecovery())
-			stack('signIn')
+			popToTop()
 		} catch (error) {
 			console.log(error)
 			setModal({
 				visible: true,
 				description: 'Não foi possível resetar sua senha. Tente novamente mais tarde.',
 			})
+			popToTop()
 		}
 	}
 
