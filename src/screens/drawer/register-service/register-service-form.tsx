@@ -64,8 +64,8 @@ export function RegisterServiceForm({ control, services, resetField, setValue, e
 	}, [selectDay])
 
 	return (
-		<View>
-			<Card className="ml-6 mr-6 mt-6">
+		<View className="gap-5">
+			<Card>
 				<Card.Header>
 					<Text className="font-inter-bold text-xl text-black">Data da execução</Text>
 				</Card.Header>
@@ -123,7 +123,7 @@ export function RegisterServiceForm({ control, services, resetField, setValue, e
 					)}
 				</Card.Body>
 			</Card>
-			<Card className="ml-6 mr-6 mt-6">
+			<Card>
 				<Card.Header>
 					<Text className="font-inter-bold text-xl text-black">Informação do Local</Text>
 				</Card.Header>

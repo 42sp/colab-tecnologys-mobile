@@ -70,7 +70,7 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 
 	return (
 		<View>
-			<Card className="ml-6 mr-6 mt-6">
+			<Card>
 				<Card.Header className="mb-1 flex-row items-center justify-between">
 					<Text className="font-inter-bold text-xl text-black">Executor</Text>
 					<Pressable
@@ -163,7 +163,7 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 									</View>
 								</View>
 
-								<Pressable onPress={() => remove(idx)} className="justify-center">
+								<Pressable onPress={() => remove(idx)} className="justify-center pb-4">
 									<Feather name="x" size={18} color="#374151" />
 								</Pressable>
 							</View>
