@@ -1,6 +1,6 @@
 import Card from '@/components/ui/card'
 import { Dropdown } from '@/components/ui/dropdown'
-import { Text, View, Modal, Pressable } from 'react-native'
+import { Text, View, Pressable } from 'react-native'
 import { useState, useEffect, useMemo } from 'react'
 import {
 	Controller,
@@ -12,8 +12,9 @@ import {
 } from 'react-hook-form'
 import type { RegisterServiceType } from './register-service'
 import { Feather } from '@expo/vector-icons'
-import { CustomCalendar, DateRangeType } from '@/components/ui/calendar'
+import { DateRangeType } from '@/components/ui/calendar'
 import { Services } from '@/api/get-services'
+import { CalendarModal } from './calendar-modal'
 
 type Props = {
 	control: Control<RegisterServiceType>
@@ -100,20 +101,11 @@ export function RegisterServiceForm({ control, services, resetField, setValue, e
 											{formattedDate || 'Data do serviço'}
 										</Text>
 									</Pressable>
-
-									<Modal visible={isCalendarVisible} transparent animationType="slide">
-										<View className="flex-1 items-center justify-center bg-black/40 p-4">
-											<View className="w-full rounded-lg bg-white p-4">
-												<CustomCalendar setDateRange={setSelectDay} markingType="dot" />
-												<Pressable
-													onPress={() => setCalendarVisible(false)}
-													className="mt-4 items-center rounded-lg border-2 border-gray-200 bg-transparent p-3"
-												>
-													<Text className="font-inter-bold text-black">Fechar</Text>
-												</Pressable>
-											</View>
-										</View>
-									</Modal>
+									<CalendarModal
+										visible={isCalendarVisible}
+										onClose={() => setCalendarVisible(false)}
+										setDateRange={setSelectDay}
+									/>
 								</>
 							)
 						}}
