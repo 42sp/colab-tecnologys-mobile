@@ -69,8 +69,8 @@ export function HomeFilterModal({ isVisible, onClose, setFilter, filter }: Filte
 		<Modal visible={showFilter} animationType="none" transparent={true}>
 			<FadeBackgroundModal visible={isVisible} onHidden={handleFadeOut} />
 			{isVisible && (
-				<View className="flex-1 justify-end">
-					<Pressable className=" rounded-t-2xl bg-white p-5 pb-10" onPress={onClose}>
+				<Pressable className="flex-1 justify-end" onPress={onClose}>
+					<View className="rounded-t-2xl bg-white p-5 pb-10">
 						<Animated.View
 							className="gap-4"
 							style={{
@@ -136,8 +136,8 @@ export function HomeFilterModal({ isVisible, onClose, setFilter, filter }: Filte
 								<CustomCalendar setDateRange={setDateRange} />
 							</View>
 						</Animated.View>
-					</Pressable>
-				</View>
+					</View>
+				</Pressable>
 			)}
 		</Modal>
 	)
