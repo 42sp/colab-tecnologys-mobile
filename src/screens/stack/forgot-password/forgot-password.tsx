@@ -13,6 +13,7 @@ import { passwordRecovery } from '@/api/password-recovery'
 import { useDispatch } from 'react-redux'
 import { setPasswordRecovery } from '@/libs/redux/password-recovery/password-recovery-slice'
 import { LoadingModal } from '@/components/ui/loading-modal'
+import { mask, unMask } from 'react-native-mask-text'
 
 const forgotPasswordSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve ser válido'),
@@ -37,6 +38,9 @@ export default function ForgotPasswordScreen() {
 		formState: { errors, isSubmitting },
 	} = useForm<ForgotPasswordType>({
 		resolver: zodResolver(forgotPasswordSchema),
+		defaultValues: {
+			cpf: '',
+		},
 	})
 
 	async function onSubmit({ cpf }: ForgotPasswordType) {
@@ -86,8 +90,8 @@ export default function ForgotPasswordScreen() {
 											IconLeft="mail"
 											placeholder="Informe seu CPF"
 											onBlur={onBlur}
-											onChangeText={onChange}
-											value={value}
+											value={mask(value || '', '999.999.999-99')}
+											onChangeText={(text) => onChange(unMask(text).slice(0, 11))}
 											hasError={!!errors.cpf}
 										/>
 										{errors.cpf && (

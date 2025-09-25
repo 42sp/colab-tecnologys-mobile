@@ -1,6 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './auth/auth-slice'
-import userReducer from './user/user-slice'
 import userProfileReducer from './user-profile/user-profile-slice'
 import passwordRecoveryReducer from './password-recovery/password-recovery-slice'
 import tasksReducer from '@/libs/redux/tasks/tasks-slice'
@@ -8,7 +7,6 @@ import tasksReducer from '@/libs/redux/tasks/tasks-slice'
 const store = configureStore({
 	reducer: {
 		auth: authReducer,
-		user: userReducer,
 		userProfile: userProfileReducer,
 		passwordRecovery: passwordRecoveryReducer,
 		tasks: tasksReducer,

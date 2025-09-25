@@ -14,14 +14,17 @@ import { ChooseResidentialModal } from '@/screens/drawer/register-service/choose
 import { getServices, Services } from '@/api/get-services'
 import { getServiceTypes, ServiceTypes } from '@/api/get-service-types'
 import { getConstructions, Construction } from '@/api/get-constructions'
-import { getAllProfiles, AllProfileResponse } from '@/api/get-profile'
+import { getProfile, Profile } from '@/api/get-profile'
 import { createTask } from '@/api/post-tasks'
-import { useFocusEffect } from '@react-navigation/native'
+
+import { useNavigate } from '@/libs/react-navigation/useNavigate'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { LogModal } from '@/components/ui/log-modal'
+import { DrawerNavigationProp } from '@react-navigation/drawer'
 
 const registerServiceSchema = z
 	.object({
-		dateOfService: z.string('Selecione uma data.'),
+		dateOfService: z.string().nonempty('Selecione uma data.'),
 		tower: z.string().nonempty('Selecione a torre.'),
 		floor: z.string().nonempty('Selecione o andar.'),
 		workers: z.array(
@@ -56,11 +59,14 @@ const registerServiceSchema = z
 export type RegisterServiceType = z.infer<typeof registerServiceSchema>
 
 export default function RegisterServiceScreen() {
+	const { drawer } = useNavigate()
+	const navigation = useNavigation<DrawerNavigationProp<any>>()
+
 	const [modalVisible, setModalVisible] = useState(false)
 	const [allServices, setAllServices] = useState<Services[]>([])
 	const [serviceTypes, setServiceTypes] = useState<ServiceTypes[]>([])
 	const [residentials, setResidentials] = useState<Construction[]>([])
-	const [profiles, setProfiles] = useState<AllProfileResponse[]>([])
+	const [profiles, setProfiles] = useState<Profile[]>([])
 	const [resIndex, setResIndex] = useState(0)
 	const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null)
 	const [modal, setModal] = useState<{
@@ -83,7 +89,16 @@ export default function RegisterServiceScreen() {
 	} = useForm<RegisterServiceType>({
 		resolver: zodResolver(registerServiceSchema),
 		defaultValues: {
+			dateOfService: '',
+			tower: '',
+			floor: '',
 			workers: [{ percent: 100, worker_id: '' }],
+			typeOfService: '',
+			apartments: [],
+			measurementUnit: '',
+			classification: '',
+			services: '',
+			confirmed: false,
 		},
 	})
 
@@ -91,13 +106,12 @@ export default function RegisterServiceScreen() {
 		useCallback(() => {
 			const fetchData = async () => {
 				try {
-					const [services, serviceType, construction, profile] = await Promise.all([
-						getServices(),
-						getServiceTypes(),
-						getConstructions(),
-						getAllProfiles(),
-					])
-					setProfiles(profile)
+					const services = await getServices()
+					const serviceType = await getServiceTypes()
+					const construction = await getConstructions()
+					const profile = await getProfile({})
+
+					setProfiles(profile.data)
 					setResidentials(construction.data)
 					setServiceTypes(serviceType.data)
 					setAllServices(services)
@@ -105,6 +119,7 @@ export default function RegisterServiceScreen() {
 					console.error('Failed to fetch initial data:', error)
 				}
 			}
+
 			fetchData()
 		}, []),
 	)
@@ -221,8 +236,13 @@ export default function RegisterServiceScreen() {
 							/>
 						</Card.Body>
 					</Card>
-					<View className="m-6 flex-row gap-4">
-						<Button title="Cancelar" variant="outline" className="flex-1" onPress={() => {}} />
+					<View className="m-6 flex-row gap-2">
+						<Button
+							title="Cancelar"
+							variant="outline"
+							className="flex-1"
+							onPress={() => navigation.navigate('home')}
+						/>
 						<Button
 							title="Enviar"
 							className="flex-1"

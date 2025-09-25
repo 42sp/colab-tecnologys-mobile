@@ -284,6 +284,11 @@ export function TypeServiceForm({
 							/>
 						)}
 					/>
+					{errors.services && (
+						<Text className="mb-2 text-xs text-red-500">
+							{errors.services.message as string}
+						</Text>
+					)}
 
 					{selectedService && (
 						<View className="mt-4">

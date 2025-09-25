@@ -5,6 +5,7 @@ import ProfileScreen from '@/screens/drawer/profile/profile'
 import SecuritySettingsScreen from '@/screens/drawer/security-settings/security-settings'
 import EditProfileScreen from '@/screens/drawer/edit-profile/edit-profile'
 import HomeScreen from '@/screens/drawer/home/home'
+import ProductivityScreen from '@/screens/drawer/productivity/productivity'
 import RegisterServiceScreen from '@/screens/drawer/register-service/register-service'
 import { DrawerHeader } from './drawer-header'
 
@@ -15,6 +16,7 @@ export type DrawerParamList = {
 	editProfile: undefined
 	registerService: undefined
 	homeManager: undefined
+	productivity: undefined
 }
 
 const Drawer = createDrawerNavigator<DrawerParamList>()
@@ -74,6 +76,15 @@ export default function DrawerLayout() {
 					drawerLabel: 'Registrar serviço',
 					title: 'Registrar serviço',
 					drawerIcon: ({ color, size }) => <Feather name="file-minus" color={color} size={size} />,
+				}}
+			/>
+			<Drawer.Screen
+				name="productivity"
+				component={ProductivityScreen}
+				options={{
+					drawerLabel: 'Produtividade',
+					title: 'Produtividade',
+					drawerIcon: ({ color, size }) => <Feather name="bar-chart-2" color={color} size={size} />,
 				}}
 			/>
 		</Drawer.Navigator>

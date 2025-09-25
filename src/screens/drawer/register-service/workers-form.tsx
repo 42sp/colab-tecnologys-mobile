@@ -4,12 +4,12 @@ import type { RegisterServiceType } from '@/screens/drawer/register-service/regi
 import Card from '@/components/ui/card'
 import { Dropdown } from '@/components/ui/dropdown'
 import { Feather } from '@expo/vector-icons'
-import { AllProfileResponse } from '@/api/get-profile'
+import { Profile } from '@/api/get-profile'
 
 type Props = {
 	control: Control<RegisterServiceType>
 	errors: FieldErrors<RegisterServiceType>
-	profiles: AllProfileResponse[]
+	profiles: Profile[]
 }
 
 const MAX_WORKERS = 4
@@ -37,8 +37,8 @@ function distributeEvenly(n: number): number[] {
 
 export function WorkersForm({ control, errors, profiles }: Props) {
 	const workerOptions = profiles.map((t) => {
-		const nameSplit = t.name.split(' ').filter(Boolean);
-		const shortName = nameSplit.length > 1 ? `${nameSplit[0]} ${nameSplit.pop()}` : t.name;
+		const nameSplit = t.name.split(' ').filter(Boolean)
+		const shortName = nameSplit.length > 1 ? `${nameSplit[0]} ${nameSplit.pop()}` : t.name
 
 		return { label: shortName, value: t.user_id }
 	})
@@ -87,8 +87,8 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 						const rowError = Array.isArray(errors.workers) ? errors.workers[idx] : undefined
 
 						return (
-							<View key={f._id} className="flex-row items-center gap-2">
-								<View className="flex-[2]">
+							<View key={f._id} className="flex-row gap-2">
+								<View className="flex-[2.2]">
 									<Controller
 										control={control}
 										name={`workers.${idx}.percent` as const}
@@ -137,9 +137,16 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 													options={availableWorkerOptions}
 													variant="outline"
 													placeholder="Executor"
-													value={value ? availableWorkerOptions.find(opt => opt.value === value)?.label || '' : ''}
+													value={
+														value
+															? availableWorkerOptions.find((opt) => opt.value === value)?.label ||
+																''
+															: ''
+													}
 													onChangeText={(selectedLabel) => {
-														const selectedOption = availableWorkerOptions.find(opt => opt.label === selectedLabel)
+														const selectedOption = availableWorkerOptions.find(
+															(opt) => opt.label === selectedLabel,
+														)
 														onChange(selectedOption?.value || '')
 													}}
 													hasError={!!rowError?.worker}
@@ -156,7 +163,7 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 									</View>
 								</View>
 
-								<Pressable onPress={() => remove(idx)}>
+								<Pressable onPress={() => remove(idx)} className="justify-center">
 									<Feather name="x" size={18} color="#374151" />
 								</Pressable>
 							</View>

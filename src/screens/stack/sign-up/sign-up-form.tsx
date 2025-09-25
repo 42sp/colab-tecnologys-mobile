@@ -13,11 +13,11 @@ import { createUser } from '@/api/create-user'
 import { signIn } from '@/api/sign-in'
 import { setAuth } from '@/libs/redux/auth/auth-slice'
 import { createProfile } from '@/api/create-profile'
-import { setUser } from '@/libs/redux/user/user-slice'
-import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { LogModal } from '@/components/ui/log-modal'
 import { saveAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
 import { LoadingModal } from '@/components/ui/loading-modal'
+import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-store'
+import { mask, unMask } from 'react-native-mask-text'
 
 const signUpSchema = z
 	.object({
@@ -26,7 +26,13 @@ const signUpSchema = z
 		cpf: z.string().length(11, 'CPF deve conter 11 caracteres'),
 		phone: z.string().nonempty('Número de telefone é obrigatório'),
 		jobTitle: z.string().nonempty('Função é obrigatório'),
-		password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
+		password: z
+			.string()
+			.min(6, 'Senha deve ter no mínimo 6 caracteres')
+			.regex(/[0-9]/, 'Senha deve conter pelo menos 1 número')
+			.regex(/[a-z]/, 'Senha deve conter pelo menos 1 letra minúscula')
+			.regex(/[A-Z]/, 'Senha deve conter pelo menos 1 letra maiúscula')
+			.regex(/[^A-Za-z0-9]/, 'Senha deve conter pelo menos 1 caractere especial'),
 		confirmPassword: z.string().nonempty('Confirme sua senha'),
 	})
 	.refine((data) => data.password === data.confirmPassword, {
@@ -87,13 +93,11 @@ export function SignUpForm() {
 	async function onSubmit(profile: SignUpType) {
 		console.log('Dados de registro ', profile)
 		try {
-			const user = await createUser({
+			await createUser({
 				cpf: profile.cpf,
 				password: profile.password,
-				role_id: profile.jobTitle,
 			})
 			const auth = await signIn({ cpf: profile.cpf, password: profile.password })
-
 			const { payload } = auth.authentication
 			await saveAuthSecureStore([
 				{ key: 'token', value: auth.accessToken },
@@ -101,38 +105,12 @@ export function SignUpForm() {
 				{ key: 'userid', value: payload.sub.toString() },
 			])
 			dispatch(setAuth({ token: auth.accessToken, expiry: payload.exp, id: payload.sub }))
-
-			const newProfile = await createProfile({
+			await createProfile({
 				name: profile.name,
 				phone: profile.phone,
+				role_id: profile.jobTitle,
 			})
-
-			dispatch(
-				setUser({
-					id: user.id,
-					cpf: user.cpf,
-					roleId: user.role_id,
-					profileId: user.profile_id,
-					isActive: user.is_active,
-					isAvailable: user.is_available,
-					createdAt: user.created_at,
-					updatedAt: user.updated_at,
-				}),
-			)
-			dispatch(
-				setProfile({
-					name: newProfile.name,
-					dateOfBirth: newProfile.date_of_birth,
-					registrationCode: newProfile.registration_code,
-					phone: newProfile.phone,
-					address: newProfile.address,
-					city: newProfile.city,
-					state: newProfile.state,
-					postcode: newProfile.postcode,
-					photo: newProfile.photo,
-					updatedAt: newProfile.updated_at,
-				}),
-			)
+			await loadAuthSecureStore(dispatch)
 			drawer('home')
 		} catch (error) {
 			console.log(error)
@@ -146,7 +124,7 @@ export function SignUpForm() {
 	return (
 		<View className="gap-5 p-10 ">
 			<View className="gap-1">
-				<Text>Nome completo</Text>
+				<Text>Nome completo *</Text>
 				<Controller
 					control={control}
 					name="name"
@@ -184,7 +162,7 @@ export function SignUpForm() {
 				{errors.email && <Text className="text-red-500">{errors.email.message}</Text>}
 			</View>
 			<View className="gap-1">
-				<Text>CPF</Text>
+				<Text>CPF *</Text>
 				<Controller
 					control={control}
 					name="cpf"
@@ -194,8 +172,8 @@ export function SignUpForm() {
 							keyboardType="numeric"
 							IconLeft={'file'}
 							className="self-center"
-							onChangeText={onChange}
-							value={value}
+							value={mask(value || '', '999.999.999-99')}
+							onChangeText={(text) => onChange(unMask(text).slice(0, 11))}
 							hasError={!!errors.cpf}
 						/>
 					)}
@@ -203,18 +181,18 @@ export function SignUpForm() {
 				{errors.cpf && <Text className="text-red-500">{errors.cpf.message}</Text>}
 			</View>
 			<View className="gap-1">
-				<Text>Número de telefone</Text>
+				<Text>Número de telefone *</Text>
 				<Controller
 					control={control}
 					name="phone"
 					render={({ field: { onChange, value } }) => (
 						<Input
-							placeholder="(00) 00000 0000"
+							placeholder="(00) 00000-0000"
 							keyboardType="phone-pad"
 							IconLeft={'phone'}
 							className="self-center"
-							onChangeText={onChange}
-							value={value}
+							value={mask(value || '', '(99) 9 9999-9999')}
+							onChangeText={(text) => onChange(unMask(text).slice(0, 11))}
 							hasError={!!errors.phone}
 						/>
 					)}
@@ -222,7 +200,7 @@ export function SignUpForm() {
 				{errors.phone && <Text className="text-red-500">{errors.phone.message}</Text>}
 			</View>
 			<View className="gap-1">
-				<Text>Função</Text>
+				<Text>Função *</Text>
 				<Controller
 					control={control}
 					name="jobTitle"
@@ -245,7 +223,7 @@ export function SignUpForm() {
 				{errors.jobTitle && <Text className="text-red-500">{errors.jobTitle.message}</Text>}
 			</View>
 			<View className="gap-1">
-				<Text>Senha</Text>
+				<Text>Senha *</Text>
 				<Controller
 					control={control}
 					name="password"
@@ -266,7 +244,7 @@ export function SignUpForm() {
 				{errors.password && <Text className="text-red-500">{errors.password.message}</Text>}
 			</View>
 			<View className="gap-1">
-				<Text>Confirmar senha</Text>
+				<Text>Confirmar senha *</Text>
 				<Controller
 					control={control}
 					name="confirmPassword"

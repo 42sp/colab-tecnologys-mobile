@@ -3,8 +3,8 @@ import { Dispatch } from 'redux'
 import { getProfile } from '@/api/get-profile'
 import { setAuth } from '@/libs/redux/auth/auth-slice'
 import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
-// import { setTasks } from '../redux/tasks/tasks-slice'
-// import { getTasks } from '@/api/get-tasks'
+import { getTasks } from '@/api/get-tasks'
+import { setTasks } from '../redux/tasks/tasks-slice'
 
 export async function loadAuthSecureStore(dispatch: Dispatch) {
 	const data = await getAuthSecureStore([
@@ -18,7 +18,7 @@ export async function loadAuthSecureStore(dispatch: Dispatch) {
 	if (data[0].value && data[1].value && parseInt(data[1].value) >= now) {
 		dispatch(setAuth({ token: data[0].value, expiry: data[1].value, id: data[2].value }))
 
-		const profileResponse = await getProfile()
+		const profileResponse = await getProfile({ userId: data[2].value })
 		const userProfile = profileResponse.data[0]
 		dispatch(
 			setProfile({
@@ -32,9 +32,11 @@ export async function loadAuthSecureStore(dispatch: Dispatch) {
 				postcode: userProfile.postcode,
 				photo: userProfile.photo,
 				updatedAt: userProfile.updated_at,
+				roleId: userProfile.role_id || undefined,
+				userId: userProfile.user_id,
 			}),
 		)
-		// const tasks = await getTasks()
-		// dispatch(setTasks(tasks))
+		const tasks = await getTasks()
+		dispatch(setTasks(tasks))
 	}
 }

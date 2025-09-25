@@ -17,7 +17,12 @@ interface GetRolesResponse {
 	data: Roles[]
 }
 
-export async function getRoles() {
-	const response = await api.get<GetRolesResponse>('/roles')
+type GetRolesProps = {
+	id?: string
+}
+
+export async function getRoles({ id }: GetRolesProps = {}) {
+	const url = id ? `/roles/${id}` : `/roles`
+	const response = await api.get<GetRolesResponse>(url)
 	return response.data
 }

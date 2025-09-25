@@ -1,6 +1,6 @@
 import { api } from '@/libs/axios/axios'
 
-interface Profile {
+export interface Profile {
 	id: string
 	user_id: string
 	name: string
@@ -15,11 +15,7 @@ interface Profile {
 	postcode: string
 	created_at: Date
 	updated_at: Date
-}
-
-export interface AllProfileResponse {
-	user_id: string
-	name: string
+	role_id: string
 }
 
 interface ProfileResponse {
@@ -29,12 +25,17 @@ interface ProfileResponse {
 	data: Profile[]
 }
 
-export async function getProfile() {
-	const response = await api.get<ProfileResponse>('/profile')
-	return response.data
+type GetProfileProps = {
+	id?: string
+	userId?: string
 }
 
-export async function getAllProfiles() {
-	const response = await api.get<AllProfileResponse[]>('/profile?list_workers=true')
+export async function getProfile({ id = '', userId }: GetProfileProps) {
+	let response
+	if (userId) {
+		response = await api.get<ProfileResponse>(`/profile?user_id=${userId}`)
+	} else {
+		response = await api.get<ProfileResponse>(`/profile/${id}`)
+	}
 	return response.data
 }

@@ -1,6 +1,6 @@
 import { View, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Feather } from '@expo/vector-icons'
+import { Feather, MaterialIcons } from '@expo/vector-icons'
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { HomeFilterModal } from './filter-modal'
@@ -55,7 +55,7 @@ export default function Home() {
 					onPress={() => (showFilter ? setShowFilter(false) : setShowFilter(true))}
 					activeOpacity={0.7}
 				>
-					<Feather name="filter" size={24} color="#FFF" />
+					<MaterialIcons name="filter-list" size={24} color="#FFF" />
 				</TouchableOpacity>
 			</View>
 
@@ -84,12 +84,14 @@ export default function Home() {
 							value={activityDataList.pendding}
 							label="Pendentes"
 						/>
-						<SummaryCard
-							icon="bar-chart"
-							SumaryVariant="green"
-							value={activityDataList.percent + '%'}
-							label="Produtividade"
-						/>
+						<TouchableOpacity onPress={() => navigation.navigate('productivity')}>
+							<SummaryCard
+								icon="bar-chart"
+								SumaryVariant="green"
+								value={activityDataList.percent + '%'}
+								label="Produtividade"
+							/>
+						</TouchableOpacity>
 					</View>
 				}
 			/>
