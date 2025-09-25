@@ -25,7 +25,7 @@ type Props = {
 	onServiceSelected?: (serviceId: string | null) => void
 }
 
-const radioOptions = [{ label: 'EXTERNA' }, { label: 'INTERNA' }]
+const radioOptions = [{ label: 'Externa' }, { label: 'Interna' }]
 
 const serviceMap: Record<string, string> = {
 	C: 'Contrapiso',
@@ -147,151 +147,156 @@ export function TypeServiceForm({
 
 	return (
 		<View>
-			<Card className="ml-6 mr-6 mt-6">
+			<Card>
 				<Card.Header>
 					<Text className="font-inter-bold text-xl text-black">Tipo de serviço</Text>
 				</Card.Header>
-				<Card.Body className="gap-2">
-					<Controller
-						control={control}
-						name="typeOfService"
-						render={({ field: { onChange, value } }) => (
-							<Dropdown
-								IconLeft={'list'}
-								IconRight={'chevron-down'}
-								options={serviceTypeOptions}
-								variant="outline"
-								placeholder="Selecione o tipo de serviço"
-								value={serviceTypeOptions.find((opt) => opt.value === value)?.label || ''}
-								onChangeText={(label) => {
-									const matched = serviceTypeOptions.find((opt) => opt.label === label)
-									const id = matched?.value ?? label
-									onChange(id)
-									resetField('apartments')
-								}}
-								hasError={!!errors.typeOfService}
-							/>
+				<Card.Body className="gap-5">
+					<View className="gap-2">
+						<Controller
+							control={control}
+							name="typeOfService"
+							render={({ field: { onChange, value } }) => (
+								<Dropdown
+									IconLeft={'list'}
+									IconRight={'chevron-down'}
+									options={serviceTypeOptions}
+									variant="outline"
+									placeholder="Selecione o tipo de serviço"
+									value={serviceTypeOptions.find((opt) => opt.value === value)?.label || ''}
+									onChangeText={(label) => {
+										const matched = serviceTypeOptions.find((opt) => opt.label === label)
+										const id = matched?.value ?? label
+										onChange(id)
+										resetField('apartments')
+									}}
+									hasError={!!errors.typeOfService}
+								/>
+							)}
+						/>
+						{errors.typeOfService && (
+							<Text className="text-md  text-red-500">{errors.typeOfService.message}</Text>
 						)}
-					/>
-					{errors.typeOfService && (
-						<Text className="text-xs text-red-500">{errors.typeOfService.message}</Text>
-					)}
-					<Text className="mt-4 text-lg">Apartamentos</Text>
-					<Controller
-						control={control}
-						name="apartments"
-						render={({
-							field: { value: selectedApartments = [], onChange: updateSelectedApartments },
-						}) => {
-							const addApartment = (label: string) => {
-								const matched = apartmentOptions.find((opt) => opt.label === label)
-								const val = matched?.value ?? label
-
-								if (!val) return
-								if (!selectedApartments.includes(val)) {
-									updateSelectedApartments([...selectedApartments, val])
-								}
-							}
-
-							return (
-								<>
-									<Dropdown
-										IconLeft="list"
-										IconRight="chevron-down"
-										options={apartmentOptions}
-										variant="outline"
-										placeholder="Selecione os apartamentos"
-										value=""
-										onChangeText={addApartment}
-										hasError={!!errors.apartments}
-									/>
-
-									{selectedApartments.length > 0 && (
-										<View className="mt-4">
-											<TableList options={selectedApartments} onChange={updateSelectedApartments} />
-										</View>
-									)}
-								</>
-							)
-						}}
-					/>
-					{errors.apartments && (
-						<Text className="text-xs text-red-500">{errors.apartments.message as string}</Text>
-					)}
-
-					<Controller
-						control={control}
-						name="measurementUnit"
-						render={({ field: { onChange, value } }) => (
-							<Dropdown
-								IconLeft={'list'}
-								IconRight={'chevron-down'}
-								className="mt-2"
-								options={measurementUnitOptions}
-								variant="outline"
-								placeholder="Selecione a unidade de medida"
-								value={value}
-								onChangeText={onChange}
-								hasError={!!errors.measurementUnit}
-							/>
-						)}
-					/>
-					{errors.measurementUnit && (
-						<Text className="text-xs text-red-500">{errors.measurementUnit.message}</Text>
-					)}
-
-					<Controller
-						control={control}
-						name="classification"
-						render={({ field: { value, onChange } }) => (
-							<View className=" mt-4 flex-row">
-								{radioOptions.map((opt) => (
-									<RadioCheckOption
-										key={opt.label}
-										label={opt.label}
-										selected={value === opt.label}
-										onPress={() => onChange(opt.label)}
-										variant="radio"
-									/>
-								))}
-							</View>
-						)}
-					/>
-					{errors.classification && (
-						<Text className="mb-2 text-xs text-red-500">
-							{errors.classification.message as string}
-						</Text>
-					)}
-
-					<Controller
-						control={control}
-						name="services"
-						render={({ field: { onChange, value } }) => (
-							<Dropdown
-								IconLeft={'list'}
-								IconRight={'chevron-down'}
-								className="mt-2"
-								options={serviceOptions}
-								variant="outline"
-								placeholder="Selecione os serviços"
-								value={serviceOptions.find((opt) => opt.value === value)?.label || ''}
-								onChangeText={(label) => {
-									const matched = serviceOptions.find((opt) => opt.label === label)
+					</View>
+					<Text className=" text-lg">Apartamentos</Text>
+					<View className="gap-2">
+						<Controller
+							control={control}
+							name="apartments"
+							render={({
+								field: { value: selectedApartments = [], onChange: updateSelectedApartments },
+							}) => {
+								const addApartment = (label: string) => {
+									const matched = apartmentOptions.find((opt) => opt.label === label)
 									const val = matched?.value ?? label
-									onChange(val)
-								}}
-								hasError={!!errors.services}
-							/>
-						)}
-					/>
-					{errors.services && (
-						<Text className="mb-2 text-xs text-red-500">
-							{errors.services.message as string}
-						</Text>
-					)}
 
+									if (!val) return
+									if (!selectedApartments.includes(val)) {
+										updateSelectedApartments([...selectedApartments, val])
+									}
+								}
+
+								return (
+									<>
+										<Dropdown
+											IconLeft="list"
+											IconRight="chevron-down"
+											options={apartmentOptions}
+											variant="outline"
+											placeholder="Selecione os apartamentos"
+											value=""
+											onChangeText={addApartment}
+											hasError={!!errors.apartments}
+										/>
+
+										{selectedApartments.length > 0 && (
+											<View className="mt-4">
+												<TableList
+													options={selectedApartments}
+													onChange={updateSelectedApartments}
+												/>
+											</View>
+										)}
+									</>
+								)
+							}}
+						/>
+						{errors.apartments && (
+							<Text className="text-md text-red-500">{errors.apartments.message as string}</Text>
+						)}
+					</View>
+					<View className="gap-2">
+						<Controller
+							control={control}
+							name="measurementUnit"
+							render={({ field: { onChange, value } }) => (
+								<Dropdown
+									IconLeft={'list'}
+									IconRight={'chevron-down'}
+									options={measurementUnitOptions}
+									variant="outline"
+									placeholder="Selecione a unidade de medida"
+									value={value}
+									onChangeText={onChange}
+									hasError={!!errors.measurementUnit}
+								/>
+							)}
+						/>
+						{errors.measurementUnit && (
+							<Text className="text-md text-red-500">{errors.measurementUnit.message}</Text>
+						)}
+					</View>
+					<View className="gap-2">
+						<Controller
+							control={control}
+							name="classification"
+							render={({ field: { value, onChange } }) => (
+								<View className="flex-row">
+									{radioOptions.map((opt) => (
+										<RadioCheckOption
+											key={opt.label}
+											label={opt.label}
+											selected={value === opt.label}
+											onPress={() => onChange(opt.label)}
+											variant="radio"
+										/>
+									))}
+								</View>
+							)}
+						/>
+						{errors.classification && (
+							<Text className="text-md mb-2 text-red-500">
+								{errors.classification.message as string}
+							</Text>
+						)}
+					</View>
+					<View className="gap-2">
+						<Controller
+							control={control}
+							name="services"
+							render={({ field: { onChange, value } }) => (
+								<Dropdown
+									IconLeft={'list'}
+									IconRight={'chevron-down'}
+									options={serviceOptions}
+									variant="outline"
+									placeholder="Selecione os serviços"
+									value={serviceOptions.find((opt) => opt.value === value)?.label || ''}
+									onChangeText={(label) => {
+										const matched = serviceOptions.find((opt) => opt.label === label)
+										const val = matched?.value ?? label
+										onChange(val)
+									}}
+									hasError={!!errors.services}
+								/>
+							)}
+						/>
+						{errors.services && (
+							<Text className="text-md mb-2 text-red-500">{errors.services.message as string}</Text>
+						)}
+					</View>
 					{selectedService && (
-						<View className="mt-4">
+						<View>
 							{filteredServices
 								.sort((a, b) => Number(a.stage) - Number(b.stage))
 								.map((service) => {

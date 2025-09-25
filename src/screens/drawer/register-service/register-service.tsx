@@ -169,10 +169,11 @@ export default function RegisterServiceScreen() {
 	}
 
 	return (
-		<ScrollView showsVerticalScrollIndicator={false}>
-			<SafeAreaView className="bg-[#F9FAFB]">
-				<KeyboardAvoidingView behavior={'height'}>
-					<Card className="mx-6 flex-1">
+		<SafeAreaView className=" bg-[#F9FAFB]" edges={['bottom']}>
+			<ScrollView showsVerticalScrollIndicator={false}>
+				<View className="flex-1 gap-5 p-5">
+					{/* <KeyboardAvoidingView behavior={'height'}> */}
+					<Card className=" flex-1">
 						<Card.Header>
 							<Image
 								source={require('@/assets/residential.png')}
@@ -207,7 +208,7 @@ export default function RegisterServiceScreen() {
 						resetField={resetField}
 						setValue={setValue}
 						errors={errors}
-					></RegisterServiceForm>
+					/>
 
 					<WorkersForm control={control} errors={errors} profiles={profiles} />
 
@@ -220,23 +221,23 @@ export default function RegisterServiceScreen() {
 						onServiceSelected={setSelectedServiceId}
 					/>
 
-					<Card className="m-6">
-						<Card.Body>
-							<Controller
-								control={control}
-								name="confirmed"
-								render={({ field: { value, onChange } }) => (
-									<RadioCheckOption
-										label="Confirmo que o serviço foi finalizado"
-										selected={!!value}
-										onPress={() => onChange(!value)}
-										variant="checkbox"
-									/>
-								)}
-							/>
-						</Card.Body>
+					<Card>
+						{/* <Card.Body> */}
+						<Controller
+							control={control}
+							name="confirmed"
+							render={({ field: { value, onChange } }) => (
+								<RadioCheckOption
+									label="Confirmo que o serviço foi finalizado"
+									selected={!!value}
+									onPress={() => onChange(!value)}
+									variant="checkbox"
+								/>
+							)}
+						/>
+						{/* </Card.Body> */}
 					</Card>
-					<View className="m-6 flex-row gap-2">
+					<View className="flex-row gap-4">
 						<Button
 							title="Cancelar"
 							variant="outline"
@@ -255,8 +256,9 @@ export default function RegisterServiceScreen() {
 						description={modal.description}
 						onClose={() => setModal({ visible: false, description: '' })}
 					/>
-				</KeyboardAvoidingView>
-			</SafeAreaView>
-		</ScrollView>
+					{/* </KeyboardAvoidingView> */}
+				</View>
+			</ScrollView>
+		</SafeAreaView>
 	)
 }
