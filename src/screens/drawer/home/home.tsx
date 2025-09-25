@@ -40,7 +40,7 @@ export default function Home() {
 	const activityDataList = handleFilterChange(filter, tasks)
 
 	return (
-		<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] p-5" edges={['bottom']}>
+		<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] px-5 pt-5" edges={['bottom']}>
 			<View className="flex-row items-center gap-5">
 				<View className="flex-1">
 					<Input
