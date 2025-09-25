@@ -5,7 +5,6 @@ import { FilterType } from './home'
 import { CustomCalendar, DateRangeType } from '@/components/ui/calendar'
 import { useEffect, useState, useRef } from 'react'
 import { FadeBackgroundModal } from '@/components/ui/fade-background-modal'
-import { SafeAreaView } from 'react-native-safe-area-context'
 
 type FilterModalProps = {
 	isVisible: boolean
@@ -70,7 +69,7 @@ export function HomeFilterModal({ isVisible, onClose, setFilter, filter }: Filte
 		<Modal visible={showFilter} animationType="none" transparent={true}>
 			<FadeBackgroundModal visible={isVisible} onHidden={handleFadeOut} />
 			{isVisible && (
-				<SafeAreaView className="flex-1 justify-end " edges={['bottom']}>
+				<View className="flex-1 justify-end">
 					<Pressable className=" rounded-t-2xl bg-white p-5 pb-10" onPress={onClose}>
 						<Animated.View
 							className="gap-4"
@@ -138,7 +137,7 @@ export function HomeFilterModal({ isVisible, onClose, setFilter, filter }: Filte
 							</View>
 						</Animated.View>
 					</Pressable>
-				</SafeAreaView>
+				</View>
 			)}
 		</Modal>
 	)
