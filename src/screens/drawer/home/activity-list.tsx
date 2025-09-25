@@ -1,4 +1,4 @@
-import { SectionList, Text, View } from 'react-native'
+import { SectionList, Text, View, StyleSheet } from 'react-native'
 import { ActivityCard } from './activity-card'
 import { Task } from '@/api/get-tasks'
 
@@ -27,6 +27,7 @@ export function ActivityList({ data, className, HeaderComponent }: ActivityListP
 				scrollEnabled={true}
 				showsVerticalScrollIndicator={false}
 				sections={data}
+				stickySectionHeadersEnabled={false}
 				renderSectionHeader={({ section }) => {
 					return <Text className="py-3 font-inter text-neutral-600">{section.title}</Text>
 				}}
