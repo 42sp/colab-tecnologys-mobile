@@ -1,10 +1,10 @@
-import { env } from '@/libs/env'
 import axios from 'axios'
 import store from '../redux/store'
+import { API_URL } from '@env'
 
 export const api = axios.create({
-	baseURL: env.EXPO_PUBLIC_API_URL,
-	timeout: 5000,
+    baseURL: API_URL,
+    timeout: 5000,
 })
 
 const getAuthHeader = () => {

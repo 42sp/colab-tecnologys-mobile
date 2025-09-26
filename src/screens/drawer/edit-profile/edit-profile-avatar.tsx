@@ -2,7 +2,6 @@ import { Text, View, Image, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
-import { env } from '@/libs/env'
 import { launchImageLibraryAsync, useMediaLibraryPermissions } from 'expo-image-picker'
 import { useImageManager } from '@/hook/useImageManager'
 import { uploads } from '@/api/post-uploads'
@@ -11,12 +10,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
 import { selectUserId, updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { LogModal } from '@/components/ui/log-modal'
+import { API_URL } from '@env'
+
 
 type EditProfileAvatarProps = {
 	avatar: number
 }
-
-const API_URL = env.EXPO_PUBLIC_API_URL
 
 export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 	const { setManipulatedImage, renderedImage } = useImageManager()
