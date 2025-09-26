@@ -14,6 +14,47 @@ export function handleFilterChange(filter: FilterType, tasks: Task[]) {
 	return buildResult(filteredData)
 }
 
+interface buildResultLogicProps {
+	base: {
+	amount: number;
+	percent: number;
+	pendding: number;
+	}
+	tasks: Task[];
+	dates?: { today: Date; yesterday: Date };
+}
+
+function buildResultLogic({ base, tasks, dates }: buildResultLogicProps)
+{
+	if (!dates) {
+		return {
+			...base,
+			data: [{ title: 'Filtered Results', data: tasks }],
+		}
+	}
+
+	function toDate(dateString?: string) {
+		return new Date(dateString as string)
+	}
+	function toStringDate(date?: string | Date) {
+		return (new Date(date as string | Date)).toLocaleDateString("pt-BR", {day: "2-digit", month: "2-digit", year: "numeric"})
+	}
+	const dataDates = tasks.map(({ created_at }) => toDate(created_at)).sort((a, b) => b.getTime() - a.getTime()).map(toStringDate)
+	const uniqueDates = Array.from(new Set(dataDates))
+	const data = uniqueDates.reduce((acc: {title: string, data: Task[]}[], date: string) => {
+		const today = new Date()
+		const yesterday = shiftDate(-1)
+		const displayDate = date == toStringDate(today) ? `Hoje (${date})` : date == toStringDate(yesterday) ? `Ontem (${date})` : date
+		acc.push({title: displayDate, data: tasks.filter(({ created_at }) => toStringDate(created_at) === date).sort((a, b) => toDate(b.created_at).getTime() -toDate(a.created_at).getTime())})
+		return acc
+	}, [])
+
+	return {
+		...base,
+		data,
+	}
+}
+
 function buildResult(tasks: Task[], dates?: { today: Date; yesterday: Date }) {
 	const completedCount = tasks.filter(({ status }) => status === 'completed').length
 	const pendingCount = tasks.filter(({ status }) => status === 'pending').length
@@ -24,33 +65,7 @@ function buildResult(tasks: Task[], dates?: { today: Date; yesterday: Date }) {
 		pendding: pendingCount,
 	}
 
-	if (!dates) {
-		return {
-			...base,
-			data: [{ title: 'Filtered Results', data: tasks }],
-		}
-	}
-
-	const { today, yesterday } = dates
-	return {
-		...base,
-		data: [
-			{
-				title: 'Hoje',
-				data: tasks.filter(({ created_at }) => isSameDay(new Date(created_at as string), today)),
-			},
-			{
-				title: 'Ontem',
-				data: tasks.filter(({ created_at }) =>
-					isSameDay(new Date(created_at as string), yesterday),
-				),
-			},
-			{
-				title: 'Anteriores',
-				data: tasks.filter(({ created_at }) => new Date(created_at as string) < yesterday),
-			},
-		],
-	}
+	return buildResultLogic({base, tasks, dates})
 }
 
 function shiftDate(days: number): Date {
