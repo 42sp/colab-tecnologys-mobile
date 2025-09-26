@@ -23,6 +23,7 @@ export async function loadAuthSecureStore(dispatch: Dispatch) {
 		dispatch(
 			setProfile({
 				name: userProfile.name,
+				email: userProfile.email,
 				dateOfBirth: userProfile.date_of_birth,
 				registrationCode: userProfile.registration_code,
 				phone: userProfile.phone,
@@ -32,8 +33,9 @@ export async function loadAuthSecureStore(dispatch: Dispatch) {
 				postcode: userProfile.postcode,
 				photo: userProfile.photo,
 				updatedAt: userProfile.updated_at,
-				roleId: userProfile.role_id || undefined,
+				roleId: userProfile.role_id,
 				userId: userProfile.user_id,
+				profileId: userProfile.id,
 			}),
 		)
 		const tasks = await getTasks()
