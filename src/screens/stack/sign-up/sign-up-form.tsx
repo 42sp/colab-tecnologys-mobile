@@ -25,7 +25,7 @@ const signUpSchema = z
 		email: z.string(),
 		cpf: z.string().length(11, 'CPF deve conter 11 caracteres'),
 		phone: z.string().nonempty('Número de telefone é obrigatório'),
-		jobTitle: z.string().nonempty('Função é obrigatório'),
+		jobTitle: z.string().nonempty('Função é obrigatória'),
 		password: z
 			.string()
 			.min(6, 'Senha deve ter no mínimo 6 caracteres')
