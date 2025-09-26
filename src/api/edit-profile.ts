@@ -1,11 +1,12 @@
 import { api } from '@/libs/axios/axios'
 
 interface EditProfileProps {
-	name: string
+	name?: string
 	email?: string
-	phone: string
+	phone?: string
 	date_of_birth?: string
 	address?: string
+	profileId: string
 }
 
 interface Profile {
@@ -33,15 +34,8 @@ interface ProfileResponse {
 }
 
 export async function EditProfile(props: EditProfileProps) {
-	const list = await api.get<ProfileResponse>('/profile')
-	const current = list.data.data?.[0]
-	if (!current?.id) {
-		throw new Error('Perfil não encontrado para o usuário atual')
-	}
-	const payload = Object.fromEntries(
-		Object.entries(props).filter(([, v]) => v !== undefined && v !== null),
-	) as Partial<EditProfileProps>
-
-	const updated = await api.patch<Profile>(`/profile/${current.id}`, payload)
+	const { profileId, ...payload } = props
+	if (!profileId) throw new Error('profileId não pode ser vazio')
+	const updated = await api.patch<ProfileResponse>(`/profile/${profileId}`, payload)
 	return updated.data
 }
