@@ -25,7 +25,7 @@ export function Calendar() {
 					(acc, date) => ({
 						...acc,
 						[date]: {
-							selected: date === selectedDay,
+							selected: true,
 							selectedColor: getDayColor(date),
 							marked: true,
 						},
