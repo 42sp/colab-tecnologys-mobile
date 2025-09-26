@@ -43,7 +43,7 @@ export default function Productivity() {
 
 			<ScrollView>
 				<Header />
-				<View className="mx-4 mt-4">
+				<View className="mt-4">
 					<Calendar selectedDay={selectedDate} onDayPress={(d) => setSelectedDate(d)} />
 					{selectedDate && (
 						<View className="mt-2 flex-row justify-end">
