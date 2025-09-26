@@ -1,10 +1,10 @@
-import { Text, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
 import Card from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { PaintRoller, Building2, House, Blocks, BrickWall, User } from 'lucide-react-native'
+import { PaintRoller, Building2, Blocks, BrickWall, User, CheckCheck } from 'lucide-react-native'
 import { Task } from '@/api/get-tasks'
 import { useSelector } from 'react-redux'
-import { getRoles } from '@/api/get-roles'
+import { getRoles, Roles } from '@/api/get-roles'
 import { useEffect, useState } from 'react'
 import { patchTasks } from '@/api/patch-tasks'
 import { selectRoleId, selectUserId } from '@/libs/redux/user-profile/user-profile-slice'
@@ -21,18 +21,20 @@ export function ActivityCard({
 	service_apartment,
 	service_tower,
 	created_at,
+	status,
 }: ActivityCardProps) {
 	const title = `${service_type} - ${service_stage} ${service_floor}/${service_apartment} - Torre ${service_tower}`
 	const time = new Date(created_at as string)
-	const [isApprover, setIsApprover] = useState(false)
+	const [isVisibleApprove, setIsVisibleApprove] = useState(false)
+	const [statusTask, setStatusTask] = useState(status)
 
 	const userId = useSelector(selectUserId)
 	const roleId = useSelector(selectRoleId)
 	const validateRole = async () => {
 		try {
 			if (!roleId) return
-			const role = await getRoles({ id: roleId })
-			if (role.data?.[0]?.hierarchy_level >= 50) setIsApprover(true)
+			const role = (await getRoles({ id: roleId })) as Roles
+			if (role.hierarchy_level >= 50) setIsVisibleApprove(true)
 		} catch (error) {
 			console.log(error)
 		}
@@ -45,8 +47,8 @@ export function ActivityCard({
 	async function handlePatchTasks() {
 		try {
 			if (!id) return
-			const task = await patchTasks({ id, approver_id: userId, status: 'completed' })
-			console.log(task)
+			await patchTasks({ id, approver_id: userId, status: 'completed' })
+			setStatusTask('approved')
 		} catch (error) {
 			console.log(error)
 		}
@@ -81,7 +83,7 @@ export function ActivityCard({
 				{getJobTypeIcon()}
 				<Card.Body className="flex-1 justify-between gap-4 ">
 					<View className="flex-row justify-between">
-						<Text className="text-md font-inter-bold ">{title}</Text>
+						<Text className="text-md max-w-52 font-inter-bold">{title}</Text>
 
 						<Text className="font-inter text-xs">
 							{time
@@ -99,9 +101,21 @@ export function ActivityCard({
 							<Text className="flex-1 font-inter text-sm">{construction_name}</Text>
 						</View>
 					</View>
-					<View className={`pl-14 ${isApprover ? '' : 'hidden'}`}>
-						<Button variant="green" title="Aprovar" onPress={() => handlePatchTasks()} />
-					</View>
+					{isVisibleApprove && (
+						<View className="self-end">
+							<Button
+								className="h-10 w-32 flex-row gap-1 bg-green-800"
+								variant="rounded"
+								onPress={() => handlePatchTasks()}
+								disabled={statusTask === 'approved'}
+							>
+								<Text className="font-inter-medium text-neutral-100">
+									{statusTask === 'approved' ? 'Aprovado' : 'Aprovar'}
+								</Text>
+								{statusTask === 'approved' && <CheckCheck stroke="#fff" />}
+							</Button>
+						</View>
+					)}
 				</Card.Body>
 			</Card>
 		</View>
