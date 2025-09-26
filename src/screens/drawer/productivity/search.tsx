@@ -13,13 +13,15 @@ type SearchProps = {
 export function Search({ onSearch, workers }: SearchProps) {
 	const roleId = useSelector(selectRoleId)
 	const [roleName, setRoleName] = useState<string>()
+	const isVisible = roleName ? ['admin', 'oficial'].includes(roleName.toLowerCase()) : false
 	const [searchTerm, setSearchTerm] = useState('')
 	const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([])
 	const [selected, setSelected] = useState(false)
 
 	useEffect(() => {
 		if (!roleId) return
-		;async () => {
+
+		const fetchRole = async () => {
 			try {
 				const res = await getRoles({ id: roleId })
 				setRoleName(res?.role_name)
@@ -27,6 +29,8 @@ export function Search({ onSearch, workers }: SearchProps) {
 				console.error('Error when searching for role:', err)
 			}
 		}
+
+		fetchRole()
 	}, [roleId])
 
 	const handleChange = (text: string) => {
@@ -56,7 +60,7 @@ export function Search({ onSearch, workers }: SearchProps) {
 	}
 
 	return (
-		<View className="m-4">
+		<View className={isVisible ? 'm-4' : 'm-4 hidden'}>
 			<Input
 				keyboardType="default"
 				IconLeft="search"
