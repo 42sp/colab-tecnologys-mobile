@@ -12,6 +12,8 @@ import { LogoutModal } from '@/components/ui/logout-modal'
 import { deleteAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
 import { clearTasks } from '@/libs/redux/tasks/tasks-slice'
 import { clearProfile } from '@/libs/redux/user-profile/user-profile-slice'
+import { mask } from 'react-native-mask-text'
+
 const API_URL = env.EXPO_PUBLIC_API_URL
 
 export function CustomDrawerContent(props: any) {
@@ -55,7 +57,7 @@ export function CustomDrawerContent(props: any) {
 					</View>
 					<Text className="pt-6 text-lg font-medium">{profile?.name || ''}</Text>
 					<Text className="text-x mb-8 text-gray-500">
-						{profile?.email ? profile.email : profile?.phone || ''}
+						{profile?.email ? profile.email : mask(profile?.phone || '', '(99) 9 9999-9999')}
 					</Text>
 				</View>
 

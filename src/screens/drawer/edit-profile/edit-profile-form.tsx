@@ -16,6 +16,7 @@ import { updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { useState } from 'react'
 import { LogModal } from '@/components/ui/log-modal'
 import { LoadingModal } from '@/components/ui/loading-modal'
+import { mask, unMask } from 'react-native-mask-text'
 
 const editProfileSchema = z.object({
 	name: z.string().nonempty('Nome completo é obrigatório'),
@@ -144,8 +145,7 @@ export function EditProfileForm() {
 							render={({ field: { onChange, value } }) => (
 								<Input
 									placeholder="seu.email@email.com"
-									keyboardType="email-address"
-									autoCapitalize="none"
+									keyboardType="email-address"									autoCapitalize="none"
 									IconLeft={'mail'}
 									className="self-center"
 									onChangeText={onChange}
@@ -168,8 +168,8 @@ export function EditProfileForm() {
 									keyboardType="phone-pad"
 									IconLeft={'phone'}
 									className="self-center"
-									onChangeText={onChange}
-									value={value}
+									value={mask(value || '', '(99) 9 9999-9999')}
+									onChangeText={(text) => onChange(unMask(text).slice(0, 11))}
 									hasError={!!errors.phone}
 								/>
 							)}
@@ -185,10 +185,11 @@ export function EditProfileForm() {
 							render={({ field: { onChange, value } }) => (
 								<Input
 									placeholder="15/05/1988"
+									keyboardType="numeric"
 									IconLeft={'user'}
 									className="self-center"
-									onChangeText={onChange}
-									value={value}
+									value={mask(value || '', '99/99/9999')}
+									onChangeText={(text) => onChange(unMask(text).slice(0, 11))}
 									hasError={!!errors.dateOfBirth}
 								/>
 							)}
