@@ -21,7 +21,7 @@ export function CustomDrawerContent(props: any) {
 	const profile = useSelector((state: RootState) => state.userProfile)
 	const dispatch = useDispatch()
 	const photoUrl = profile?.photo
-		? `${API_URL}images/${profile.photo}?t=${profile.updatedAt}`
+		? `${API_URL}/images/${profile.photo}?t=${profile.updatedAt}`
 		: null
 	const imageUrl = photoUrl ? { uri: photoUrl } : require('@/assets/default-avatar.png')
 	const [isModalVisible, setIsModalVisible] = useState(false)

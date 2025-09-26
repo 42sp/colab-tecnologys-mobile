@@ -23,7 +23,7 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 	//const [_status, _requestPermission] = useMediaLibraryPermissions()
 	const profile = useSelector((state: RootState) => state.userProfile)
 	const dispatch = useDispatch()
-	const [image, setImage] = useState<string | null>(null)
+	const [image, setImage] = useState<string | undefined>(undefined)
 	const [modal, setModal] = useState<{
 		visible: boolean
 		status: 'error' | 'success'
@@ -34,7 +34,6 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 	useEffect(() => {
 		const handleRenderedImage = async () => {
 			if (!renderedImage) return
-			setImage(renderedImage.uri)
 			try {
 				const result = await uploads({ uri: `data:image/jpeg;base64,${renderedImage.base64}` })
 				if (result) {
@@ -45,10 +44,11 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 						status: 'success',
 						description: 'Foto de perfil alterada!',
 					})
+					setImage(profile.photo)
 				}
 			} catch (error) {
 				console.log('error returned profile-avatar: ', error)
-				setImage(null)
+				setImage(undefined)
 				setModal({
 					visible: true,
 					status: 'error',
@@ -58,8 +58,9 @@ export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 		}
 		handleRenderedImage()
 	}, [renderedImage])
+
 	const photoUrl = profile?.photo
-		? `${API_URL}images/${profile.photo}?t=${profile.updatedAt}`
+		? `${API_URL}/images/${profile.photo}?t=${profile.updatedAt}`
 		: null
 
 	const imageUrl = image ? { uri: image } : photoUrl ? { uri: photoUrl } : avatar
