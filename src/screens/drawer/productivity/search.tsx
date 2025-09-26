@@ -19,19 +19,13 @@ export function Search({ onSearch, workers }: SearchProps) {
 
 	useEffect(() => {
 		if (!roleId) return
-		let mounted = true
-		;(async () => {
+		;async () => {
 			try {
 				const res = await getRoles({ id: roleId })
-				if (mounted) {
-					setRoleName(res?.role_name)
-				}
+				setRoleName(res?.role_name)
 			} catch (err) {
 				console.error('Error when searching for role:', err)
 			}
-		})()
-		return () => {
-			mounted = false
 		}
 	}, [roleId])
 
