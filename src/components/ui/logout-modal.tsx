@@ -28,22 +28,22 @@ export function LogoutModal({ visible, onClose, onConfirm }: LogoutModalProps) {
 			<View className="flex-1 items-center justify-end bg-black/40">
 				<FadeBackgroundModal visible={visible} onHidden={handleFadeOut} />
 				{visible && (
-					<Card className="m-10 w-10/12">
-						<View className="flex-row justify-between ">
-							<Text className="font-inter-bold text-lg text-red-700">Sair</Text>
-							<TouchableOpacity onPress={onClose} hitSlop={10}>
-								<Feather name="x" size={20} color="#333" />
-							</TouchableOpacity>
-						</View>
+					<Card className="m-10 w-10/12 gap-4 p-4">
+						<Text className="font-inter-bold text-lg text-red-700">Sair</Text>
 						<Text className="text-md font-inter text-gray-700">
-							Tem certeza que deseja fazer logout?
+							Tem certeza que deseja sair de sua conta?
 						</Text>
-						<View className="flex-row justify-between p-2">
-							<Button title="Não" variant="pill" className="w-24 bg-red-100" onPress={onClose} />
+						<View className="h-12 flex-row justify-between">
+							<Button
+								title="Não"
+								variant="pill"
+								className=" w-32 justify-center border border-red-700"
+								onPress={onClose}
+							/>
 							<Button
 								title="Sim"
 								variant="pill"
-								className="w-24 flex-row items-center gap-2 bg-green-100"
+								className="w-32 flex-row justify-center gap-2 border border-green-700"
 								onPress={onConfirm}
 							>
 								<Feather name="log-out" size={14} />
