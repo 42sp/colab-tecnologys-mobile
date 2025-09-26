@@ -16,6 +16,7 @@ import { resetAuth } from '@/libs/redux/auth/auth-slice'
 import { LogoutModal } from '@/components/ui/logout-modal'
 import { useState } from 'react'
 import { deleteAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
+import { LogModal } from '@/components/ui/log-modal'
 
 export default function ProfileScreen() {
 	const user = useSelector((state: RootState) => state.userProfile)
@@ -23,6 +24,11 @@ export default function ProfileScreen() {
 	const navigation = useNavigation<ProfileScreenNavigationProp>()
 	const dispatch = useDispatch()
 	const [isModalVisible, setIsModalVisible] = useState(false)
+	const [modal, setModal] = useState<{
+		visible: boolean
+		status: 'error'
+		description: string
+	}>({ visible: false, status: 'error', description: '' })
 
 	async function confirmLogout() {
 		try {
@@ -74,7 +80,13 @@ export default function ProfileScreen() {
 					<View className="rounded-xl bg-white">
 						<TouchableOpacity
 							className="w-full flex-row items-center gap-4 rounded-t-xl border border-neutral-100 p-3"
-							// onPress={() => navigation.navigate('home')}
+							onPress={() =>
+								setModal({
+									visible: true,
+									status: 'error',
+									description: 'Esta funcionalidade ainda não está disponível.',
+								})
+							}
 						>
 							<ProfileIcon icon="bell" color={'#d97706'} background="#fef3c7" />
 							<Text className="font-inter-medium text-xl">Notificações</Text>
@@ -98,6 +110,12 @@ export default function ProfileScreen() {
 						onConfirm={confirmLogout}
 					/>
 				</View>
+				<LogModal
+					visible={modal.visible}
+					status={modal.status}
+					description={modal.description}
+					onClose={() => setModal({ visible: false, status: 'error', description: '' })}
+				/>
 			</ScrollView>
 		</SafeAreaView>
 	)
