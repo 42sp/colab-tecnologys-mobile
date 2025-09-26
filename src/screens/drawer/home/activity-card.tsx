@@ -81,13 +81,14 @@ export function ActivityCard({
 				{getJobTypeIcon()}
 				<Card.Body className="flex-1 justify-between gap-4 ">
 					<View className="flex-row justify-between">
-						<Text className="text-md font-inter-bold ">{title}</Text>
-
-						<Text className="font-inter text-xs">
-							{time
-								? time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-								: '00:00'}
-						</Text>
+						<Text className="text-md font-inter-bold flex-1">{title}</Text>
+						<View>
+							<Text className="font-inter text-xs ml-1">
+								{time
+									? time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+									: '00:00'}
+							</Text>
+						</View>
 					</View>
 					<View>
 						<View className="flex-row gap-2">
