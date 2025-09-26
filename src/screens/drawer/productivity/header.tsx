@@ -13,7 +13,7 @@ export type Productivity = {
 	text: string
 }
 
-export default function Header() {
+export function Header() {
 	return (
 		<View className="m-4 flex-row items-center justify-between rounded-3xl bg-white px-4">
 			<View className="">

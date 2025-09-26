@@ -1,29 +1,15 @@
 import { View } from 'react-native'
 import { ActivityCard } from './activity-card'
-import { useEffect, useState } from 'react'
 import { Task } from '@/api/get-tasks'
-import { useSelector } from 'react-redux'
-import { RootState } from '@/libs/redux/store'
 
-export function Activity() {
-	const [tasks, setTasks] = useState<Task[]>([])
-	const tasksRedux = useSelector((state: RootState) => state.tasks.tasks)
+interface ActivityProps {
+	tasks?: Task[]
+}
 
-	useEffect(() => {
-		const reqGetTasks = async () => {
-			const tasksWithDateObjects = tasksRedux.map((task) => ({
-				...task,
-				completion_date: task.completion_date ? new Date(task.completion_date) : undefined,
-			}))
-			setTasks(tasksWithDateObjects)
-			console.log(tasks)
-		}
-		reqGetTasks()
-	}, [])
-
+export function Activity({ tasks }: ActivityProps) {
 	return (
 		<View className="m-4">
-			{(
+			{(tasks &&
 				Object.entries(
 					tasks.reduce(
 						(acc: Record<string, Task[]>, task: Task) => {
@@ -38,10 +24,10 @@ export function Activity() {
 						},
 						{} as Record<string, Task[]>,
 					),
-				) as [string, Task[]][]
-			).map(([date, dateTasks]) => (
-				<ActivityCard key={date} date={date} dateTasks={dateTasks} />
-			))}
+				).map(([date, dateTasks]) => (
+					<ActivityCard key={date} date={date} dateTasks={dateTasks} />
+				))) ||
+				null}
 		</View>
 	)
 }

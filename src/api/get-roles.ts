@@ -23,6 +23,6 @@ type GetRolesProps = {
 
 export async function getRoles({ id }: GetRolesProps = {}) {
 	const url = id ? `/roles/${id}` : `/roles`
-	const response = await api.get<GetRolesResponse>(url)
+	const response = await api.get<Roles>(url)
 	return response.data
 }
