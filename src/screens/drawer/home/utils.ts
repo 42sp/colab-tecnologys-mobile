@@ -1,6 +1,15 @@
 import { Task } from '@/api/get-tasks'
 import { FilterType } from './home'
 
+
+export function toDate(dateString?: string | Date) {
+	return new Date(dateString as string)
+}
+
+export function toStringDate(date?: string | Date) {
+	return (new Date(date as string | Date)).toLocaleDateString("pt-BR", {day: "2-digit", month: "2-digit", year: "numeric"})
+}
+
 export function handleFilterChange(filter: FilterType, tasks: Task[]) {
 	const yesterday = shiftDate(-1)
 	const today = new Date()
@@ -31,13 +40,6 @@ function buildResultLogic({ base, tasks, dates }: buildResultLogicProps)
 			...base,
 			data: [{ title: 'Filtered Results', data: tasks }],
 		}
-	}
-
-	function toDate(dateString?: string) {
-		return new Date(dateString as string)
-	}
-	function toStringDate(date?: string | Date) {
-		return (new Date(date as string | Date)).toLocaleDateString("pt-BR", {day: "2-digit", month: "2-digit", year: "numeric"})
 	}
 	const dataDates = tasks.map(({ created_at }) => toDate(created_at)).sort((a, b) => b.getTime() - a.getTime()).map(toStringDate)
 	const uniqueDates = Array.from(new Set(dataDates))

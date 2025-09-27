@@ -1,34 +1,46 @@
 {
-	"expo": {
-		"name": "tecnologys-app",
-		"slug": "tecnologys-segy",
-		"version": "1.0.0",
-		"scheme": "tecnologys-app-scheme",
-		"main": "./src/app.tsx",
-		"plugins": ["expo-font", "expo-secure-store"],
-		"web": {
-			"favicon": "./src/assets/favicon.png"
-		},
-		"experiments": {
-			"tsconfigPaths": true
-		},
-		"orientation": "portrait",
-		"icon": "./src/assets/icon.png",
-		"userInterfaceStyle": "light",
-		"splash": {
-			"image": "./src/assets/splash.png",
-			"resizeMode": "contain",
-			"backgroundColor": "#ffffff"
-		},
-		"assetBundlePatterns": ["**/*"],
-		"ios": {
-			"supportsTablet": true
-		},
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./src/assets/adaptive-icon.png",
-				"backgroundColor": "#ffffff"
-			}
-		}
-	}
+  "expo": {
+    "name": "tecnologys-app",
+    "slug": "tecnologys-segy",
+    "version": "1.0.0",
+    "scheme": "tecnologys-app-scheme",
+    "main": "./src/app.tsx",
+    "plugins": [
+      "expo-font",
+      "expo-secure-store"
+    ],
+    "web": {
+      "favicon": "./src/assets/favicon.png"
+    },
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "orientation": "portrait",
+    "icon": "./src/assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./src/assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.quarentaedois.labs.tecnologys"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3546a0cb-dac3-49d2-b870-2261bb69bf15"
+      }
+    },
+    "owner": "42spexpo"
+  }
 }

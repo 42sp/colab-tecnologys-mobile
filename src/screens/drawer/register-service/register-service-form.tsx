@@ -54,7 +54,7 @@ export function RegisterServiceForm({ control, services, resetField, setValue, e
 				value: floor,
 			}))
 
-		return uniqueFloors
+		return uniqueFloors.sort((a, b) => Number(a.label.split(' ')[1]) - Number(b.label.split(' ')[1]))
 	}, [selectedTower, services])
 
 	useEffect(() => {

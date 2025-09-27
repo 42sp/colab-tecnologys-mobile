@@ -3,20 +3,19 @@ import { useEffect, useState } from 'react'
 import { Feather } from '@expo/vector-icons'
 import { uploads } from '@/api/post-uploads'
 import { getProfile } from '@/api/get-profile'
-import { env } from '@/libs/env'
 import { launchImageLibraryAsync, useMediaLibraryPermissions } from 'expo-image-picker'
 import { useImageManager } from '@/hook/useImageManager'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
 import { selectUserId, updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { LogModal } from '@/components/ui/log-modal'
+import { API_URL } from '@env'
+
 
 type ProfileAvatarProps = {
 	avatar: number
 	name: string
 }
-
-const API_URL = env.EXPO_PUBLIC_API_URL
 
 export function ProfileAvatar({ avatar, name }: ProfileAvatarProps) {
 	const { setManipulatedImage, renderedImage } = useImageManager()
