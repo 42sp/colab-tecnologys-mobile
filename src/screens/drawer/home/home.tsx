@@ -1,7 +1,7 @@
 import { View, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Feather, MaterialIcons } from '@expo/vector-icons'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { HomeFilterModal } from './filter-modal'
 import { SummaryCard } from '@/screens/drawer/home/summary-card'
@@ -16,6 +16,7 @@ import { handleFilterChange } from './utils'
 import { useSelector } from 'react-redux'
 
 import { RootState } from '@/libs/redux/store'
+import { HomeSearch } from './home-search'
 
 export type StatusTypes = 'pending' | 'in_progress' | 'completed' | 'approved' | 'rejected'
 
@@ -35,23 +36,57 @@ export default function Home() {
 		dateRange: { start: null, end: null },
 	})
 	const [showFilter, setShowFilter] = useState(false)
+	const [inputText, setInputText] = useState('')
+	// const [inputTextListFilter, setTextListFilter] = useState<ItemType[]>([])
 
 	const tasks = useSelector((state: RootState) => state.tasks.tasks)
 	const activityDataList = handleFilterChange(filter, tasks)
 
+	useEffect(() => {
+		console.log('text: ', inputText)
+		// 	const list: ItemType[] = Array.from(
+		// 		new Set(
+		// 			tasks
+		// 				.filter(
+		// 					(item) =>
+		// 						!!item.worker_name &&
+		// 						item.worker_name.toLowerCase().includes(inputText.toLowerCase()),
+		// 				)
+		// 				.map((item) => item.worker_name as string),
+		// 		),
+		// 	).map((name) => ({
+		// 		label: name,
+		// 	}))
+		// 	setTextListFilter(list)
+		// 	console.log(list)
+	}, [inputText])
+
+	const uniqueWorkers = Array.from(new Set(tasks.map((t) => t.worker_name ?? '')))
+
 	return (
 		<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] px-5 pt-5" edges={['bottom']}>
-			<View className="flex-row items-center gap-5">
+			<View className="flex-row gap-5">
 				<View className="flex-1">
-					<Input
+					<HomeSearch workers={uniqueWorkers} onSearch={(name) => setInputText(name)} />
+					{/* <Input
 						keyboardType="default"
 						IconLeft="search"
 						placeholder="Procurar tarefas"
 						className="bg-white"
-					/>
+						onChangeText={(value) => setInputText(value)}
+					/> */}
+					{/* <TextDropdown
+						// IconLeft={'briefcase'}
+						// IconRight={'chevron-down'}
+						options={inputTextListFilter}
+						placeholder="Selecione uma opção"
+						onChangeText={() => {
+							console.log('sei lá')
+						}}
+					/> */}
 				</View>
 				<TouchableOpacity
-					className="rounded-lg bg-black p-3"
+					className="size-14 items-center justify-center rounded-lg bg-black p-3"
 					onPress={() => (showFilter ? setShowFilter(false) : setShowFilter(true))}
 					activeOpacity={0.7}
 				>
