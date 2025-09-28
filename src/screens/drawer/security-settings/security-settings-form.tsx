@@ -6,17 +6,18 @@ import { ToggleButton } from '@/components/ui/toggle-button'
 import { z } from 'zod'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from '@/libs/react-navigation/useNavigate'
 import { ScanFace } from 'lucide-react-native'
-import { DrawerNavigationProp } from '@react-navigation/drawer'
-import { DrawerParamList } from '@/_layouts/drawer/drawer'
-import { useNavigation } from '@react-navigation/native'
+import { patchUsers } from '@/api/patch-users'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '@/libs/redux/store'
+import { clearPasswordRecovery } from '@/libs/redux/password-recovery/password-recovery-slice'
 import { LogModal } from '@/components/ui/log-modal'
 import { LoadingModal } from '@/components/ui/loading-modal'
 
 const SecuritySettingsSchema = z
 	.object({
-		currentPassword: z.string().nonempty('A senha atual é obrigatória'),
 		newPassword: z
 			.string()
 			.min(6, 'Senha deve ter no mínimo 6 caracteres')
@@ -33,82 +34,68 @@ const SecuritySettingsSchema = z
 
 type SecuritySettingsType = z.infer<typeof SecuritySettingsSchema>
 
+// const flux = 'first-access' // 'reset-password' ou 'first-access'
+
 export function SecuritySettingsForm() {
+	const { userId, accessToken, exp } = useSelector((state: RootState) => state.passwordRecovery)
+	const { name, cpf, email, phone, roleId } = useSelector((state: RootState) => state.signUp)
+	const isExpired = accessToken && Date.now() > Number(exp) * 1000
+	const navigate = useNavigate()
+	const dispatch = useDispatch()
+	const [modal, setModal] = useState<{
+		visible: boolean
+		description: string
+	}>({
+		visible: false,
+		description: '',
+	})
+
 	const {
 		control,
 		handleSubmit,
 		formState: { errors, isSubmitting },
-		reset,
 	} = useForm<SecuritySettingsType>({
 		resolver: zodResolver(SecuritySettingsSchema),
 		defaultValues: {
-			currentPassword: '',
 			newPassword: '',
 			confirmPassword: '',
 		},
 	})
-	const [modal, setModal] = useState<{
-		visible: boolean
-		status: 'error' | 'success'
-		description: string
-	}>({ visible: false, status: 'error', description: '' })
+	const { popToTop } = useNavigate().navigation
 
-	type ProfileScreenNavigationProp = DrawerNavigationProp<DrawerParamList>
-	const navigation = useNavigation<ProfileScreenNavigationProp>()
-
-	function onSubmit(data: SecuritySettingsType) {
-		console.log('Dados de Registro: ', JSON.stringify(data))
-		//implementar requisição
-		// try {
-		// 	setModal({ visible: true, status: 'success', description: 'Senha alterada!' })
-		// } catch(error) {
-		setModal({
-			visible: true,
-			status: 'error',
-			description: 'Não foi possível alterar a senha. Tente novamente.',
-		})
-		// }
-		reset({
-			currentPassword: '',
-			newPassword: '',
-			confirmPassword: '',
-		})
-		navigation.navigate('profile')
+	useEffect(() => {
+		if (accessToken && exp) {
+			if (!accessToken || isExpired) {
+				setModal({
+					visible: true,
+					description: 'Não foi possível resetar sua senha. Tente novamente mais tarde.',
+				})
+				popToTop()
+			}
+		}
+	}, [accessToken, exp])
+	async function onSubmit({ newPassword }: SecuritySettingsType) {
+		try {
+			await patchUsers({ id: userId, cpf: cpf, password: newPassword })
+			dispatch(clearPasswordRecovery())
+			popToTop()
+		} catch (error) {
+			console.log(error)
+			setModal({
+				visible: true,
+				description: 'Não foi possível resetar sua senha. Tente novamente mais tarde.',
+			})
+			popToTop()
+		}
 	}
 
-	const [hideCurrentPassword, setHideCurrentPassword] = useState(true)
 	const [hideNewPassword, setHideNewPassword] = useState(true)
 	const [hideConfirmPassword, setHideConfirmPassword] = useState(true)
+
 	return (
-		<View className="gap-5 p-5 pb-10">
-			<Card className=" gap-5">
-				<Card.Header>
-					<Text className="font-inter-bold text-xl">Gerenciar senha</Text>
-				</Card.Header>
+		<View className="mb-20 gap-5 p-5">
+			<Card className="gap-5">
 				<Card.Body className="gap-5 pb-10">
-					<View className="gap-1">
-						<Text>Senha atual</Text>
-						<Controller
-							control={control}
-							name="currentPassword"
-							render={({ field: { onChange, value } }) => (
-								<Input
-									placeholder="Digite sua senha atual"
-									IconLeft={'lock'}
-									IconRight={hideCurrentPassword ? 'eye-off' : 'eye'}
-									iconPress={() => setHideCurrentPassword(!hideCurrentPassword)}
-									secureTextEntry={hideCurrentPassword}
-									className="self-center"
-									value={value}
-									onChangeText={onChange}
-									hasError={!!errors.currentPassword}
-								/>
-							)}
-						/>
-						{errors.currentPassword && (
-							<Text className="text-red-500">{errors.currentPassword.message}</Text>
-						)}
-					</View>
 					<View className="gap-1">
 						<Text>Nova senha</Text>
 						<Controller
@@ -180,22 +167,17 @@ export function SecuritySettingsForm() {
 					<Text className="font-inter-bold text-xl">Dicas de segurança</Text>
 				</Card.Header>
 				<Card.Body>
-					<Text className="font-inter text-gray-500">{'\u2022'} Crie uma senha forte e única</Text>
-					<Text className="font-inter text-gray-500">
-						{'\u2022'} Nunca compartilhe suas credenciais
-					</Text>
-					<Text className="font-inter text-gray-500">
-						{'\u2022'} Ative a autenticação biométrica
-					</Text>
-					<Text className="font-inter text-gray-500">{'\u2022'} Mude sua senha regularmente</Text>
+					<Text className="font-inter text-gray-500">Crie uma senha forte e única</Text>
+					<Text className="font-inter text-gray-500">Nunca compartilhe suas credenciais</Text>
+					<Text className="font-inter text-gray-500">Ative a autenticação biométrica</Text>
+					<Text className="font-inter text-gray-500">Mude sua senha regularmente</Text>
 				</Card.Body>
 			</Card>
 			<LoadingModal visible={isSubmitting} />
 			<LogModal
 				visible={modal.visible}
-				status={modal.status}
 				description={modal.description}
-				onClose={() => setModal({ visible: false, status: 'error', description: '' })}
+				onClose={() => setModal({ visible: false, description: '' })}
 			/>
 		</View>
 	)

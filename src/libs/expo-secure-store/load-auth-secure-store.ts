@@ -9,34 +9,30 @@ import { setTasks } from '../redux/tasks/tasks-slice'
 export async function loadAuthSecureStore(dispatch: Dispatch) {
 	const data = await getAuthSecureStore([
 		{ key: 'token' },
-		{ key: 'expiryDate' },
+		{ key: 'profile_id' },
 		{ key: 'userid' },
 	])
 
-	const now = Math.floor(Date.now() / 1000)
+	dispatch(setAuth(data[0].value))
 
-	if (data[0].value && data[1].value && parseInt(data[1].value) >= now) {
-		dispatch(setAuth({ token: data[0].value, expiry: data[1].value, id: data[2].value }))
-
-		const profileResponse = await getProfile({ userId: data[2].value })
-		const userProfile = profileResponse.data[0]
-		dispatch(
-			setProfile({
-				name: userProfile.name,
-				dateOfBirth: userProfile.date_of_birth,
-				registrationCode: userProfile.registration_code,
-				phone: userProfile.phone,
-				address: userProfile.address,
-				city: userProfile.city,
-				state: userProfile.state,
-				postcode: userProfile.postcode,
-				photo: userProfile.photo,
-				updatedAt: userProfile.updated_at,
-				roleId: userProfile.role_id || undefined,
-				userId: userProfile.user_id,
-			}),
-		)
-		const tasks = await getTasks()
-		dispatch(setTasks(tasks))
-	}
+	const profileResponse = await getProfile({ userId: data[2].value })
+	const userProfile = profileResponse.data[0]
+	dispatch(
+		setProfile({
+			name: userProfile.name,
+			dateOfBirth: userProfile.date_of_birth,
+			registrationCode: userProfile.registration_code,
+			phone: userProfile.phone,
+			address: userProfile.address,
+			city: userProfile.city,
+			state: userProfile.state,
+			postcode: userProfile.postcode,
+			photo: userProfile.photo,
+			updatedAt: userProfile.updated_at,
+			roleId: userProfile.role_id || undefined,
+			userId: userProfile.user_id,
+		}),
+	)
+	const tasks = await getTasks()
+	dispatch(setTasks(tasks))
 }

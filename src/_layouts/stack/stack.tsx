@@ -14,10 +14,9 @@ export type StackParamList = {
 	signUp: undefined
 	forgotPassword: undefined
 	verifyCode: undefined
-	resetPassword: undefined
+	resetPassword: { flux: string }
 	drawer: NavigatorScreenParams<DrawerParamList>
 }
-
 const Stack = createStackNavigator<StackParamList>()
 
 export default function StackLayout() {

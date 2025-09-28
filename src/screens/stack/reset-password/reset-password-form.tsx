@@ -15,6 +15,10 @@ import { RootState } from '@/libs/redux/store'
 import { clearPasswordRecovery } from '@/libs/redux/password-recovery/password-recovery-slice'
 import { LogModal } from '@/components/ui/log-modal'
 import { LoadingModal } from '@/components/ui/loading-modal'
+import { createUser } from '@/api/create-user'
+import { saveAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
+import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-store'
+import { setAuth } from '@/libs/redux/auth/auth-slice'
 
 const SecuritySettingsSchema = z
 	.object({
@@ -34,12 +38,15 @@ const SecuritySettingsSchema = z
 
 type SecuritySettingsType = z.infer<typeof SecuritySettingsSchema>
 
-export function ResetPasswordForm() {
-	const { userId, cpf, accessToken, exp } = useSelector(
-		(state: RootState) => state.passwordRecovery,
-	)
+// const flux = 'first-access' // 'reset-password' ou 'first-access'
+
+export function ResetPasswordForm({ route }: any) {
+	const { userId, accessToken, exp } = useSelector((state: RootState) => state.passwordRecovery)
+	const { name, cpf, email, phone, roleId } = useSelector((state: RootState) => state.signUp)
 	const isExpired = accessToken && Date.now() > Number(exp) * 1000
+	const navigate = useNavigate()
 	const dispatch = useDispatch()
+	const { flux } = route.params
 	const [modal, setModal] = useState<{
 		visible: boolean
 		description: string
@@ -74,16 +81,30 @@ export function ResetPasswordForm() {
 	}, [accessToken, exp])
 	async function onSubmit({ newPassword }: SecuritySettingsType) {
 		try {
-			if (!userId || !cpf) {
-				setModal({
-					visible: true,
-					description: 'Não foi possível resetar sua senha. Tente novamente mais tarde.',
+			//dispatch(clearPasswordRecovery())
+			//popToTop()
+			if (flux === 'reset-password') {
+				await patchUsers({ id: userId, cpf: cpf, password: newPassword })
+			} else {
+				const payload = await createUser({
+					cpf,
+					password: newPassword,
+					name,
+					email,
+					phone,
+					roleId,
 				})
-			}
-			await patchUsers({ id: userId, cpf: cpf, password: newPassword })
 
-			dispatch(clearPasswordRecovery())
-			popToTop()
+				console.log('Dados do novo usuário:', payload)
+
+				await saveAuthSecureStore([
+					{ key: 'token', value: payload.accessToken },
+					{ key: 'profile_id', value: payload.profile_id },
+					{ key: 'userid', value: payload.id },
+				])
+
+				dispatch(setAuth(payload.accessToken))
+			}
 		} catch (error) {
 			console.log(error)
 			setModal({
@@ -172,14 +193,10 @@ export function ResetPasswordForm() {
 					<Text className="font-inter-bold text-xl">Dicas de segurança</Text>
 				</Card.Header>
 				<Card.Body>
-					<Text className="font-inter text-gray-500">{'\u2022'} Crie uma senha forte e única</Text>
-					<Text className="font-inter text-gray-500">
-						{'\u2022'} Nunca compartilhe suas credenciais
-					</Text>
-					<Text className="font-inter text-gray-500">
-						{'\u2022'} Ative a autenticação biométrica
-					</Text>
-					<Text className="font-inter text-gray-500">{'\u2022'} Mude sua senha regularmente</Text>
+					<Text className="font-inter text-gray-500">Crie uma senha forte e única</Text>
+					<Text className="font-inter text-gray-500">Nunca compartilhe suas credenciais</Text>
+					<Text className="font-inter text-gray-500">Ative a autenticação biométrica</Text>
+					<Text className="font-inter text-gray-500">Mude sua senha regularmente</Text>
 				</Card.Body>
 			</Card>
 			<LoadingModal visible={isSubmitting} />

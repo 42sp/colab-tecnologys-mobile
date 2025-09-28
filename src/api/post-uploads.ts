@@ -2,18 +2,19 @@ import { api } from '@/libs/axios/axios'
 
 interface UploadsProps {
 	uri: string
+	id?: string
 }
 
 interface UploadsResponse {
-	id: string
-	uri: string
-	size: number
-	contentType: string
+	data: {
+		contentType: string
+		photo: string
+	}
 }
 
-export async function uploads({ uri }: UploadsProps) {
+export async function uploads(data: UploadsProps) {
 	try {
-		const response = await api.post<UploadsResponse>('/uploads', { uri })
+		const response = await api.post<UploadsResponse>('/uploads', data)
 		return response.data
 	} catch (error) {
 		console.log('Error uploading image:', error)

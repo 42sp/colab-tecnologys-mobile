@@ -16,7 +16,9 @@ import { LogModal } from '@/components/ui/log-modal'
 import { LoadingModal } from '@/components/ui/loading-modal'
 import { ScrollView } from 'react-native-gesture-handler'
 import Card from '@/components/ui/card'
+import { match, P } from 'ts-pattern'
 import { updatePasswordRecovery } from '@/libs/redux/password-recovery/password-recovery-slice'
+import { is } from 'zod/v4/locales'
 
 const otpSchema = z.object({
 	otp: z
@@ -28,11 +30,15 @@ const otpSchema = z.object({
 type otpForm = z.infer<typeof otpSchema>
 
 export default function VerifyCode() {
-	const { stack } = useNavigate()
+	const navigate = useNavigate()
 	const dispatch = useDispatch()
 	const [baseTimer, setBaseTimer] = useState(30)
-	const { phone, cpf } = useSelector((state: RootState) => state.passwordRecovery)
-	const lastFourDigits = phone?.slice(-4)
+	const [response, setResponse] = useState<{ code: string; expiration: string }>({
+		code: '',
+		expiration: new Date().toString(),
+	})
+	const [code, setCode] = useState<string[]>(['', '', '', '', '', ''])
+	const { phone, cpf } = useSelector((state: RootState) => state.signUp)
 
 	const [modal, setModal] = useState<{
 		visible: boolean
@@ -56,6 +62,34 @@ export default function VerifyCode() {
 	})
 
 	useEffect(() => {
+		cpf && sendCode(cpf, phone)
+	}, [cpf])
+
+	useEffect(() => {
+		/*if (code.join('').length === 6 && code.toString() === response?.code) {
+			if (response.expiration) {
+				const expirationDate = new Date(response.expiration)
+				const currentDate = new Date()
+				if (currentDate > expirationDate) {
+					setModal({
+						visible: true,
+						description: 'Código expirado. Solicite um novo código.',
+					})
+					return
+				}
+			}
+			console.log('Código completo:', code.join(''))
+			//onSubmit({ otp: code.join('') })
+		}*/
+
+		const expirationDate = new Date(response?.expiration)
+		const currentDate = new Date()
+
+		const isValid = verifyCode(code)
+		//console.log('code', code.join('').length, new Date(expirationDate - currentDate).getMinutes() )
+	}, [code])
+
+	useEffect(() => {
 		if (timer > 0) {
 			const interval = setInterval(() => {
 				setTimer((prev) => prev - 1)
@@ -67,9 +101,55 @@ export default function VerifyCode() {
 		}
 	}, [timer])
 
-	async function onSubmit(data: otpForm) {
+	const verifyCode = (enteredCode: string[]) => {
+		const expiration = response.expiration
+		const comparisson = response.code
+		match({ enteredCode, expiration, comparisson })
+			.with(
+				{
+					expiration: P.when((e) => {
+						if (!e) return false
+						const expirationDate = new Date(e)
+						const currentDate = new Date()
+						console.log('expirationDate', expirationDate)
+						return currentDate.getTime() > expirationDate.getTime()
+					}),
+				},
+				(e) => console.log('expired!', e),
+			)
+			.with(
+				{
+					enteredCode: P.when((c) => c.join('').length === 6),
+
+					comparisson: P.string,
+				},
+				(obj) => {
+					const code = obj.enteredCode.join('')
+					const comparisson = obj.comparisson.replace('-', '')
+					if (code === comparisson) {
+						console.log('Código válido:', code)
+						navigate.stack('resetPassword', { flux: 'first-access' })
+					} else {
+						console.log('Código inválido')
+					}
+				},
+			)
+			.otherwise(() => {})
+	}
+
+	async function sendCode(cpf: string | null | undefined, phone?: string | null) {
 		try {
-			const response = await passwordRecovery({ cpf, code: data.otp })
+			const response = await passwordRecovery({ cpf, phone })
+			console.log('response', response)
+			setResponse({ code: response.code || '', expiration: response.expiration || '' })
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	/*async function onSubmit(data: otpForm) {
+		try {
+			const response = await passwordRecovery({ cpf })
 			console.log('response', response)
 
 			dispatch(
@@ -87,14 +167,21 @@ export default function VerifyCode() {
 				description: 'Código inválido. Tente novamente.',
 			})
 		}
-	}
+	}*/
 
-	// const handleCellTextChange = async (text: string, i: number) => {
-	// 	if (i === 0) {
-	// 	  const clippedText = await Clipboard.getStringAsync();
-	// 	  if (clippedText.slice(0, 1) === text) {
-	// 		input.current?.setValue(clippedText, true);
-	// 	  }
+	const handleCellTextChange = async (text: string, i: number) => {
+		/*if (i === 0) {
+		  const clippedText = await Clipboard.getStringAsync();
+		  if (clippedText.slice(0, 1) === text) {
+			input.current?.setValue(clippedText, true);
+		  }
+		}*/
+		setCode((prevCount) => {
+			const newCode = [...prevCount]
+			newCode[i] = text
+			return newCode
+		})
+	}
 	// 	}
 	//   };
 
@@ -123,7 +210,7 @@ export default function VerifyCode() {
 								</Text>
 								<View className="mt-2 flex-row justify-center gap-2">
 									<Text className="font-inter-bold text-xl text-gray-500">
-										(XX) XXXXX-{lastFourDigits}
+										(XX) XXXXX-{phone?.slice(-4)}
 									</Text>
 									<FontAwesome name="whatsapp" size={24} color="#25D366" />
 								</View>
@@ -138,7 +225,7 @@ export default function VerifyCode() {
 									<View>
 										<OTPTextView
 											handleTextChange={onChange}
-											// handleCellTextChange={handleCellTextChange}
+											handleCellTextChange={handleCellTextChange}
 											inputCount={6}
 											keyboardType="numeric"
 											tintColor={'#d16a32'}
@@ -159,8 +246,6 @@ export default function VerifyCode() {
 						{errors.otp && (
 							<Text className="pb-2 text-center font-inter text-red-500">{errors.otp.message}</Text>
 						)}
-
-						<Button title="Verificar" onPress={handleSubmit(onSubmit)} disabled={isSubmitting} />
 
 						<View className=" items-center gap-4 p-4">
 							<Text className=" font-inter font-bold text-blue-400">
