@@ -1,6 +1,6 @@
 import { api } from '@/libs/axios/axios'
 
-interface Roles {
+export interface Roles {
 	id: string
 	role_name: string
 	role_description: string
@@ -22,7 +22,11 @@ type GetRolesProps = {
 }
 
 export async function getRoles({ id }: GetRolesProps = {}) {
-	const url = id ? `/roles/${id}` : `/roles`
-	const response = await api.get<Roles>(url)
-	return response.data
+	if (id) {
+		const response = await api.get<GetRolesResponse>(`/roles/${id}`)
+		return response.data
+	} else {
+		const response = await api.get<Roles>(`/roles`)
+		return response.data
+	}
 }

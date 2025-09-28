@@ -5,6 +5,15 @@ export function handleFilterChange(filter: FilterType, tasks: Task[]) {
 	const yesterday = shiftDate(-1)
 	const today = new Date()
 
+	if (filter.searchTerm) {
+		const searchTerm = filter.searchTerm!.value.toLowerCase().trim()
+		return buildResult(
+			tasks.filter((task) =>
+				task[filter.searchTerm!.type]?.toString().toLowerCase().includes(searchTerm),
+			),
+		)
+	}
+
 	if (isEmptyFilter(filter, tasks)) {
 		return buildResult(tasks, { today, yesterday })
 	}
@@ -16,20 +25,19 @@ export function handleFilterChange(filter: FilterType, tasks: Task[]) {
 
 interface buildResultLogicProps {
 	base: {
-	amount: number;
-	percent: number;
-	pendding: number;
+		amount: number
+		percent: number
+		pendding: number
 	}
-	tasks: Task[];
-	dates?: { today: Date; yesterday: Date };
+	tasks: Task[]
+	dates?: { today: Date; yesterday: Date }
 }
 
-function buildResultLogic({ base, tasks, dates }: buildResultLogicProps)
-{
+function buildResultLogic({ base, tasks, dates }: buildResultLogicProps) {
 	if (!dates) {
 		return {
 			...base,
-			data: [{ title: 'Filtered Results', data: tasks }],
+			data: [{ title: 'Resultados do filtro', data: tasks }],
 		}
 	}
 
@@ -37,15 +45,32 @@ function buildResultLogic({ base, tasks, dates }: buildResultLogicProps)
 		return new Date(dateString as string)
 	}
 	function toStringDate(date?: string | Date) {
-		return (new Date(date as string | Date)).toLocaleDateString("pt-BR", {day: "2-digit", month: "2-digit", year: "numeric"})
+		return new Date(date as string | Date).toLocaleDateString('pt-BR', {
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric',
+		})
 	}
-	const dataDates = tasks.map(({ created_at }) => toDate(created_at)).sort((a, b) => b.getTime() - a.getTime()).map(toStringDate)
+	const dataDates = tasks
+		.map(({ created_at }) => toDate(created_at))
+		.sort((a, b) => b.getTime() - a.getTime())
+		.map(toStringDate)
 	const uniqueDates = Array.from(new Set(dataDates))
-	const data = uniqueDates.reduce((acc: {title: string, data: Task[]}[], date: string) => {
+	const data = uniqueDates.reduce((acc: { title: string; data: Task[] }[], date: string) => {
 		const today = new Date()
 		const yesterday = shiftDate(-1)
-		const displayDate = date == toStringDate(today) ? `Hoje (${date})` : date == toStringDate(yesterday) ? `Ontem (${date})` : date
-		acc.push({title: displayDate, data: tasks.filter(({ created_at }) => toStringDate(created_at) === date).sort((a, b) => toDate(b.created_at).getTime() -toDate(a.created_at).getTime())})
+		const displayDate =
+			date == toStringDate(today)
+				? `Hoje (${date})`
+				: date == toStringDate(yesterday)
+					? `Ontem (${date})`
+					: date
+		acc.push({
+			title: displayDate,
+			data: tasks
+				.filter(({ created_at }) => toStringDate(created_at) === date)
+				.sort((a, b) => toDate(b.created_at).getTime() - toDate(a.created_at).getTime()),
+		})
 		return acc
 	}, [])
 
@@ -65,7 +90,7 @@ function buildResult(tasks: Task[], dates?: { today: Date; yesterday: Date }) {
 		pendding: pendingCount,
 	}
 
-	return buildResultLogic({base, tasks, dates})
+	return buildResultLogic({ base, tasks, dates })
 }
 
 function shiftDate(days: number): Date {
@@ -102,4 +127,36 @@ function applyFilters(tasks: Task[], filter: FilterType): Task[] {
 				filter.serviceType === 'Todos' ||
 				service_type === filter.serviceType,
 		)
+}
+
+type SuggestionType = { title: string; type: string }
+
+export function filterAndMapTasks(
+	tasks: Task[],
+	key: keyof Task,
+	prefix?: string,
+	query?: string,
+	partial = true,
+): SuggestionType[] {
+	const normalizedQuery = query?.toLowerCase().trim() || ''
+
+	let filtered = tasks.filter((task) => {
+		const value = task[key]?.toString().toLowerCase()
+		if (!value) return false
+		if (!normalizedQuery) return true // se query vazia, pega todos
+		return partial ? value.includes(normalizedQuery) : value === normalizedQuery
+	})
+
+	filtered = filtered.sort((a, b) =>
+		(a[key] ?? '').toString() > (b[key] ?? '').toString() ? 1 : -1,
+	)
+
+	const unique = Array.from(
+		new Map(filtered.map((item) => [item[key]?.toString().toLowerCase(), item])).values(),
+	)
+
+	return unique.map((item) => ({
+		title: prefix ? `${prefix} ${item[key]}` : (item[key] as string),
+		type: key,
+	}))
 }

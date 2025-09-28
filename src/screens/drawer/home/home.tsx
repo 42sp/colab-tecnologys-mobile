@@ -1,7 +1,7 @@
 import { View, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Feather, MaterialIcons } from '@expo/vector-icons'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { HomeFilterModal } from './filter-modal'
 import { SummaryCard } from '@/screens/drawer/home/summary-card'
@@ -16,6 +16,8 @@ import { handleFilterChange } from './utils'
 import { useSelector } from 'react-redux'
 
 import { RootState } from '@/libs/redux/store'
+import { HomeSearch } from './home-search'
+import { Task } from '@/api/get-tasks'
 
 export type StatusTypes = 'pending' | 'in_progress' | 'completed' | 'approved' | 'rejected'
 
@@ -23,6 +25,7 @@ export interface FilterType {
 	serviceType?: string
 	status?: StatusTypes[]
 	dateRange?: DateRangeType
+	searchTerm?: { type: keyof Task; value: string }
 }
 
 type ProfileScreenNavigationProp = DrawerNavigationProp<DrawerParamList>
@@ -41,17 +44,14 @@ export default function Home() {
 
 	return (
 		<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] px-5 pt-5" edges={['bottom']}>
-			<View className="flex-row items-center gap-5">
-				<View className="flex-1">
-					<Input
-						keyboardType="default"
-						IconLeft="search"
-						placeholder="Procurar tarefas"
-						className="bg-white"
-					/>
-				</View>
+			<View className="flex-row gap-5">
+				<HomeSearch
+					tasksList={tasks}
+					onSearch={(search) => setFilter({ ...filter, searchTerm: search })}
+				/>
+
 				<TouchableOpacity
-					className="rounded-lg bg-black p-3"
+					className="size-14 items-center justify-center rounded-lg bg-black p-3"
 					onPress={() => (showFilter ? setShowFilter(false) : setShowFilter(true))}
 					activeOpacity={0.7}
 				>
