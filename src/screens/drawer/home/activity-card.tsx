@@ -23,7 +23,7 @@ export function ActivityCard({
 	created_at,
 	status,
 }: ActivityCardProps) {
-	const title = `${service_type} - ${service_stage} ${service_floor}/${service_apartment} - Torre ${service_tower}`
+	const title = `${service_type} - Parede ${service_stage} - ${service_floor} - Apt. ${service_apartment} - Torre ${service_tower}`
 	const time = new Date(created_at as string)
 	const [isVisibleApprove, setIsVisibleApprove] = useState(false)
 	const [statusTask, setStatusTask] = useState(status)

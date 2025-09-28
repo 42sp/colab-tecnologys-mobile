@@ -17,6 +17,15 @@ export function handleFilterChange(filter: FilterType, tasks: Task[]) {
 	const yesterday = shiftDate(-1)
 	const today = new Date()
 
+	if (filter.searchTerm) {
+		const searchTerm = filter.searchTerm!.value.toLowerCase().trim()
+		return buildResult(
+			tasks.filter((task) =>
+				task[filter.searchTerm!.type]?.toString().toLowerCase().includes(searchTerm),
+			),
+		)
+	}
+
 	if (isEmptyFilter(filter, tasks)) {
 		return buildResult(tasks, { today, yesterday })
 	}
@@ -40,7 +49,7 @@ function buildResultLogic({ base, tasks, dates }: buildResultLogicProps) {
 	if (!dates) {
 		return {
 			...base,
-			data: [{ title: 'Filtered Results', data: tasks }],
+			data: [{ title: 'Resultados do filtro', data: tasks }],
 		}
 	}
 

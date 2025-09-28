@@ -1,16 +1,17 @@
 import { View, Text, TouchableOpacity, FlatList } from 'react-native'
 import { Input } from '@/components/ui/input'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Task } from '@/api/get-tasks'
-
-type SearchProps = {
-	onSearch: (term: string) => void
-	tasksList: Task[]
-}
 
 type SuggestionType = {
 	title: string
-	type: string
+	type: keyof Task
+	value: string
+}
+
+type SearchProps = {
+	onSearch: (task?: SuggestionType) => void
+	tasksList: Task[]
 }
 
 export function HomeSearch({ onSearch, tasksList }: SearchProps) {
@@ -29,12 +30,15 @@ export function HomeSearch({ onSearch, tasksList }: SearchProps) {
 		let filtered = tasks.filter((task) => {
 			const value = task[key]?.toString().toLowerCase()
 			if (!value) return false
-			if (!normalizedQuery) return true // se query vazia, pega todos
+			if (!normalizedQuery) return true
 			return partial ? value.includes(normalizedQuery) : value === normalizedQuery
 		})
 
 		filtered = filtered.sort((a, b) =>
-			(a[key] ?? '').toString() > (b[key] ?? '').toString() ? 1 : -1,
+			(a[key]?.toString() ?? '').localeCompare(b[key]?.toString() ?? '', undefined, {
+				numeric: true,
+				sensitivity: 'base',
+			}),
 		)
 
 		const unique = Array.from(
@@ -42,8 +46,9 @@ export function HomeSearch({ onSearch, tasksList }: SearchProps) {
 		)
 
 		return unique.map((item) => ({
-			title: prefix ? `${prefix} ${item[key]}` : (item[key] as string),
+			title: prefix ? `${prefix} ${item[key]}` : `${item[key]}`,
 			type: key,
+			value: item[key]?.toString() || '',
 		}))
 	}
 
@@ -51,125 +56,46 @@ export function HomeSearch({ onSearch, tasksList }: SearchProps) {
 		setSearchTerm(query)
 		const normalized = query.toLowerCase().trim()
 
-		const uniqueSuggestions = (items: SuggestionType[]) => {
-			return Array.from(new Map(items.map((item) => [item.title.toLowerCase(), item])).values())
-		}
+		const fields: {
+			key: keyof Task
+			prefix?: string
+			regex?: RegExp
+		}[] = [
+			{ key: 'service_tower', prefix: 'Torre', regex: /^(?:torre|tower)(?:\s+(.+))?/ },
+			{
+				key: 'service_apartment',
+				prefix: 'Apartamento',
+				regex: /^(?:apartamento|apartment|ap)(?:\s+(.+))?/,
+			},
+			{ key: 'service_floor', regex: /^(?:pavimento|pav)(?:\s+(.+))?/ },
+			{ key: 'worker_name' },
+			{ key: 'construction_name', prefix: 'Obra' },
+			{ key: 'service_stage', prefix: 'Etapa/Parede' },
+		]
 
-		const towerMatch = normalized.match(/(?:torre|tower)(?:\s+(.+))?/)
-		if (towerMatch) {
-			const filteredResult = tasksList.filter((task) =>
-				towerMatch[1]
-					? task.service_tower?.toLowerCase().includes(towerMatch[1])
-					: !!task.service_tower,
-			)
-			console.log('towerMatch:', towerMatch, filteredResult)
-			setFilteredSuggestions(
-				uniqueSuggestions(
-					filteredResult.map((item) => ({
-						title: `Torre ${item.service_tower}`,
-						type: 'tower',
-					})),
-				),
-			)
-			return
-		}
+		const suggestions = fields.flatMap((field) => {
+			const match = field.regex?.exec(normalized)
+			const queryValue = match ? match[1] : normalized
+			return filterAndMapTasks(tasksList, field.key, field.prefix, queryValue)
+		})
 
-		const apartmentMatch = normalized.match(/(?:apartamento|apartment|ap)(?:\s+(.+))?/)
-		if (apartmentMatch) {
-			console.log('apartmentMatch:', apartmentMatch)
-
-			const filteredResult = tasksList
-				.filter((task) =>
-					apartmentMatch[1]
-						? task.service_apartment?.toLowerCase().includes(apartmentMatch[1])
-						: !!task.service_apartment,
-				)
-				.sort((a, b) => (a.service_apartment! > b.service_apartment! ? 1 : -1))
-			setFilteredSuggestions(
-				uniqueSuggestions(
-					filteredResult.map((item) => ({
-						title: `Apartamento ${item.service_apartment}`,
-						type: 'apartment',
-					})),
-				),
-			)
-			return
-		}
-
-		const floorMatch = normalized.match(/(?:pavimento|pav)(?:\s+(.+))?/)
-		if (floorMatch) {
-			const filteredResult = tasksList.filter((task) =>
-				floorMatch[1]
-					? task.service_floor?.toLowerCase().includes(floorMatch[0])
-					: !!task.service_floor,
-			)
-			setFilteredSuggestions(
-				uniqueSuggestions(
-					filteredResult.map((item) => ({
-						title: item.service_floor as string,
-						type: 'floor',
-					})),
-				),
-			)
-			return
-		}
-
-		const filteredResult = tasksList.filter(
-			(task) =>
-				task.worker_name?.toLowerCase().includes(normalized) ||
-				task.construction_name?.toLowerCase().includes(normalized) ||
-				task.service_floor?.toLowerCase() === normalized ||
-				task.service_apartment?.toLowerCase() === normalized ||
-				task.service_tower?.toLowerCase() === normalized ||
-				task.service_stage?.toLowerCase() === normalized,
-		)
-
-		setFilteredSuggestions(
-			uniqueSuggestions(
-				filteredResult.map((item) => {
-					if (item.worker_name?.toLowerCase().includes(normalized)) {
-						return { title: item.worker_name, type: 'worker' }
-					}
-					if (item.construction_name?.toLowerCase() === normalized) {
-						return { title: `Obra ${item.construction_name}`, type: 'construction' }
-					}
-					if (item.service_floor?.toLowerCase() === normalized) {
-						return { title: `${item.service_floor}`, type: 'floor' }
-					}
-					if (item.service_apartment?.toLowerCase() === normalized) {
-						return { title: `Apartamento ${item.service_apartment}`, type: 'apartment' }
-					}
-					if (item.service_tower?.toLowerCase() === normalized) {
-						return { title: `Torre ${item.service_tower}`, type: 'tower' }
-					}
-					if (item.service_stage?.toLowerCase() === normalized) {
-						return { title: `Etapa/parede ${item.service_stage}`, type: 'stage' }
-					}
-					return { title: '', type: '' }
-				}),
-			),
-		)
+		setFilteredSuggestions(suggestions)
 	}
 
-	useEffect(() => {
-		console.log('Filtered Suggestions:', filteredSuggestions)
-	}, [filteredSuggestions])
-
-	const handleSelect = ({ title, type }: SuggestionType) => {
-		console.log('Selected:', title, type)
+	const handleSelect = ({ title, type, value }: SuggestionType) => {
 		setSearchTerm(title)
 		setFilteredSuggestions([])
-		// onSearch(name)
+		onSearch({ title, type, value })
 	}
 
 	const handleClear = () => {
 		setSearchTerm('')
 		setFilteredSuggestions([])
-		// onSearch('')
+		onSearch()
 	}
 
 	return (
-		<View>
+		<View className="flex-1">
 			<Input
 				keyboardType="default"
 				IconLeft="search"

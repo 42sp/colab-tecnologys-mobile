@@ -17,6 +17,7 @@ import { useSelector } from 'react-redux'
 
 import { RootState } from '@/libs/redux/store'
 import { HomeSearch } from './home-search'
+import { Task } from '@/api/get-tasks'
 
 export type StatusTypes = 'pending' | 'in_progress' | 'completed' | 'approved' | 'rejected'
 
@@ -24,6 +25,7 @@ export interface FilterType {
 	serviceType?: string
 	status?: StatusTypes[]
 	dateRange?: DateRangeType
+	searchTerm?: { type: keyof Task; value: string }
 }
 
 type ProfileScreenNavigationProp = DrawerNavigationProp<DrawerParamList>
@@ -66,25 +68,11 @@ export default function Home() {
 	return (
 		<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] px-5 pt-5" edges={['bottom']}>
 			<View className="flex-row gap-5">
-				<View className="flex-1">
-					<HomeSearch tasksList={tasks} onSearch={(name) => setInputText(name)} />
-					{/* <Input
-						keyboardType="default"
-						IconLeft="search"
-						placeholder="Procurar tarefas"
-						className="bg-white"
-						onChangeText={(value) => setInputText(value)}
-					/> */}
-					{/* <TextDropdown
-						// IconLeft={'briefcase'}
-						// IconRight={'chevron-down'}
-						options={inputTextListFilter}
-						placeholder="Selecione uma opção"
-						onChangeText={() => {
-							console.log('sei lá')
-						}}
-					/> */}
-				</View>
+				<HomeSearch
+					tasksList={tasks}
+					onSearch={(search) => setFilter({ ...filter, searchTerm: search })}
+				/>
+
 				<TouchableOpacity
 					className="size-14 items-center justify-center rounded-lg bg-black p-3"
 					onPress={() => (showFilter ? setShowFilter(false) : setShowFilter(true))}
