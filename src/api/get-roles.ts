@@ -26,7 +26,7 @@ export async function getRoles({ id }: GetRolesProps = {}) {
 		const response = await api.get<GetRolesResponse>(`/roles/${id}`)
 		return response.data
 	} else {
-		const response = await api.get<Roles>(`/roles/${id}`)
+		const response = await api.get<Roles>(`/roles`)
 		return response.data
 	}
 }
