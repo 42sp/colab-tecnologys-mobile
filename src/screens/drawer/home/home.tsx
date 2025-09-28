@@ -61,13 +61,13 @@ export default function Home() {
 		// 	console.log(list)
 	}, [inputText])
 
-	const uniqueWorkers = Array.from(new Set(tasks.map((t) => t.worker_name ?? '')))
+	const uniqueWorkers = Array.from(new Set(tasks))
 
 	return (
 		<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] px-5 pt-5" edges={['bottom']}>
 			<View className="flex-row gap-5">
 				<View className="flex-1">
-					<HomeSearch workers={uniqueWorkers} onSearch={(name) => setInputText(name)} />
+					<HomeSearch tasksList={tasks} onSearch={(name) => setInputText(name)} />
 					{/* <Input
 						keyboardType="default"
 						IconLeft="search"
