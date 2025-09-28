@@ -1,8 +1,7 @@
 import { View, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Feather, MaterialIcons } from '@expo/vector-icons'
-import { useEffect, useState } from 'react'
-import { Input } from '@/components/ui/input'
+import { useState } from 'react'
 import { HomeFilterModal } from './filter-modal'
 import { SummaryCard } from '@/screens/drawer/home/summary-card'
 import { ActivityList } from '@/screens/drawer/home/activity-list'
@@ -38,32 +37,9 @@ export default function Home() {
 		dateRange: { start: null, end: null },
 	})
 	const [showFilter, setShowFilter] = useState(false)
-	const [inputText, setInputText] = useState('')
-	// const [inputTextListFilter, setTextListFilter] = useState<ItemType[]>([])
 
 	const tasks = useSelector((state: RootState) => state.tasks.tasks)
 	const activityDataList = handleFilterChange(filter, tasks)
-
-	useEffect(() => {
-		console.log('text: ', inputText)
-		// 	const list: ItemType[] = Array.from(
-		// 		new Set(
-		// 			tasks
-		// 				.filter(
-		// 					(item) =>
-		// 						!!item.worker_name &&
-		// 						item.worker_name.toLowerCase().includes(inputText.toLowerCase()),
-		// 				)
-		// 				.map((item) => item.worker_name as string),
-		// 		),
-		// 	).map((name) => ({
-		// 		label: name,
-		// 	}))
-		// 	setTextListFilter(list)
-		// 	console.log(list)
-	}, [inputText])
-
-	const uniqueWorkers = Array.from(new Set(tasks))
 
 	return (
 		<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] px-5 pt-5" edges={['bottom']}>
