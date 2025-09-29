@@ -136,7 +136,7 @@ export default function RegisterServiceScreen() {
 				workers: [
 					{
 						percent: 100,
-						worker_id: userId || '', // valor padrão: primeiro perfil
+						worker_id: userId || '',
 					},
 				],
 			}))
