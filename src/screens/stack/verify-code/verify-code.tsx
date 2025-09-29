@@ -19,6 +19,8 @@ import Card from '@/components/ui/card'
 import { match, P } from 'ts-pattern'
 import { updatePasswordRecovery } from '@/libs/redux/password-recovery/password-recovery-slice'
 import { is } from 'zod/v4/locales'
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry'
+import { getCurrentDate } from '@/utils'
 
 const otpSchema = z.object({
 	otp: z
@@ -29,16 +31,23 @@ const otpSchema = z.object({
 
 type otpForm = z.infer<typeof otpSchema>
 
-export default function VerifyCode() {
+export default function VerifyCode({ route }: any) {
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 	const [baseTimer, setBaseTimer] = useState(30)
-	const [response, setResponse] = useState<{ code: string; expiration: string }>({
+	const [response, setResponse] = useState<{
+		code: string
+		expiration: string
+		id: string
+		phone: string
+	}>({
 		code: '',
-		expiration: new Date().toString(),
+		expiration: '',
+		id: '',
+		phone: '',
 	})
 	const [code, setCode] = useState<string[]>(['', '', '', '', '', ''])
-	const { phone, cpf } = useSelector((state: RootState) => state.signUp)
+	const { cpf, flux, phone } = route.params
 
 	const [modal, setModal] = useState<{
 		visible: boolean
@@ -62,32 +71,20 @@ export default function VerifyCode() {
 	})
 
 	useEffect(() => {
-		cpf && sendCode(cpf, phone)
-	}, [cpf])
+		//const s = `${new Date(new Date().getTime() + 10 * 60000).toLocaleString('sv-SE', { timeZone: 'America/Sao_Paulo' }).replace(' ', 'T') + '.' + String(new Date().getMilliseconds()).padStart(3, '0')}`
 
-	useEffect(() => {
-		/*if (code.join('').length === 6 && code.toString() === response?.code) {
-			if (response.expiration) {
-				const expirationDate = new Date(response.expiration)
-				const currentDate = new Date()
-				if (currentDate > expirationDate) {
-					setModal({
-						visible: true,
-						description: 'Código expirado. Solicite um novo código.',
-					})
-					return
-				}
-			}
-			console.log('Código completo:', code.join(''))
-			//onSubmit({ otp: code.join('') })
-		}*/
+		const expirationDate = response?.expiration
+		const currentDate = getCurrentDate()
 
-		const expirationDate = new Date(response?.expiration)
-		const currentDate = new Date()
+		console.log('expirationDate', expirationDate, currentDate)
 
 		const isValid = verifyCode(code)
-		//console.log('code', code.join('').length, new Date(expirationDate - currentDate).getMinutes() )
-	}, [code])
+		console.log(
+			'code',
+			code.join('').length,
+			//new Date(new Date(expirationDate) - currentDate).getMinutes(),
+		)
+	}, [response, code])
 
 	useEffect(() => {
 		if (timer > 0) {
@@ -101,6 +98,14 @@ export default function VerifyCode() {
 		}
 	}, [timer])
 
+	useEffect(() => {
+		sendCode()
+	}, [])
+
+	useEffect(() => {
+		console.log('response no verify-code: ', response)
+	}, [response])
+
 	const verifyCode = (enteredCode: string[]) => {
 		const expiration = response.expiration
 		const comparisson = response.code
@@ -110,9 +115,8 @@ export default function VerifyCode() {
 					expiration: P.when((e) => {
 						if (!e) return false
 						const expirationDate = new Date(e)
-						const currentDate = new Date()
 						console.log('expirationDate', expirationDate)
-						return currentDate.getTime() > expirationDate.getTime()
+						return getCurrentDate().getTime() > expirationDate.getTime()
 					}),
 				},
 				(_e) =>
@@ -132,7 +136,7 @@ export default function VerifyCode() {
 					const comparisson = obj.comparisson.replace('-', '')
 					if (code === comparisson) {
 						console.log('Código válido:', code)
-						navigate.stack('resetPassword', { flux: 'first-access' })
+						navigate.stack('resetPassword', { flux, cpf, id: response.id })
 					} else {
 						setModal({
 							visible: true,
@@ -144,11 +148,16 @@ export default function VerifyCode() {
 			.otherwise(() => {})
 	}
 
-	async function sendCode(cpf: string | null | undefined, phone?: string | null) {
+	async function sendCode() {
 		try {
+			console.log('Enviando código para', phone)
 			const response = await passwordRecovery({ cpf, phone })
-			console.log('response', response)
-			setResponse({ code: response.code || '', expiration: response.expiration || '' })
+			setResponse({
+				code: response.code,
+				expiration: response.expiration,
+				id: response?.userId ?? '',
+				phone: response?.phone ?? phone,
+			})
 		} catch (error) {
 			console.log(error)
 		}
@@ -217,7 +226,7 @@ export default function VerifyCode() {
 								</Text>
 								<View className="mt-2 flex-row justify-center gap-2">
 									<Text className="font-inter-bold text-xl text-gray-500">
-										(XX) XXXXX-{phone?.slice(-4)}
+										(XX) XXXXX-{response?.phone?.slice(-4)}
 									</Text>
 									<FontAwesome name="whatsapp" size={24} color="#25D366" />
 								</View>
@@ -267,6 +276,7 @@ export default function VerifyCode() {
 									setBaseTimer(newBase)
 									setTimer(newBase)
 									setIsButtonDisabled(true)
+									sendCode()
 								}}
 								disabled={isButtonDisabled}
 							>

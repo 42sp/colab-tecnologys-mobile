@@ -9,8 +9,8 @@ const initialState: Roles = {
 	role_description: '',
 	hierarchy_level: 0,
 	is_active: false,
-	updated_at: new Date(),
-	created_at: new Date(),
+	updated_at: new Date().toString(),
+	created_at: new Date().toString(),
 }
 
 // creation of slice

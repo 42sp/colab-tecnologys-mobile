@@ -2,22 +2,36 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 
 interface UserProfileState {
-	name?: string
+	name: null | string
 	dateOfBirth?: Date
-	email?: string
+	email: null | string
 	photo?: string
 	registrationCode?: string
-	phone?: string
+	phone: null | string
 	address?: string
 	city?: string
 	state?: string
 	postcode?: string
 	updatedAt?: string
-	roleId?: string
+	roleId: null | string
 	userId?: string
 }
 
-const initialState: UserProfileState = {}
+const initialState: UserProfileState = {
+	name: null,
+	dateOfBirth: undefined,
+	email: null,
+	photo: '',
+	registrationCode: '',
+	phone: '',
+	address: '',
+	city: '',
+	state: '',
+	postcode: '',
+	updatedAt: '',
+	roleId: '',
+	userId: '',
+}
 
 const userProfileSlice = createSlice({
 	name: 'user-profile',

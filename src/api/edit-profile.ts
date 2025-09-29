@@ -22,7 +22,7 @@ interface Profile {
 	state: string
 	postcode: string
 	created_at: Date
-	updated_at: Date
+	updated_at: string
 }
 
 interface ProfileResponse {

@@ -1,7 +1,7 @@
 import { api } from '@/libs/axios/axios'
 
 interface CreateUserProps {
-	cpf: string
+	cpf: string | null
 	password: string
 	name: string | null
 	email: string | null

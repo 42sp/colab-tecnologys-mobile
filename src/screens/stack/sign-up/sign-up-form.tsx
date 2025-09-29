@@ -87,8 +87,8 @@ export function SignUpForm() {
 		const jobTitle = rolesList.find((r) => r.id === profile.jobTitle)?.role_name
 		const role_id = profile.jobTitle
 		dispatch(setSignUp({ ...profile, jobTitle: jobTitle || '', roleId: role_id }))
-		await passwordRecovery({ cpf: profile.cpf, phone: profile.phone })
-		navigate.stack('verifyCode')
+		//await passwordRecovery({ cpf: profile.cpf, phone: profile.phone })
+		navigate.stack('verifyCode', { flux: 'first-access', cpf: profile.cpf, phone: profile.phone })
 		try {
 			/*await createUser({
 				cpf: profile.cpf,

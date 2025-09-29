@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, FlatList } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { useSelector } from 'react-redux'
 import { getRoles } from '@/api/get-roles'
+import type { Roles } from '@/api/get-roles'
 import { useEffect, useState } from 'react'
 import { RootState } from '@/libs/redux/store'
 
@@ -23,7 +24,7 @@ export function Search({ onSearch, workers }: SearchProps) {
 
 		const fetchRole = async () => {
 			try {
-				const res = await getRoles({ id: roleId })
+				const res = (await getRoles({ id: roleId })) as Roles
 				setRoleName(res?.role_name)
 			} catch (err) {
 				console.error('Error when searching for role:', err)

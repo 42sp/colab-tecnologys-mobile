@@ -37,8 +37,9 @@ type SecuritySettingsType = z.infer<typeof SecuritySettingsSchema>
 // const flux = 'first-access' // 'reset-password' ou 'first-access'
 
 export function SecuritySettingsForm() {
-	const { userId, accessToken, exp } = useSelector((state: RootState) => state.passwordRecovery)
+	const { accessToken, exp } = useSelector((state: RootState) => state.passwordRecovery)
 	const { name, cpf, email, phone, roleId } = useSelector((state: RootState) => state.signUp)
+	const { userId } = useSelector((state: RootState) => state.userProfile)
 	const isExpired = accessToken && Date.now() > Number(exp) * 1000
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
@@ -61,7 +62,6 @@ export function SecuritySettingsForm() {
 			confirmPassword: '',
 		},
 	})
-	const { popToTop } = useNavigate().navigation
 
 	useEffect(() => {
 		if (accessToken && exp) {
@@ -70,7 +70,7 @@ export function SecuritySettingsForm() {
 					visible: true,
 					description: 'Não foi possível resetar sua senha. Tente novamente mais tarde.',
 				})
-				popToTop()
+				navigate.navigation.goBack()
 			}
 		}
 	}, [accessToken, exp])
@@ -78,14 +78,14 @@ export function SecuritySettingsForm() {
 		try {
 			await patchUsers({ id: userId, cpf: cpf, password: newPassword })
 			dispatch(clearPasswordRecovery())
-			popToTop()
+			navigate.navigation.goBack()
 		} catch (error) {
 			console.log(error)
 			setModal({
 				visible: true,
 				description: 'Não foi possível resetar sua senha. Tente novamente mais tarde.',
 			})
-			popToTop()
+			navigate.navigation.goBack()
 		}
 	}
 

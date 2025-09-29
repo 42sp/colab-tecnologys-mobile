@@ -11,7 +11,7 @@ export interface Construction {
 	expected_end_date: Date
 	description: string
 	is_active: boolean
-	updated_at: Date
+	updated_at: string
 	created_at: Date
 }
 

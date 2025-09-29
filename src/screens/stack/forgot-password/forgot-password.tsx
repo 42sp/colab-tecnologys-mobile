@@ -22,7 +22,7 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordType = z.infer<typeof forgotPasswordSchema>
 
 export default function ForgotPasswordScreen() {
-	const { stack } = useNavigate()
+	const navigate = useNavigate()
 	const { goBack } = useNavigate().navigation
 	const dispatch = useDispatch()
 	const [modal, setModal] = useState<{
@@ -46,17 +46,7 @@ export default function ForgotPasswordScreen() {
 
 	async function onSubmit({ cpf }: ForgotPasswordType) {
 		try {
-			const response = await passwordRecovery({ cpf })
-			console.log('response from forgot password: ', response)
-
-			dispatch(
-				setPasswordRecovery({
-					cpf,
-					phone: response.phone,
-					userId: response.userId,
-				}),
-			)
-			stack('verifyCode')
+			navigate.stack('verifyCode', { flux: 'forgot-password', cpf })
 		} catch (error) {
 			console.log(error)
 			setModal({

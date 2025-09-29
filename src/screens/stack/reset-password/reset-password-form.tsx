@@ -19,6 +19,7 @@ import { createUser } from '@/api/create-user'
 import { saveAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
 import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-store'
 import { setAuth } from '@/libs/redux/auth/auth-slice'
+import { updateState } from '@/libs/redux/user-profile/user-profile-slice'
 
 const SecuritySettingsSchema = z
 	.object({
@@ -42,11 +43,11 @@ type SecuritySettingsType = z.infer<typeof SecuritySettingsSchema>
 
 export function ResetPasswordForm({ route }: any) {
 	const { userId, accessToken, exp } = useSelector((state: RootState) => state.passwordRecovery)
-	const { name, cpf, email, phone, roleId } = useSelector((state: RootState) => state.signUp)
+	const { name, email, phone, roleId } = useSelector((state: RootState) => state.userProfile)
 	const isExpired = accessToken && Date.now() > Number(exp) * 1000
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
-	const { flux } = route.params
+	const { flux, cpf, id } = route.params
 	const [modal, setModal] = useState<{
 		visible: boolean
 		description: string
@@ -85,6 +86,11 @@ export function ResetPasswordForm({ route }: any) {
 			//popToTop()
 			if (flux === 'reset-password') {
 				await patchUsers({ id: userId, cpf: cpf, password: newPassword })
+				console.log('fluxo reset-password')
+			} else if (flux === 'forgot-password') {
+				await patchUsers({ id: id, cpf: cpf, password: newPassword })
+				console.log('fluxo forgot-password')
+				navigate.stack('signIn')
 			} else {
 				const payload = await createUser({
 					cpf,
@@ -94,6 +100,8 @@ export function ResetPasswordForm({ route }: any) {
 					phone,
 					roleId,
 				})
+
+				dispatch(updateState({ name, email, phone, roleId, userId: payload.id }))
 
 				console.log('Dados do novo usuário:', payload)
 
