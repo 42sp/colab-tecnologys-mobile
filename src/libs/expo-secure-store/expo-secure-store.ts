@@ -1,4 +1,6 @@
 import * as SecureStore from 'expo-secure-store'
+import { useDispatch } from 'react-redux'
+import { setAuth } from '../redux/auth/auth-slice'
 
 interface SaveItemType {
 	key: string

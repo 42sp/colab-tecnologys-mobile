@@ -16,7 +16,11 @@ import { LogModal } from '@/components/ui/log-modal'
 import { LoadingModal } from '@/components/ui/loading-modal'
 import { ScrollView } from 'react-native-gesture-handler'
 import Card from '@/components/ui/card'
+import { match, P } from 'ts-pattern'
 import { updatePasswordRecovery } from '@/libs/redux/password-recovery/password-recovery-slice'
+import { is } from 'zod/v4/locales'
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry'
+import { getCurrentDate } from '@/utils'
 
 const otpSchema = z.object({
 	otp: z
@@ -27,12 +31,23 @@ const otpSchema = z.object({
 
 type otpForm = z.infer<typeof otpSchema>
 
-export default function VerifyCode() {
-	const { stack } = useNavigate()
+export default function VerifyCode({ route }: any) {
+	const navigate = useNavigate()
 	const dispatch = useDispatch()
 	const [baseTimer, setBaseTimer] = useState(30)
-	const { phone, cpf } = useSelector((state: RootState) => state.passwordRecovery)
-	const lastFourDigits = phone?.slice(-4)
+	const [response, setResponse] = useState<{
+		code: string
+		expiration: string
+		id: string
+		phone: string
+	}>({
+		code: '',
+		expiration: '',
+		id: '',
+		phone: '',
+	})
+	const [code, setCode] = useState<string[]>(['', '', '', '', '', ''])
+	const { cpf, flux, phone } = route.params
 
 	const [modal, setModal] = useState<{
 		visible: boolean
@@ -56,6 +71,22 @@ export default function VerifyCode() {
 	})
 
 	useEffect(() => {
+		//const s = `${new Date(new Date().getTime() + 10 * 60000).toLocaleString('sv-SE', { timeZone: 'America/Sao_Paulo' }).replace(' ', 'T') + '.' + String(new Date().getMilliseconds()).padStart(3, '0')}`
+
+		const expirationDate = response?.expiration
+		const currentDate = getCurrentDate()
+
+		console.log('expirationDate', expirationDate, currentDate)
+
+		const isValid = verifyCode(code)
+		console.log(
+			'code',
+			code.join('').length,
+			//new Date(new Date(expirationDate) - currentDate).getMinutes(),
+		)
+	}, [response, code])
+
+	useEffect(() => {
 		if (timer > 0) {
 			const interval = setInterval(() => {
 				setTimer((prev) => prev - 1)
@@ -67,9 +98,74 @@ export default function VerifyCode() {
 		}
 	}, [timer])
 
-	async function onSubmit(data: otpForm) {
+	useEffect(() => {
+		sendCode()
+	}, [])
+
+	useEffect(() => {
+		console.log('response no verify-code: ', response)
+	}, [response])
+
+	const verifyCode = (enteredCode: string[]) => {
+		const expiration = response.expiration
+		const comparisson = response.code
+		match({ enteredCode, expiration, comparisson })
+			.with(
+				{
+					expiration: P.when((e) => {
+						if (!e) return false
+						const expirationDate = new Date(e)
+						console.log('expirationDate', expirationDate)
+						return getCurrentDate().getTime() > expirationDate.getTime()
+					}),
+				},
+				(_e) =>
+					setModal({
+						visible: true,
+						description: 'Código expirado. Solicite um novo código.',
+					}),
+			)
+			.with(
+				{
+					enteredCode: P.when((c) => c.join('').length === 6),
+
+					comparisson: P.string,
+				},
+				(obj) => {
+					const code = obj.enteredCode.join('')
+					const comparisson = obj.comparisson.replace('-', '')
+					if (code === comparisson) {
+						console.log('Código válido:', code)
+						navigate.stack('resetPassword', { flux, cpf, id: response.id })
+					} else {
+						setModal({
+							visible: true,
+							description: 'Código inválido. Tente novamente.',
+						})
+					}
+				},
+			)
+			.otherwise(() => {})
+	}
+
+	async function sendCode() {
 		try {
-			const response = await passwordRecovery({ cpf, code: data.otp })
+			console.log('Enviando código para', phone)
+			const response = await passwordRecovery({ cpf, phone })
+			setResponse({
+				code: response.code,
+				expiration: response.expiration,
+				id: response?.userId ?? '',
+				phone: response?.phone ?? phone,
+			})
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	/*async function onSubmit(data: otpForm) {
+		try {
+			const response = await passwordRecovery({ cpf })
 			console.log('response', response)
 
 			dispatch(
@@ -87,14 +183,21 @@ export default function VerifyCode() {
 				description: 'Código inválido. Tente novamente.',
 			})
 		}
-	}
+	}*/
 
-	// const handleCellTextChange = async (text: string, i: number) => {
-	// 	if (i === 0) {
-	// 	  const clippedText = await Clipboard.getStringAsync();
-	// 	  if (clippedText.slice(0, 1) === text) {
-	// 		input.current?.setValue(clippedText, true);
-	// 	  }
+	const handleCellTextChange = async (text: string, i: number) => {
+		/*if (i === 0) {
+		  const clippedText = await Clipboard.getStringAsync();
+		  if (clippedText.slice(0, 1) === text) {
+			input.current?.setValue(clippedText, true);
+		  }
+		}*/
+		setCode((prevCount) => {
+			const newCode = [...prevCount]
+			newCode[i] = text
+			return newCode
+		})
+	}
 	// 	}
 	//   };
 
@@ -123,7 +226,7 @@ export default function VerifyCode() {
 								</Text>
 								<View className="mt-2 flex-row justify-center gap-2">
 									<Text className="font-inter-bold text-xl text-gray-500">
-										(XX) XXXXX-{lastFourDigits}
+										(XX) XXXXX-{response?.phone?.slice(-4)}
 									</Text>
 									<FontAwesome name="whatsapp" size={24} color="#25D366" />
 								</View>
@@ -138,7 +241,7 @@ export default function VerifyCode() {
 									<View>
 										<OTPTextView
 											handleTextChange={onChange}
-											// handleCellTextChange={handleCellTextChange}
+											handleCellTextChange={handleCellTextChange}
 											inputCount={6}
 											keyboardType="numeric"
 											tintColor={'#d16a32'}
@@ -160,8 +263,6 @@ export default function VerifyCode() {
 							<Text className="pb-2 text-center font-inter text-red-500">{errors.otp.message}</Text>
 						)}
 
-						<Button title="Verificar" onPress={handleSubmit(onSubmit)} disabled={isSubmitting} />
-
 						<View className=" items-center gap-4 p-4">
 							<Text className=" font-inter font-bold text-blue-400">
 								Aguarde {formatTimer(timer)} para enviar novamente
@@ -175,6 +276,7 @@ export default function VerifyCode() {
 									setBaseTimer(newBase)
 									setTimer(newBase)
 									setIsButtonDisabled(true)
+									sendCode()
 								}}
 								disabled={isButtonDisabled}
 							>

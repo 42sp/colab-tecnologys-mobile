@@ -18,36 +18,26 @@ import { saveAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
 import { LoadingModal } from '@/components/ui/loading-modal'
 import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-store'
 import { mask, unMask } from 'react-native-mask-text'
+import { setSignUp } from '@/libs/redux/sign-up/signup-slice'
+import { passwordRecovery } from '@/api/password-recovery'
 
-const signUpSchema = z
-	.object({
-		name: z.string().nonempty('Nome é obrigatório'),
-		email: z.string(),
-		cpf: z.string().length(11, 'CPF deve conter 11 caracteres'),
-		phone: z.string().nonempty('Número de telefone é obrigatório'),
-		jobTitle: z.string().nonempty('Função é obrigatória'),
-		password: z
-			.string()
-			.min(6, 'Senha deve ter no mínimo 6 caracteres')
-			.regex(/[0-9]/, 'Senha deve conter pelo menos 1 número')
-			.regex(/[a-z]/, 'Senha deve conter pelo menos 1 letra minúscula')
-			.regex(/[A-Z]/, 'Senha deve conter pelo menos 1 letra maiúscula')
-			.regex(/[^A-Za-z0-9]/, 'Senha deve conter pelo menos 1 caractere especial'),
-		confirmPassword: z.string().nonempty('Confirme sua senha'),
-	})
-	.refine((data) => data.password === data.confirmPassword, {
-		message: 'As senhas não correspondem',
-		path: ['confirmPassword'],
-	})
+const signUpSchema = z.object({
+	name: z.string().nonempty('Nome é obrigatório'),
+	email: z.string(),
+	cpf: z.string().length(11, 'CPF deve conter 11 caracteres'),
+	phone: z.string().nonempty('Número de telefone é obrigatório'),
+	jobTitle: z.string().nonempty('Função é obrigatória'),
+})
 
 type SignUpType = z.infer<typeof signUpSchema>
 
 type RolesType = {
 	id: string
+	role_name: string
 } & ItemType
 
 export function SignUpForm() {
-	const { goBack } = useNavigate().navigation
+	const navigate = useNavigate()
 	const [hidePassword, setHidePassword] = useState(true)
 	const [modal, setModal] = useState<{
 		visible: boolean
@@ -69,17 +59,19 @@ export function SignUpForm() {
 			cpf: '',
 			phone: '',
 			jobTitle: '',
-			password: '',
-			confirmPassword: '',
+			//password: '',
+			//confirmPassword: '',
 		},
 	})
 	const [rolesList, setRolesList] = useState<RolesType[]>([])
 	const dispatch = useDispatch()
 
 	async function fetchRolesList() {
+		console.log('fetchRolesList')
 		try {
-			const roles = await getRoles()
-			const list = roles.data.map(({ id, role_name }) => ({ id, label: role_name }))
+			const roles = (await getRoles()) as any
+			console.log('roles', roles)
+			const list = roles.map(({ id, role_name }: any) => ({ id, label: role_name }))
 			setRolesList(list)
 		} catch (error) {
 			console.log(error)
@@ -92,14 +84,19 @@ export function SignUpForm() {
 
 	async function onSubmit(profile: SignUpType) {
 		console.log('Dados de registro ', profile)
+		const jobTitle = rolesList.find((r) => r.id === profile.jobTitle)?.role_name
+		const role_id = profile.jobTitle
+		dispatch(setSignUp({ ...profile, jobTitle: jobTitle || '', roleId: role_id }))
+		//await passwordRecovery({ cpf: profile.cpf, phone: profile.phone })
+		navigate.stack('verifyCode', { flux: 'first-access', cpf: profile.cpf, phone: profile.phone })
 		try {
-			await createUser({
+			/*await createUser({
 				cpf: profile.cpf,
 				password: profile.password,
-			})
-			const auth = await signIn({ cpf: profile.cpf, password: profile.password })
-			const { payload } = auth.authentication
-			await saveAuthSecureStore([
+			})*/
+			//const auth = await signIn({ cpf: profile.cpf, password: profile.password })
+			//const { payload } = auth.authentication
+			/*await saveAuthSecureStore([
 				{ key: 'token', value: auth.accessToken },
 				{ key: 'expiryDate', value: payload.exp.toString() },
 				{ key: 'userid', value: payload.sub.toString() },
@@ -110,7 +107,7 @@ export function SignUpForm() {
 				phone: profile.phone,
 				role_id: profile.jobTitle,
 			})
-			await loadAuthSecureStore(dispatch)
+			await loadAuthSecureStore(dispatch)*/
 		} catch (error) {
 			console.log(error)
 			setModal({
@@ -221,50 +218,6 @@ export function SignUpForm() {
 				/>
 				{errors.jobTitle && <Text className="text-red-500">{errors.jobTitle.message}</Text>}
 			</View>
-			<View className="gap-1">
-				<Text>Senha *</Text>
-				<Controller
-					control={control}
-					name="password"
-					render={({ field: { onChange, value } }) => (
-						<Input
-							placeholder="Digite sua senha"
-							IconLeft={'lock'}
-							IconRight={hidePassword ? 'eye' : 'eye-off'}
-							iconPress={() => setHidePassword(!hidePassword)}
-							secureTextEntry={hidePassword}
-							className="self-center"
-							value={value}
-							onChangeText={onChange}
-							hasError={!!errors.password}
-						/>
-					)}
-				/>
-				{errors.password && <Text className="text-red-500">{errors.password.message}</Text>}
-			</View>
-			<View className="gap-1">
-				<Text>Confirmar senha *</Text>
-				<Controller
-					control={control}
-					name="confirmPassword"
-					render={({ field: { onChange, value } }) => (
-						<Input
-							placeholder="Confirme sua senha"
-							IconLeft={'lock'}
-							IconRight={hidePassword ? 'eye' : 'eye-off'}
-							iconPress={() => setHidePassword(!hidePassword)}
-							secureTextEntry={hidePassword}
-							className="self-center"
-							onChangeText={onChange}
-							value={value}
-							hasError={!!errors.confirmPassword}
-						/>
-					)}
-				/>
-				{errors.confirmPassword && (
-					<Text className="text-red-500">{errors.confirmPassword.message}</Text>
-				)}
-			</View>
 
 			<Button
 				title="Criar conta"
@@ -277,7 +230,7 @@ export function SignUpForm() {
 					Já tem uma conta?
 					<Text
 						onPress={() => {
-							goBack()
+							navigate.navigation.goBack()
 						}}
 						className="font-inter-bold text-blue-500"
 					>

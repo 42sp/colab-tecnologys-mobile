@@ -4,10 +4,9 @@ import { Button } from '@/components/ui/button'
 import { PaintRoller, Building2, Blocks, BrickWall, User, CheckCheck } from 'lucide-react-native'
 import { Task } from '@/api/get-tasks'
 import { useSelector } from 'react-redux'
-import { getRoles, Roles } from '@/api/get-roles'
 import { useEffect, useState } from 'react'
 import { patchTasks } from '@/api/patch-tasks'
-import { selectRoleId, selectUserId } from '@/libs/redux/user-profile/user-profile-slice'
+import { RootState } from '@/libs/redux/store'
 
 interface ActivityCardProps extends Task {}
 
@@ -26,23 +25,14 @@ export function ActivityCard({
 	const title = `${service_type} - Parede ${service_stage} - ${service_floor} - Apt. ${service_apartment} - Torre ${service_tower}`
 	const time = new Date(created_at as string)
 	const [isVisibleApprove, setIsVisibleApprove] = useState(false)
+	const { hierarchy_level } = useSelector((state: RootState) => state.roles)
 	const [statusTask, setStatusTask] = useState(status)
 
-	const userId = useSelector(selectUserId)
-	const roleId = useSelector(selectRoleId)
-	const validateRole = async () => {
-		try {
-			if (!roleId) return
-			const role = (await getRoles({ id: roleId })) as Roles
-			if (role.hierarchy_level >= 50) setIsVisibleApprove(true)
-		} catch (error) {
-			console.log(error)
-		}
-	}
+	const { userId, roleId } = useSelector((state: RootState) => state.userProfile)
 
 	useEffect(() => {
-		validateRole()
-	}, [])
+		if (hierarchy_level >= 50) setIsVisibleApprove(true)
+	}, [hierarchy_level])
 
 	async function handlePatchTasks() {
 		try {

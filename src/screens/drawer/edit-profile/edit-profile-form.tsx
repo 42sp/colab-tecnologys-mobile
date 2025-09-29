@@ -84,7 +84,7 @@ export function EditProfileForm() {
 					state: updated.state,
 					postcode: updated.postcode,
 					photo: updated.photo,
-					updatedAt: updated.updated_at,
+					updatedAt: updated.updated_at.toString(),
 				}),
 			)
 			setModal({ visible: true, status: 'success', description: 'Perfil atualizado!' })
@@ -145,7 +145,8 @@ export function EditProfileForm() {
 							render={({ field: { onChange, value } }) => (
 								<Input
 									placeholder="seu.email@email.com"
-									keyboardType="email-address"									autoCapitalize="none"
+									keyboardType="email-address"
+									autoCapitalize="none"
 									IconLeft={'mail'}
 									className="self-center"
 									onChangeText={onChange}

@@ -6,11 +6,11 @@ export interface Roles {
 	role_description: string
 	hierarchy_level: number
 	is_active: boolean
-	updated_at: Date
-	created_at: Date
+	updated_at: string
+	created_at: string
 }
 
-interface GetRolesResponse {
+export interface GetRolesResponse {
 	total: number
 	skip: number
 	limit: number
@@ -23,10 +23,11 @@ type GetRolesProps = {
 
 export async function getRoles({ id }: GetRolesProps = {}) {
 	if (id) {
-		const response = await api.get<GetRolesResponse>(`/roles/${id}`)
+		const response = await api.get<Roles>(`/roles/${id}`)
 		return response.data
 	} else {
-		const response = await api.get<Roles>(`/roles`)
-		return response.data
+		const response = await api.get<GetRolesResponse>(`/roles`)
+		console.log('response', response.data.data)
+		return response.data.data.filter((role) => role.id !== '7bbe6f8a-f4f6-4dcd-85ca-ca692a400942')
 	}
 }

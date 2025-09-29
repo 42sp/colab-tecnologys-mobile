@@ -1,7 +1,7 @@
 import { KeyboardAvoidingView, Image, Text, View, Pressable, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Card from '@/components/ui/card'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { RegisterServiceForm } from '@/screens/drawer/register-service/register-service-form'
 import { RadioCheckOption } from '@/components/ui/input-radio'
 import { useForm, Controller } from 'react-hook-form'
@@ -21,6 +21,9 @@ import { useNavigate } from '@/libs/react-navigation/useNavigate'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { LogModal } from '@/components/ui/log-modal'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
+import LoadingButton from '@/components/ui/loadingButton'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/libs/redux/store'
 
 const registerServiceSchema = z
 	.object({
@@ -59,19 +62,21 @@ const registerServiceSchema = z
 export type RegisterServiceType = z.infer<typeof registerServiceSchema>
 
 export default function RegisterServiceScreen() {
-	const { drawer } = useNavigate()
 	const navigation = useNavigation<DrawerNavigationProp<any>>()
 
+	const { userId } = useSelector((state: RootState) => state.userProfile)
 	const [modalVisible, setModalVisible] = useState(false)
 	const [allServices, setAllServices] = useState<Services[]>([])
 	const [serviceTypes, setServiceTypes] = useState<ServiceTypes[]>([])
 	const [residentials, setResidentials] = useState<Construction[]>([])
 	const [profiles, setProfiles] = useState<Profile[]>([])
 	const [resIndex, setResIndex] = useState(0)
+	const [registering, setRegistering] = useState(false)
 	const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null)
 	const [modal, setModal] = useState<{
 		visible: boolean
 		description: string
+		status?: 'error' | 'success'
 	}>({
 		visible: false,
 		description: '',
@@ -124,7 +129,22 @@ export default function RegisterServiceScreen() {
 		}, []),
 	)
 
+	useEffect(() => {
+		if (profiles.length > 0) {
+			reset((prev) => ({
+				...prev,
+				workers: [
+					{
+						percent: 100,
+						worker_id: userId || '', // valor padrão: primeiro perfil
+					},
+				],
+			}))
+		}
+	}, [profiles, reset])
+
 	async function onSubmit(data: RegisterServiceType) {
+		setRegistering(true)
 		try {
 			console.log('Dados do Serviço: ', JSON.stringify(data))
 
@@ -152,6 +172,11 @@ export default function RegisterServiceScreen() {
 			reset()
 			setResIndex(0)
 			setSelectedServiceId(null)
+			setModal({
+				visible: true,
+				status: 'success',
+				description: 'Serviço registrado com sucesso!',
+			})
 		} catch (error) {
 			setModal({
 				visible: true,
@@ -159,6 +184,7 @@ export default function RegisterServiceScreen() {
 			})
 			console.error('Error creating tasks:', error)
 		}
+		setRegistering(false)
 	}
 
 	function handleSelectResidential(index: number) {
@@ -244,18 +270,21 @@ export default function RegisterServiceScreen() {
 							className="flex-1"
 							onPress={() => navigation.navigate('home')}
 						/>
-						<Button
-							title="Enviar"
-							className="flex-1"
-							variant="gradient"
+
+						<LoadingButton
+							title={registering ? 'Registrando…' : 'Enviar'}
+							loading={registering}
 							onPress={handleSubmit(onSubmit)}
+							className="flex-1"
 						/>
 					</View>
 					<LogModal
 						visible={modal.visible}
+						status={modal.status}
 						description={modal.description}
-						onClose={() => setModal({ visible: false, description: '' })}
+						onClose={() => setModal({ visible: false, status: 'error', description: '' })}
 					/>
+
 					{/* </KeyboardAvoidingView> */}
 				</View>
 			</ScrollView>

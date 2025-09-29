@@ -2,22 +2,36 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 
 interface UserProfileState {
-	name?: string
+	name: null | string
 	dateOfBirth?: Date
-	email?: string
+	email: null | string
 	photo?: string
 	registrationCode?: string
-	phone?: string
+	phone: null | string
 	address?: string
 	city?: string
 	state?: string
 	postcode?: string
-	updatedAt?: Date
-	roleId?: string
+	updatedAt?: string
+	roleId: null | string
 	userId?: string
 }
 
-const initialState: UserProfileState = {}
+const initialState: UserProfileState = {
+	name: null,
+	dateOfBirth: undefined,
+	email: null,
+	photo: '',
+	registrationCode: '',
+	phone: '',
+	address: '',
+	city: '',
+	state: '',
+	postcode: '',
+	updatedAt: '',
+	roleId: '',
+	userId: '',
+}
 
 const userProfileSlice = createSlice({
 	name: 'user-profile',
@@ -29,23 +43,19 @@ const userProfileSlice = createSlice({
 		updateProfile(state, { payload }: PayloadAction<Partial<UserProfileState>>) {
 			return { ...state, ...payload }
 		},
+		selectU(state, { payload }: PayloadAction<UserProfileState>) {
+			return { ...state, ...payload }
+		},
+		setPhoto: (state, action: PayloadAction<string>) => {
+			state.photo = action.payload
+		},
+		updateState: (state, action: PayloadAction<Partial<UserProfileState>>) => {
+			Object.assign(state, action.payload)
+		},
 		clearProfile: () => initialState,
 	},
 })
 
-export const selectName = (state: RootState) => state.userProfile.name
-export const selectDateOfBirth = (state: RootState) => state.userProfile.dateOfBirth
-export const selectEmail = (state: RootState) => state.userProfile.email
-export const selectPhoto = (state: RootState) => state.userProfile.photo
-export const selectRegistrationCode = (state: RootState) => state.userProfile.registrationCode
-export const selectPhone = (state: RootState) => state.userProfile.phone
-export const selectAddress = (state: RootState) => state.userProfile.address
-export const selectCity = (state: RootState) => state.userProfile.city
-export const selectRegion = (state: RootState) => state.userProfile.state
-export const selectPostcode = (state: RootState) => state.userProfile.postcode
-export const selectUpdatedAt = (state: RootState) => state.userProfile.updatedAt
-export const selectRoleId = (state: RootState) => state.userProfile.roleId
-export const selectUserId = (state: RootState) => state.userProfile.userId
-
-export const { setProfile, updateProfile, clearProfile } = userProfileSlice.actions
+export const { setProfile, updateProfile, clearProfile, updateState, setPhoto } =
+	userProfileSlice.actions
 export default userProfileSlice.reducer

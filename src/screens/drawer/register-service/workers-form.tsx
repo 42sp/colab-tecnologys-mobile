@@ -62,9 +62,14 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 			update(index, updatedWorker)
 		})
 
+		// Pega os IDs já selecionados
+		const selectedIds = rows.map((w) => w.worker_id).filter(Boolean)
+		// Encontra o primeiro worker disponível
+		const firstAvailable = workerOptions.find((opt) => !selectedIds.includes(opt.value))
+
 		append({
 			percent: newDistribution[newTotal - 1],
-			worker_id: '',
+			worker_id: firstAvailable ? firstAvailable.value : '', // valor padrão
 		})
 	}
 
