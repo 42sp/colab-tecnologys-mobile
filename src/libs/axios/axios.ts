@@ -55,7 +55,7 @@ api.interceptors.response.use(
 					console.log('Erro de chave duplicada detectado:', e),
 				)
 				.otherwise(() => false)
-			console.log('[AXIOS][RESPONSE][ERROR][DATA]:', error.response.data)
+			//console.log('[AXIOS][RESPONSE][ERROR][DATA]:', error.response.data)
 			console.log('[AXIOS][RESPONSE][ERROR][STATUS]:', error.response.status)
 		}
 		return Promise.reject(error)

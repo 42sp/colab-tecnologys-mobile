@@ -2,14 +2,12 @@ import { api } from '@/libs/axios/axios'
 
 interface UploadsProps {
 	uri: string
-	id?: string
+	userId?: string
 }
 
 interface UploadsResponse {
-	data: {
-		contentType: string
-		photo: string
-	}
+	contentType: string
+	photo: string
 }
 
 export async function uploads(data: UploadsProps) {

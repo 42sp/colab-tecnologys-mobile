@@ -115,7 +115,11 @@ export default function VerifyCode() {
 						return currentDate.getTime() > expirationDate.getTime()
 					}),
 				},
-				(e) => console.log('expired!', e),
+				(_e) =>
+					setModal({
+						visible: true,
+						description: 'Código expirado. Solicite um novo código.',
+					}),
 			)
 			.with(
 				{
@@ -130,7 +134,10 @@ export default function VerifyCode() {
 						console.log('Código válido:', code)
 						navigate.stack('resetPassword', { flux: 'first-access' })
 					} else {
-						console.log('Código inválido')
+						setModal({
+							visible: true,
+							description: 'Código inválido. Tente novamente.',
+						})
 					}
 				},
 			)

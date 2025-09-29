@@ -32,9 +32,16 @@ const userProfileSlice = createSlice({
 		selectU(state, { payload }: PayloadAction<UserProfileState>) {
 			return { ...state, ...payload }
 		},
+		setPhoto: (state, action: PayloadAction<string>) => {
+			state.photo = action.payload
+		},
+		updateState: (state, action: PayloadAction<Partial<UserProfileState>>) => {
+			Object.assign(state, action.payload)
+		},
 		clearProfile: () => initialState,
 	},
 })
 
-export const { setProfile, updateProfile, clearProfile } = userProfileSlice.actions
+export const { setProfile, updateProfile, clearProfile, updateState, setPhoto } =
+	userProfileSlice.actions
 export default userProfileSlice.reducer

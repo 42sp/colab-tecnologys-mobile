@@ -46,11 +46,11 @@ export function SignInForm() {
 			console.log('Resposta do signIn:', auth)
 
 			const { accessToken } = auth
-			const { payload } = auth.authentication
+			const { id } = auth.user
 			await saveAuthSecureStore([
 				{ key: 'token', value: accessToken },
-				{ key: 'expiryDate', value: payload.exp.toString() },
-				{ key: 'userid', value: payload.sub.toString() },
+				{ key: 'profile_id', value: id },
+				{ key: 'userid', value: id },
 			])
 			await loadAuthSecureStore(dispatch)
 			console.log('LOG: Usuário autenticado a partir do login manual')

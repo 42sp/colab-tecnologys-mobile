@@ -10,7 +10,7 @@ export interface Roles {
 	created_at: Date
 }
 
-interface GetRolesResponse {
+export interface GetRolesResponse {
 	total: number
 	skip: number
 	limit: number
@@ -28,6 +28,6 @@ export async function getRoles({ id }: GetRolesProps = {}) {
 	} else {
 		const response = await api.get<GetRolesResponse>(`/roles`)
 		console.log('response', response.data.data)
-		return response.data.data.filter(role => role.id !== '7bbe6f8a-f4f6-4dcd-85ca-ca692a400942')
+		return response.data.data.filter((role) => role.id !== '7bbe6f8a-f4f6-4dcd-85ca-ca692a400942')
 	}
 }

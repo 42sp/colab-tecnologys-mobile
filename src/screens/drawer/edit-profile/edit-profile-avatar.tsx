@@ -9,7 +9,7 @@ import { uploads } from '@/api/post-uploads'
 import { getProfile } from '@/api/get-profile'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
-import { selectUserId, updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
+import { setPhoto, updateProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { LogModal } from '@/components/ui/log-modal'
 import { API_URL } from '@env'
 
@@ -20,7 +20,7 @@ type EditProfileAvatarProps = {
 export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 	const { setManipulatedImage, renderedImage } = useImageManager()
 	//const [_status, _requestPermission] = useMediaLibraryPermissions()
-	const profile = useSelector((state: RootState) => state.userProfile)
+	const { userId, photo } = useSelector((state: RootState) => state.userProfile)
 	const dispatch = useDispatch()
 	const [image, setImage] = useState<string | null>(null)
 	const [modal, setModal] = useState<{
@@ -28,26 +28,29 @@ export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 		status: 'error' | 'success'
 		description: string
 	}>({ visible: false, status: 'error', description: '' })
-	const userId = useSelector(selectUserId)
+	//const userId = useSelector(selectUserId)
 
 	useEffect(() => {
 		const handleRenderedImage = async () => {
 			if (!renderedImage) return
-			setImage(renderedImage.uri)
 			try {
-				const result = await uploads({ uri: `data:image/jpeg;base64,${renderedImage.base64}` })
+				const result = await uploads({
+					uri: `data:image/jpeg;base64,${renderedImage.base64}`,
+					userId: userId,
+				})
 				if (result) {
-					const user = await getProfile({ userId: userId })
-					dispatch(updateProfile({ photo: user.data[0].photo, updatedAt: user.data[0].updated_at }))
+					console.log('result upload profile-avatar: ', result)
+					dispatch(setPhoto(result.photo))
 					setModal({
 						visible: true,
 						status: 'success',
 						description: 'Foto de perfil alterada!',
 					})
+					setImage(result.photo)
 				}
 			} catch (error) {
-				console.log('error returned edit-profile-avatar: ', error)
-				setImage(null)
+				console.log('error returned profile-avatar: ', error)
+				setImage('')
 				setModal({
 					visible: true,
 					status: 'error',
@@ -57,12 +60,6 @@ export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 		}
 		handleRenderedImage()
 	}, [renderedImage])
-
-	const photoUrl = profile?.photo
-		? `${API_URL}/images/${profile.photo}?t=${profile.updatedAt}`
-		: null
-
-	const imageUrl = image ? { uri: image } : photoUrl ? { uri: photoUrl } : avatar
 
 	async function updateAvatar() {
 		const result = await launchImageLibraryAsync({
@@ -91,7 +88,10 @@ export function EditProfileAvatar({ avatar }: EditProfileAvatarProps) {
 		<View className="items-center gap-5 ">
 			<View className="items-center">
 				<View className="size-36 rounded-full border border-neutral-100 bg-white p-1">
-					<Image source={imageUrl} className="h-full w-full rounded-full" />
+					<Image
+						source={{ uri: `${API_URL}/images/${photo}` }}
+						className="h-full w-full rounded-full"
+					/>
 					<Button variant="rounded" className="mt-[-35px] h-10 w-10 self-end">
 						<Feather name="user" color={'#ffff'} size={14} />
 					</Button>

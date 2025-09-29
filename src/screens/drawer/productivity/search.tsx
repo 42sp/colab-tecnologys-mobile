@@ -1,9 +1,9 @@
 import { View, Text, TouchableOpacity, FlatList } from 'react-native'
 import { Input } from '@/components/ui/input'
 import { useSelector } from 'react-redux'
-import { selectRoleId } from '@/libs/redux/user-profile/user-profile-slice'
 import { getRoles } from '@/api/get-roles'
 import { useEffect, useState } from 'react'
+import { RootState } from '@/libs/redux/store'
 
 type SearchProps = {
 	onSearch: (term: string) => void
@@ -11,7 +11,7 @@ type SearchProps = {
 }
 
 export function Search({ onSearch, workers }: SearchProps) {
-	const roleId = useSelector(selectRoleId)
+	const { roleId } = useSelector((state: RootState) => state.userProfile)
 	const [roleName, setRoleName] = useState<string>()
 	const isVisible = roleName ? ['admin', 'oficial'].includes(roleName.toLowerCase()) : false
 	const [searchTerm, setSearchTerm] = useState('')
