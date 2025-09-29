@@ -1,6 +1,4 @@
 import { Text, View } from 'react-native'
-import dayjs from "dayjs"
-
 
 export function ActivityCardDate({ date }: { date: string }) {
 
