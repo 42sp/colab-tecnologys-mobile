@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Text, View } from 'react-native'
 import Card from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PaintRoller, Building2, Blocks, BrickWall, User, CheckCheck } from 'lucide-react-native'
@@ -28,7 +28,7 @@ export function ActivityCard({
 	const { hierarchy_level } = useSelector((state: RootState) => state.roles)
 	const [statusTask, setStatusTask] = useState(status)
 
-	const { userId, roleId } = useSelector((state: RootState) => state.userProfile)
+	const { userId } = useSelector((state: RootState) => state.userProfile)
 
 	useEffect(() => {
 		if (hierarchy_level >= 50) setIsVisibleApprove(true)
@@ -91,21 +91,35 @@ export function ActivityCard({
 							<Text className="flex-1 font-inter text-sm">{construction_name}</Text>
 						</View>
 					</View>
-					{isVisibleApprove && (
-						<View className="self-end">
-							<Button
-								className="h-10 w-32 flex-row gap-1 bg-green-800"
-								variant="rounded"
-								onPress={() => handlePatchTasks()}
-								disabled={statusTask === 'approved'}
-							>
-								<Text className="font-inter-medium text-neutral-100">
-									{statusTask === 'approved' ? 'Aprovado' : 'Aprovar'}
-								</Text>
-								{statusTask === 'approved' && <CheckCheck stroke="#fff" />}
-							</Button>
-						</View>
-					)}
+					<View className="self-end flex-row gap-3">
+						{!isVisibleApprove && ["pending"].includes(statusTask ?? '') && (
+							<View className="self-end">
+								<View
+									className="h-10 w-32 flex-row gap-1 bg-orange-100 rounded-full items-center justify-center"
+								>
+									<Text className="font-inter-medium text-[#EAB308]">
+										Pendente
+									</Text>
+									{statusTask === 'approved' && <CheckCheck stroke="#fff" />}
+								</View>
+							</View>
+						)}
+						{isVisibleApprove && (
+							<View className="self-end">
+								<Button
+									className="h-10 w-32 flex-row gap-1 bg-green-800"
+									variant="rounded"
+									onPress={() => handlePatchTasks()}
+									disabled={statusTask === 'approved'}
+								>
+									<Text className="font-inter-medium text-neutral-100">
+										{statusTask === 'approved' ? 'Aprovado' : 'Aprovar'}
+									</Text>
+									{statusTask === 'approved' && <CheckCheck stroke="#fff" />}
+								</Button>
+							</View>
+						)}
+					</View>
 				</Card.Body>
 			</Card>
 		</View>
