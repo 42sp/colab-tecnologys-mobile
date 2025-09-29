@@ -32,7 +32,7 @@ export async function loadAuthSecureStore(dispatch: Dispatch) {
 			state: userProfile.state,
 			postcode: userProfile.postcode,
 			photo: userProfile.photo,
-			updatedAt: userProfile.updated_at,
+			updatedAt: userProfile.updated_at.toString(),
 			roleId: userProfile.role_id || undefined,
 			userId: userProfile.user_id,
 		}),

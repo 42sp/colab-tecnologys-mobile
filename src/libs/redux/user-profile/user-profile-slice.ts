@@ -12,7 +12,7 @@ interface UserProfileState {
 	city?: string
 	state?: string
 	postcode?: string
-	updatedAt?: Date
+	updatedAt?: string
 	roleId?: string
 	userId?: string
 }
