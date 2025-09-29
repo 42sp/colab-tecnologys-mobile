@@ -8,7 +8,7 @@ import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-s
 
 export default function RootNavigator() {
 	const dispatch = useDispatch()
-	const { token, expiry } = useSelector((state: RootState) => state.auth)
+	const { token } = useSelector((state: RootState) => state.auth)
 	const [loading, setLoading] = useState<boolean>(true)
 
 	useEffect(() => {
@@ -25,11 +25,8 @@ export default function RootNavigator() {
 		loadAuth()
 	}, [])
 
-	const now = Math.floor(Date.now() / 1000)
-	const isAuthenticated = !!token && !!expiry && parseInt(expiry) >= now
-
 	if (loading) {
 		return <LoadingModal visible={loading} />
 	}
-	return isAuthenticated ? <DrawerLayout /> : <StackLayout />
+	return token ? <DrawerLayout /> : <StackLayout />
 }

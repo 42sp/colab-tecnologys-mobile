@@ -1,8 +1,12 @@
 import { api } from '@/libs/axios/axios'
 
 interface CreateUserProps {
-	cpf: string
+	cpf: string | null
 	password: string
+	name: string | null
+	email: string | null
+	phone: string | null
+	roleId: string | null
 }
 
 interface UserResponse {
@@ -13,9 +17,10 @@ interface UserResponse {
 	is_available: boolean
 	created_at: Date
 	updated_at: Date
+	accessToken: string
 }
 
-export async function createUser({ cpf, password }: CreateUserProps) {
-	const response = await api.post<UserResponse>('/users', { cpf, password })
+export async function createUser(data: CreateUserProps) {
+	const response = await api.post<UserResponse>('/users', data)
 	return response.data
 }

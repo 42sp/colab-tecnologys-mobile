@@ -3,14 +3,14 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { SecuritySettingsForm } from './security-settings-form'
 import { ScrollView } from 'react-native-gesture-handler'
 
-export default function SecuritySettingsScreen() {
+export default function SecuritySettingsScreen({ route }: any) {
 	return (
-		<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-			<SafeAreaView className="bg-[#F9FAFB]" edges={['bottom']}>
+		<SafeAreaView edges={[]}>
+			<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
 				<ScrollView showsVerticalScrollIndicator={false}>
 					<SecuritySettingsForm />
 				</ScrollView>
-			</SafeAreaView>
-		</KeyboardAvoidingView>
+			</KeyboardAvoidingView>
+		</SafeAreaView>
 	)
 }

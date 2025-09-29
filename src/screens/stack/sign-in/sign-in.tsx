@@ -1,4 +1,4 @@
-import { Image, KeyboardAvoidingView, Platform, Text, View } from 'react-native'
+import { Image, KeyboardAvoidingView, Platform, Text, View, Dimensions } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { SignInDivisor } from './sign-in-divisor'
 import { Button } from '@/components/ui/button'
@@ -7,67 +7,65 @@ import { ScrollView } from 'react-native-gesture-handler'
 import { LogModal } from '@/components/ui/log-modal'
 import { useState } from 'react'
 
+const { width, height } = Dimensions.get('window')
+
 export default function SignInScreen() {
-	const [modal, setModal] = useState<{
-		visible: boolean
-		//status: 'success' | 'error'
-		description: string
-	}>({
-		visible: false,
-		//status: 'error',
-		description: '',
-	})
+    const [modal, setModal] = useState<{
+        visible: boolean
+        description: string
+    }>({
+        visible: false,
+        description: '',
+    })
 
-	function handleGoogle() {
-		// try {
+    function handleGoogle() {
+        setModal({
+            visible: true,
+            description: 'Não foi possível entrar com o Google. Tente novamente mais tarde.',
+        })
+    }
 
-		// } catch(error) {
+    return (
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1, backgroundColor: 'white' }}
+            >
+                <ScrollView
+                    contentContainerStyle={{
+                        flexGrow: 1,
+                        justifyContent: 'center',
+                        padding: 24,
+                    }}
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View style={{ flex: 1, justifyContent: 'center' }}>
+                        <Image
+                            source={require('@/assets/tecnologys-logo.png')}
+                            style={{ alignSelf: 'center', marginBottom: 24, width: 180, height: 180, resizeMode: 'contain' }}
+                        />
 
-		setModal({
-			visible: true,
-			//status: 'error',
-			description: 'Não foi possível entrar com o Google. Tente novamente mais tarde.',
-		})
-		// }
-	}
+                        <View style={{ alignItems: 'center', marginBottom: 24 }}>
+                            <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 28 }}>Bem vindo ao Alvenatech</Text>
+                            <Text style={{ marginTop: 8, textAlign: 'center', fontFamily: 'Inter_400Regular', fontSize: 16, color: '#6B7280' }}>
+                                Faça login para continuar
+                            </Text>
+                        </View>
 
-	return (
-		<SafeAreaView className="h-full bg-white">
-			<KeyboardAvoidingView
-				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-				style={{ backgroundColor: 'white' }}
-			>
-				<ScrollView showsVerticalScrollIndicator={false}>
-					<View className="p-10">
-						<Image source={require('@/assets/tecnologys-logo.png')} className="mb-5 self-center" />
+                        <SignInForm />
 
-						<View className="my-5 items-center">
-							<Text className="font-inter-bold text-3xl">Bem vindo ao SEGY</Text>
-							<Text className="mt-2 text-center font-inter text-lg text-neutral-500">
-								Faça login para continuar
-							</Text>
-						</View>
+                        {/* Espaço para outros botões ou divisores, se necessário */}
+                        {/* <SignInDivisor /> */}
+                        {/* <Button title="Entrar com Google" onPress={handleGoogle} /> */}
 
-						<Button
-							title="Entrar com o Google"
-							onPress={handleGoogle}
-							variant="outline"
-							className="my-5 self-center"
-						>
-							<Image source={require('@/assets/google-logo.png')} className="mr-2" />
-						</Button>
-
-						<SignInDivisor text="ou" className="my-5" />
-
-						<SignInForm />
-						<LogModal
-							visible={modal.visible}
-							description={modal.description}
-							onClose={() => setModal({ visible: false, description: '' })}
-						/>
-					</View>
-				</ScrollView>
-			</KeyboardAvoidingView>
-		</SafeAreaView>
-	)
+                        <LogModal
+                            visible={modal.visible}
+                            description={modal.description}
+                            onClose={() => setModal({ visible: false, description: '' })}
+                        />
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
+    )
 }

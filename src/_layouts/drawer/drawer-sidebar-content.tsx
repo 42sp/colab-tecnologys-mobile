@@ -6,22 +6,20 @@ import { type Route } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
 import { resetAuth } from '@/libs/redux/auth/auth-slice'
-import { env } from '@/libs/env'
 import { useState } from 'react'
 import { LogoutModal } from '@/components/ui/logout-modal'
 import { deleteAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
 import { clearTasks } from '@/libs/redux/tasks/tasks-slice'
 import { clearProfile } from '@/libs/redux/user-profile/user-profile-slice'
 import { mask } from 'react-native-mask-text'
-
-const API_URL = env.EXPO_PUBLIC_API_URL
+import { API_URL } from '@env'
 
 export function CustomDrawerContent(props: any) {
 	const { state } = props
 	const profile = useSelector((state: RootState) => state.userProfile)
 	const dispatch = useDispatch()
 	const photoUrl = profile?.photo
-		? `${API_URL}images/${profile.photo}?t=${profile.updatedAt}`
+		? `${API_URL}/images/${profile.photo}?t=${profile.updatedAt}`
 		: null
 	const imageUrl = photoUrl ? { uri: photoUrl } : require('@/assets/default-avatar.png')
 	const [isModalVisible, setIsModalVisible] = useState(false)

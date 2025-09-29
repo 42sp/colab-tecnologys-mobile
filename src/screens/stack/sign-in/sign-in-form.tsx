@@ -41,19 +41,31 @@ export function SignInForm() {
 
 	async function onSubmit(user: SignInType) {
 		try {
+			console.log('Tentando fazer login com:', user)
 			const auth = await signIn({ ...user })
+			console.log('Resposta do signIn:', auth)
+
 			const { accessToken } = auth
-			const { payload } = auth.authentication
+			const { id } = auth.user
 			await saveAuthSecureStore([
 				{ key: 'token', value: accessToken },
-				{ key: 'expiryDate', value: payload.exp.toString() },
-				{ key: 'userid', value: payload.sub.toString() },
+				{ key: 'profile_id', value: id },
+				{ key: 'userid', value: id },
 			])
 			await loadAuthSecureStore(dispatch)
 			console.log('LOG: Usuário autenticado a partir do login manual')
 			drawer('home')
-		} catch (error) {
+		} catch (error: any) {
 			setShowErrorModal(true)
+			if (error.response) {
+				console.log('Erro Axios - response:', error.response)
+				console.log('Erro Axios - data:', error.response.data)
+				console.log('Erro Axios - status:', error.response.status)
+			} else if (error.request) {
+				console.log('Erro Axios - request:', error.request)
+			} else {
+				console.log('Erro desconhecido:', error.message)
+			}
 			console.log('Erro ao fazer login em SignIn. Erro retornado: ', error)
 		}
 	}

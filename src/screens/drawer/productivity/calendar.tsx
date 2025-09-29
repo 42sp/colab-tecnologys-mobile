@@ -1,9 +1,12 @@
-import { useState } from 'react'
 import { CalendarProvider, WeekCalendar } from 'react-native-calendars'
+import type { FC } from 'react'
 
-export function Calendar() {
-	const [selectedDay, setSelectedDay] = useState('2025-09-09')
+type Props = {
+	selectedDay?: string
+	onDayPress?: (dateString: string) => void
+}
 
+export const Calendar: FC<Props> = ({ selectedDay, onDayPress }) => {
 	const productivityByDay: Record<string, number> = {
 		'2025-09-09': 65,
 		'2025-09-10': 95,
@@ -17,10 +20,12 @@ export function Calendar() {
 		return '#F44336' // vermelho
 	}
 
+	const providerDate = selectedDay ?? new Date().toISOString().split('T')[0]
+
 	return (
-		<CalendarProvider date={selectedDay}>
+		<CalendarProvider date={providerDate}>
 			<WeekCalendar
-				onDayPress={(day) => setSelectedDay(day.dateString)}
+				onDayPress={(day) => onDayPress && onDayPress(day.dateString)}
 				markedDates={Object.keys(productivityByDay).reduce(
 					(acc, date) => ({
 						...acc,

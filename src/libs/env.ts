@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 const envScheme = z.object({
-	EXPO_PUBLIC_API_URL: z.string(),
+	API_URL: z.string(),
 })
 
 const { data, error } = envScheme.safeParse(process.env)

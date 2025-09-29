@@ -1,7 +1,7 @@
 import { View, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Feather, MaterialIcons } from '@expo/vector-icons'
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { HomeFilterModal } from './filter-modal'
 import { SummaryCard } from '@/screens/drawer/home/summary-card'
@@ -13,9 +13,13 @@ import { DrawerNavigationProp } from '@react-navigation/drawer'
 import { DrawerParamList } from '@/_layouts/drawer/drawer'
 import { useNavigation } from '@react-navigation/native'
 import { handleFilterChange } from './utils'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useFocusEffect } from '@react-navigation/native'
 
 import { RootState } from '@/libs/redux/store'
+import { ItemType } from '@/components/ui/dropdown'
+import { setTasks } from '@/libs/redux/tasks/tasks-slice'
+import { getTasks } from '@/api/get-tasks'
 
 export type StatusTypes = 'pending' | 'in_progress' | 'completed' | 'approved' | 'rejected'
 
@@ -29,15 +33,55 @@ type ProfileScreenNavigationProp = DrawerNavigationProp<DrawerParamList>
 
 export default function Home() {
 	const navigation = useNavigation<ProfileScreenNavigationProp>()
+	const dispatch = useDispatch()
 
 	const [filter, setFilter] = useState<FilterType>({
 		serviceType: 'Todos',
 		dateRange: { start: null, end: null },
 	})
 	const [showFilter, setShowFilter] = useState(false)
+	// const [inputText, setInputText] = useState('')
+	// const [inputTextListFilter, setTextListFilter] = useState<ItemType[]>([])
 
 	const tasks = useSelector((state: RootState) => state.tasks.tasks)
 	const activityDataList = handleFilterChange(filter, tasks)
+
+	useFocusEffect(
+		useCallback(() => {
+			// This function will be called when the screen comes into focus.
+			const fetchTasks = async () => {
+				const fetchedTasks = await getTasks()
+				dispatch(setTasks(fetchedTasks))
+			}
+			fetchTasks()
+
+			// You can return a cleanup function here.
+			// This function will be called when the screen goes out of focus,
+			// or when the component unmounts.
+			return () => {
+				console.log('MyScreen is no longer focused!')
+			}
+		}, []), // The dependency array ensures the effect runs only once or when dependencies change.
+	)
+
+	// useEffect(() => {
+	// 	console.log('text: ', inputText)
+	// 	const list: ItemType[] = Array.from(
+	// 		new Set(
+	// 			tasks
+	// 				.filter(
+	// 					(item) =>
+	// 						!!item.worker_name &&
+	// 						item.worker_name.toLowerCase().includes(inputText.toLowerCase()),
+	// 				)
+	// 				.map((item) => item.worker_name as string),
+	// 		),
+	// 	).map((name) => ({
+	// 		label: name,
+	// 	}))
+	// 	setTextListFilter(list)
+	// 	console.log(list)
+	// }, [inputText])
 
 	return (
 		<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] px-5 pt-5" edges={['bottom']}>
@@ -48,7 +92,17 @@ export default function Home() {
 						IconLeft="search"
 						placeholder="Procurar tarefas"
 						className="bg-white"
+						// onChangeText={(value) => setInputText(value)}
 					/>
+					{/* <TextDropdown
+						// IconLeft={'briefcase'}
+						// IconRight={'chevron-down'}
+						options={inputTextListFilter}
+						placeholder="Selecione uma opção"
+						onChangeText={() => {
+							console.log('sei lá')
+						}}
+					/> */}
 				</View>
 				<TouchableOpacity
 					className="rounded-lg bg-black p-3"
@@ -84,14 +138,16 @@ export default function Home() {
 							value={activityDataList.pendding}
 							label="Pendentes"
 						/>
-						<TouchableOpacity onPress={() => navigation.navigate('productivity')}>
-							<SummaryCard
-								icon="bar-chart"
-								SumaryVariant="green"
-								value={activityDataList.percent + '%'}
-								label="Produtividade"
-							/>
-						</TouchableOpacity>
+						{filter.serviceType !== 'Todos' && (
+							<TouchableOpacity onPress={() => navigation.navigate('productivity')}>
+								<SummaryCard
+									icon="bar-chart"
+									SumaryVariant="green"
+									value={activityDataList.percent + '%'}
+									label="Produtividade"
+								/>
+							</TouchableOpacity>
+						)}
 					</View>
 				}
 			/>
