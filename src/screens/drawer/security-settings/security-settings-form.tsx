@@ -38,7 +38,6 @@ type SecuritySettingsType = z.infer<typeof SecuritySettingsSchema>
 
 export function SecuritySettingsForm() {
 	const { accessToken, exp } = useSelector((state: RootState) => state.passwordRecovery)
-	const { name, cpf, email, phone, roleId } = useSelector((state: RootState) => state.signUp)
 	const { userId } = useSelector((state: RootState) => state.userProfile)
 	const isExpired = accessToken && Date.now() > Number(exp) * 1000
 	const navigate = useNavigate()
@@ -76,7 +75,7 @@ export function SecuritySettingsForm() {
 	}, [accessToken, exp])
 	async function onSubmit({ newPassword }: SecuritySettingsType) {
 		try {
-			await patchUsers({ id: userId, cpf: cpf, password: newPassword })
+			await patchUsers({ id: userId, password: newPassword })
 			dispatch(clearPasswordRecovery())
 			navigate.navigation.goBack()
 		} catch (error) {
