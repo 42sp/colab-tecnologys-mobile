@@ -24,6 +24,7 @@ export async function loadAuthSecureStore(dispatch: Dispatch) {
 	dispatch(
 		updateState({
 			name: userProfile.name,
+			email: userProfile.email,
 			dateOfBirth: userProfile.date_of_birth,
 			registrationCode: userProfile.registration_code,
 			phone: userProfile.phone,
@@ -35,6 +36,7 @@ export async function loadAuthSecureStore(dispatch: Dispatch) {
 			updatedAt: userProfile.updated_at.toString(),
 			roleId: userProfile.role_id || undefined,
 			userId: userProfile.user_id,
+			profileId: userProfile.id,
 		}),
 	)
 	const role = (await getRoles({ id: userProfile.role_id })) as unknown as Roles

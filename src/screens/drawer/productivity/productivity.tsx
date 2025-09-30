@@ -42,7 +42,7 @@ export default function Productivity() {
 			<Search workers={uniqueWorkers} onSearch={(name) => setSearchTerm(name)} />
 
 			<ScrollView>
-				<Header />
+				<Header tasks={filteredTasks} />
 				<View className="mt-4">
 					<Calendar selectedDay={selectedDate} onDayPress={(d) => setSelectedDate(d)} />
 					{selectedDate && (
