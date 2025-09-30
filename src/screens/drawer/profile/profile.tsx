@@ -35,7 +35,7 @@ export default function ProfileScreen() {
 		try {
 			setIsModalVisible(false)
 			dispatch(resetAuth())
-			await deleteAuthSecureStore([{ key: 'token' }, { key: 'expiryDate' }, { key: 'userid' }])
+			await deleteAuthSecureStore([{ key: 'token' }, { key: 'profile_id' }, { key: 'userid' }])
 		} catch (error) {
 			console.log('Erro no secure-store ao fazer log out: ', error)
 		}

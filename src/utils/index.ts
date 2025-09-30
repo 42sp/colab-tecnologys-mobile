@@ -11,11 +11,9 @@ export const logoutUser = async (dispatch: AppDispatch) => {
 	await deleteAuthSecureStore([{ key: 'token' }, { key: 'expiryDate' }, { key: 'userid' }])
 }
 
-export const getCurrentDate = () =>
-	new Date(
-		new Date(new Date().getTime())
-			.toLocaleString('sv-SE', { timeZone: 'America/Sao_Paulo' })
-			.replace(' ', 'T') +
-			'.' +
-			String(new Date().getMilliseconds()).padStart(3, '0'),
-	)
+
+export const getCurrentDate = () => {
+	const now = new Date();
+	return now.toLocaleString('sv-SE', { timeZone: 'America/Sao_Paulo' }) as unknown as Date
+}
+	

@@ -83,7 +83,7 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 						className="h-9 items-center justify-center rounded-lg border-2 border-gray-200 px-3 disabled:opacity-40"
 						disabled={fields.length >= MAX_WORKERS}
 					>
-						<Text className="w-[135px] text-center text-xl text-gray-700">Adicionar</Text>
+						<Text className="w-[135px] text-center text-xl text-black">Adicionar</Text>
 					</Pressable>
 				</Card.Header>
 

@@ -29,7 +29,7 @@ export function ChooseResidentialModal({ visible, onClose, residentials, onSelec
 				{visible && (
 					<View className="mx-6 max-h-[80%] rounded-lg bg-white p-4">
 						<View className="mb-3 flex-row items-center justify-between">
-							<Text className="text-lg font-bold text-gray-800">Selecione o residencial</Text>
+							<Text className="text-lg font-bold text-black">Selecione o residencial</Text>
 							<Pressable onPress={onClose}>
 								<Feather name="x" size={24} color="#111827" />
 							</Pressable>

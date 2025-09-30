@@ -95,7 +95,7 @@ export function RegisterServiceForm({ control, services, resetField, setValue, e
 										/>
 										<Text
 											className={`flex-1 px-3 font-inter ${
-												errors.dateOfService ? 'text-red-500' : 'text-neutral-400'
+												errors.dateOfService ? 'text-red-500' : 'text-black'
 											} `}
 										>
 											{formattedDate || 'Data do serviço'}

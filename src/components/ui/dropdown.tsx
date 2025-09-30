@@ -10,11 +10,11 @@ const baseStyle = 'h-14 w-full flex-row items-center bg-transparent rounded-lg'
 const dropdownVariants: Record<DropdownVariant, { container: string; text: string }> = {
 	default: {
 		container: `${baseStyle} border border-neutral-300`,
-		text: `font-inter text-neutral-400`,
+		text: `font-inter text-black`,
 	},
 	outline: {
 		container: `${baseStyle} border border-neutral-300`,
-		text: `font-inter text-neutral-400`,
+		text: `font-inter text-black`,
 	},
 	red: {
 		container: `${baseStyle} bg-red-50`,
@@ -96,7 +96,7 @@ export function Dropdown({
 								setOpen(false)
 							}}
 						>
-							<Text className="text-base text-neutral-800">{item.label}</Text>
+							<Text className="text-base text-black">{item.label}</Text>
 						</TouchableOpacity>
 					))}
 				</ScrollView>

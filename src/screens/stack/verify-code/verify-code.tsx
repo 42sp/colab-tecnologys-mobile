@@ -74,7 +74,7 @@ export default function VerifyCode({ route }: any) {
 		//const s = `${new Date(new Date().getTime() + 10 * 60000).toLocaleString('sv-SE', { timeZone: 'America/Sao_Paulo' }).replace(' ', 'T') + '.' + String(new Date().getMilliseconds()).padStart(3, '0')}`
 
 		const expirationDate = response?.expiration
-		const currentDate = getCurrentDate()
+		const currentDate = new Date(getCurrentDate())
 
 		console.log('expirationDate', expirationDate, currentDate)
 
@@ -116,7 +116,7 @@ export default function VerifyCode({ route }: any) {
 						if (!e) return false
 						const expirationDate = new Date(e)
 						console.log('expirationDate', expirationDate)
-						return getCurrentDate().getTime() > expirationDate.getTime()
+						return new Date(getCurrentDate()).getTime() > expirationDate.getTime()
 					}),
 				},
 				(_e) =>

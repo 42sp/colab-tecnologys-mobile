@@ -14,6 +14,7 @@ interface UserProfileState {
 	postcode?: string
 	updatedAt?: string
 	roleId: null | string
+	jobTitle: null | string
 	userId?: string
 	profileId?: string
 }
@@ -32,6 +33,7 @@ const initialState: UserProfileState = {
 	updatedAt: '',
 	roleId: '',
 	userId: '',
+	jobTitle: '',
 }
 
 const userProfileSlice = createSlice({

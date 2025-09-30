@@ -18,8 +18,8 @@ import { saveAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
 import { LoadingModal } from '@/components/ui/loading-modal'
 import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-store'
 import { mask, unMask } from 'react-native-mask-text'
-import { setSignUp } from '@/libs/redux/sign-up/signup-slice'
 import { passwordRecovery } from '@/api/password-recovery'
+import { updateState } from '@/libs/redux/user-profile/user-profile-slice'
 
 const signUpSchema = z.object({
 	name: z.string().nonempty('Nome é obrigatório'),
@@ -86,7 +86,7 @@ export function SignUpForm() {
 		console.log('Dados de registro ', profile)
 		const jobTitle = rolesList.find((r) => r.id === profile.jobTitle)?.role_name
 		const role_id = profile.jobTitle
-		dispatch(setSignUp({ ...profile, jobTitle: jobTitle || '', roleId: role_id }))
+		dispatch(updateState({ ...profile, jobTitle: jobTitle || '', roleId: role_id }))
 		//await passwordRecovery({ cpf: profile.cpf, phone: profile.phone })
 		navigate.stack('verifyCode', { flux: 'first-access', cpf: profile.cpf, phone: profile.phone })
 		try {

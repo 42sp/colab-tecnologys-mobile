@@ -101,7 +101,7 @@ export function ResetPasswordForm({ route }: any) {
 					roleId,
 				})
 
-				dispatch(updateState({ name, email, phone, roleId, userId: payload.id }))
+				dispatch(updateState({ name, email, phone, roleId, userId: payload.profile_id }))
 
 				console.log('Dados do novo usuário:', payload)
 
