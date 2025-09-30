@@ -330,7 +330,7 @@ export function TypeServiceForm({
 												>
 													{service.tower}º {service.floor} - Apartamento {service.apartment}
 												</Text>
-												<Text className={`${isSelected ? 'text-red-500' : 'text-neutral-500'}`}>
+												<Text className={`${isSelected ? 'text-red-500' : 'text-black'}`}>
 													{service.labor_quantity} - {serviceName}
 												</Text>
 											</View>

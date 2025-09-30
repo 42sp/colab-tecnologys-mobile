@@ -1,5 +1,7 @@
 import { Task } from '@/api/get-tasks'
 import { FilterType } from './home'
+import { getCurrentDate } from '@/utils'
+
 
 export function toDate(dateString?: string | Date) {
 	return new Date(dateString as string)
@@ -16,13 +18,16 @@ export function toStringDate(date?: string | Date) {
 
 export function handleFilterChange(filter: FilterType, tasks: Task[]) {
 	const yesterday = shiftDate(-1)
-	const today = new Date()
+	const today = getCurrentDate() as unknown as Date
 
 	if (isEmptyFilter(filter, tasks)) {
+
 		return buildResult(tasks, { today, yesterday })
 	}
 
 	const filteredData = applyFilters(tasks, filter!)
+
+
 
 	return buildResult(filteredData)
 }
@@ -82,6 +87,7 @@ function buildResult(tasks: Task[], dates?: { today: Date; yesterday: Date }) {
 		percent: tasks.length ? Math.round((completedCount / tasks.length) * 100) : 0,
 		pendding: pendingCount,
 	}
+
 
 	return buildResultLogic({ base, tasks, dates })
 }

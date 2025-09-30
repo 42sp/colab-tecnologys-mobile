@@ -14,16 +14,16 @@ export function ActivityCard({
 	id,
 	service_type,
 	construction_name,
-	construction_address,
+	worker_name,
 	service_stage,
 	service_floor,
 	service_apartment,
 	service_tower,
-	created_at,
+	completion_date,
 	status,
 }: ActivityCardProps) {
 	const title = `${service_type} - ${service_stage} ${service_floor}/${service_apartment} - Torre ${service_tower}`
-	const time = new Date(created_at as string)
+	const time = new Date(completion_date as Date)
 	const [isVisibleApprove, setIsVisibleApprove] = useState(false)
 	const { hierarchy_level } = useSelector((state: RootState) => state.roles)
 	const [statusTask, setStatusTask] = useState(status)
@@ -77,18 +77,18 @@ export function ActivityCard({
 
 						<Text className="font-inter text-xs">
 							{time
-								? time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+								? time.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
 								: '00:00'}
 						</Text>
 					</View>
 					<View>
 						<View className="flex-row gap-2">
 							<Building2 size={14} color="black" />
-							<Text className="flex-1 font-inter text-sm">{construction_address}</Text>
+							<Text className="flex-1 font-inter text-sm">{construction_name}</Text>
 						</View>
 						<View className="flex-row gap-2">
 							<User size={14} color="black" />
-							<Text className="flex-1 font-inter text-sm">{construction_name}</Text>
+							<Text className="flex-1 font-inter text-sm">{worker_name}</Text>
 						</View>
 					</View>
 					<View className="self-end flex-row gap-3">

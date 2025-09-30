@@ -16,8 +16,6 @@ import { getServiceTypes, ServiceTypes } from '@/api/get-service-types'
 import { getConstructions, Construction } from '@/api/get-constructions'
 import { getProfile, Profile } from '@/api/get-profile'
 import { createTask } from '@/api/post-tasks'
-
-import { useNavigate } from '@/libs/react-navigation/useNavigate'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { LogModal } from '@/components/ui/log-modal'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
