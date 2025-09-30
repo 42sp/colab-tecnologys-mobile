@@ -22,7 +22,7 @@ const editProfileSchema = z.object({
 	name: z.string().nonempty('Nome completo é obrigatório'),
 	email: z.string(),
 	phone: z.string().nonempty('Telefone é obrigatório'),
-	dateOfBirth: z.string().nonempty('Data de nascimento é obrigatório'),
+	dateOfBirth: z.string().nonempty('Data de nascimento é obrigatória'),
 	address: z.string().nonempty('Endereço é obrigatório'),
 })
 
@@ -48,6 +48,7 @@ export function EditProfileForm() {
 			address: profile.address || '',
 		},
 	})
+
 	type ProfileScreenNavigationProp = DrawerNavigationProp<DrawerParamList>
 	const navigation = useNavigation<ProfileScreenNavigationProp>()
 	const dispatch = useDispatch()
@@ -57,39 +58,105 @@ export function EditProfileForm() {
 		description: string
 	}>({ visible: false, status: 'error', description: '' })
 
+	function ValidateEditedData(data: EditProfileType) {
+		const payload: {
+			name?: string
+			email?: string
+			phone?: string
+			date_of_birth?: string
+			address?: string
+		} = {}
+
+		const normNameForm = data.name.trim()
+		const normNameRedux = profile?.name?.trim()
+		if (normNameForm !== normNameRedux) {
+			payload.name = data.name.trim()
+		}
+
+		const normPhoneForm = data.phone.trim()
+		const normPhoneRedux = profile?.phone?.trim()
+		if (normPhoneForm !== normPhoneRedux) {
+			payload.phone = data.phone.trim()
+		}
+
+		const normAddrForm = data.address.trim()
+		const normAddrRedux = profile?.address?.trim()
+		if (normAddrForm !== normAddrRedux) {
+			payload.address = data.address.trim()
+		}
+
+		const normEmailForm = data.email ? data.email.trim() : ''
+		const normEmailRedux = profile?.email?.trim()
+		if (data.email && normEmailForm !== normEmailRedux) {
+			payload.email = data.email.trim()
+		}
+
+		if (data.dateOfBirth) {
+			const digits = data.dateOfBirth.replace(/\D/g, '')
+			if (digits.length === 8) {
+				const day = digits.slice(0, 2)
+				const month = digits.slice(2, 4)
+				const year = digits.slice(4, 8)
+
+				const dateForm = `${year}-${month}-${day}`
+				const dateRedux = profile.dateOfBirth
+					? new Date(profile.dateOfBirth).toISOString().slice(0, 10)
+					: null
+
+				if (!dateRedux || dateForm !== dateRedux) {
+					payload.date_of_birth = dateForm
+				}
+			}
+		}
+
+		return payload
+	}
+
 	async function onSubmit(data: EditProfileType) {
 		try {
-			await new Promise((resolve) => setTimeout(resolve, 5000))
-			const payload: any = {
-				name: data.name,
-				phone: data.phone,
-				address: data.address,
-				date_of_birth: data.dateOfBirth
-					? new Date(data.dateOfBirth.split('/').reverse().join('-')).toISOString().split('T')[0]
-					: undefined,
-			}
-			if (data.email && data.email.trim() !== '') {
-				payload.email = data.email
-			}
+			const payload = ValidateEditedData(data)
 
-			const updated = await EditProfile(payload)
-			dispatch(
-				updateProfile({
-					name: updated.name,
-					dateOfBirth: updated.date_of_birth,
-					registrationCode: updated.registration_code,
-					phone: updated.phone,
-					address: updated.address,
-					city: updated.city,
-					state: updated.state,
-					postcode: updated.postcode,
-					photo: updated.photo,
-					updatedAt: updated.updated_at.toString(),
-				}),
+			if (Object.keys(payload).length === 0) {
+				setModal({
+					visible: true,
+					status: 'success',
+					description: 'Nenhuma alteração detectada.',
+				})
+				return
+			}
+			const payloadFiltered = Object.fromEntries(
+				Object.entries(payload || {}).filter(([_, v]) => v !== undefined),
 			)
-			setModal({ visible: true, status: 'success', description: 'Perfil atualizado!' })
+
+			let updated: any
+			if (profile?.profileId) {
+				updated = await EditProfile({ profileId: profile.profileId, ...payloadFiltered })
+
+				if (updated) {
+					dispatch(
+						updateProfile({
+							name: updated.name,
+							email: updated.email,
+							dateOfBirth: updated.date_of_birth,
+							registrationCode: updated.registration_code,
+							phone: updated.phone,
+							address: updated.address,
+							city: updated.city,
+							state: updated.state,
+							postcode: updated.postcode,
+							photo: updated.photo,
+							updatedAt: updated.updated_at.toString(),
+						}),
+					)
+					setModal({ visible: true, status: 'success', description: 'Perfil atualizado!' })
+					setTimeout(() => {
+						navigation.navigate('profile')
+						setModal({ visible: false, status: 'success', description: 'Perfil atualizado!' })
+					}, 2000)
+				}
+			}
 		} catch (error) {
-			console.log(error)
+			console.error('[onSubmit] erro capturado:', error)
 			setModal({
 				visible: true,
 				status: 'error',

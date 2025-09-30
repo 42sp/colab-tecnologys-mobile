@@ -46,7 +46,7 @@ function buildResultLogic({ base, tasks, dates }: buildResultLogicProps) {
 	if (!dates) {
 		return {
 			...base,
-			data: [{ title: 'Filtered Results', data: tasks }],
+			data: [{ title: 'Resultados do filtro', data: tasks }],
 		}
 	}
 	const dataDates = tasks
@@ -126,4 +126,36 @@ function applyFilters(tasks: Task[], filter: FilterType): Task[] {
 				filter.serviceType === 'Todos' ||
 				service_type === filter.serviceType,
 		)
+}
+
+type SuggestionType = { title: string; type: string }
+
+export function filterAndMapTasks(
+	tasks: Task[],
+	key: keyof Task,
+	prefix?: string,
+	query?: string,
+	partial = true,
+): SuggestionType[] {
+	const normalizedQuery = query?.toLowerCase().trim() || ''
+
+	let filtered = tasks.filter((task) => {
+		const value = task[key]?.toString().toLowerCase()
+		if (!value) return false
+		if (!normalizedQuery) return true // se query vazia, pega todos
+		return partial ? value.includes(normalizedQuery) : value === normalizedQuery
+	})
+
+	filtered = filtered.sort((a, b) =>
+		(a[key] ?? '').toString() > (b[key] ?? '').toString() ? 1 : -1,
+	)
+
+	const unique = Array.from(
+		new Map(filtered.map((item) => [item[key]?.toString().toLowerCase(), item])).values(),
+	)
+
+	return unique.map((item) => ({
+		title: prefix ? `${prefix} ${item[key]}` : (item[key] as string),
+		type: key,
+	}))
 }

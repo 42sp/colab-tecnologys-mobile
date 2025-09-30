@@ -16,6 +16,7 @@ interface UserProfileState {
 	roleId: null | string
 	jobTitle: null | string
 	userId?: string
+	profileId?: string
 }
 
 const initialState: UserProfileState = {
