@@ -28,7 +28,7 @@ api.interceptors.request.use(
 			url: config.url,
 			method: config.method,
 			headers: config.headers,
-			data: config.data,
+			//data: config.data,
 		})
 		return config
 	},
@@ -43,7 +43,7 @@ api.interceptors.response.use(
 		console.log('[AXIOS][RESPONSE]', {
 			url: response.config.url,
 			status: response.status,
-			data: response.data,
+			//data: response.data,
 		})
 		return response
 	},
