@@ -16,12 +16,13 @@ import { handleFilterChange } from './utils'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFocusEffect } from '@react-navigation/native'
 
-import HomeSkeleton from './home-skeleton'
+import { HomeSkeleton } from './home-skeleton'
 
 import { RootState } from '@/libs/redux/store'
 import { ItemType } from '@/components/ui/dropdown'
 import { setTasks } from '@/libs/redux/tasks/tasks-slice'
 import { getTasks } from '@/api/get-tasks'
+import { LoadingModal } from '@/components/ui/loading-modal'
 
 export type StatusTypes = 'pending' | 'in_progress' | 'completed' | 'approved' | 'rejected'
 
@@ -55,14 +56,17 @@ export default function Home() {
 		useCallback(() => {
 			// This function will be called when the screen comes into focus.
 			const fetchTasks = async () => {
-				setIsLoading(true)
-				const fetchedTasks = await getTasks()
-				dispatch(setTasks(fetchedTasks))
-				setTimeout(() => {
-					setIsLoading(false)
-				}, 1000)
-			}
-			fetchTasks()
+			setIsLoading(true)
+      		try {
+        		const fetchedTasks = await getTasks()
+        		dispatch(setTasks(fetchedTasks))
+      		} catch (error) {
+        		console.error('Erro ao buscar tarefas:', error)
+      		} finally {
+        		setIsLoading(false)
+    		}
+    	}
+    	fetchTasks()
 
 			// You can return a cleanup function here.
 			// This function will be called when the screen goes out of focus,
@@ -122,18 +126,22 @@ export default function Home() {
 				</TouchableOpacity>
 			</View>
 
-			<HorizontalList
-				options={[
-					'Todos',
-					...new Set(tasks.map((item) => (item.service_type ? item.service_type : ''))),
-				]}
-				selected={filter.serviceType ? filter.serviceType : 'Todos'}
-				onSelect={(value) => setFilter((prev) => ({ ...prev, serviceType: value }))}
-			/>
-
 			{ isLoading ? (
-					<HomeSkeleton />
+					<>
+						<HomeSkeleton />
+						<LoadingModal visible={isLoading}/>
+					</>
 				) : (
+				<>
+				<HorizontalList
+					options={[
+						'Todos',
+						...new Set(tasks.map((item) => (item.service_type ? item.service_type : ''))),
+					]}
+					selected={filter.serviceType ? filter.serviceType : 'Todos'}
+					onSelect={(value) => setFilter((prev) => ({ ...prev, serviceType: value }))}
+				/>
+
 			<ActivityList
 				data={activityDataList.data}
 				HeaderComponent={
@@ -161,8 +169,9 @@ export default function Home() {
 							    </TouchableOpacity>
 							)}
 					</View>
-				}
+			}
 				/>
+			</>
 			)}
 			<Button
 				variant="rounded"

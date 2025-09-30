@@ -8,9 +8,6 @@ function Skeleton({
   return (
     <View
       className={cn("rounded-md bg-gray-200", className)}
-      style={{
-        backgroundColor: '#E5E7EB',
-      }}
       {...props}
     />
   )

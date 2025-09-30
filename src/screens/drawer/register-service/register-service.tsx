@@ -22,6 +22,8 @@ import { DrawerNavigationProp } from '@react-navigation/drawer'
 import LoadingButton from '@/components/ui/loadingButton'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
+import { RegisterServiceSkeleton } from './register-service-skeleton'
+import { LoadingModal } from '@/components/ui/loading-modal'
 
 const registerServiceSchema = z
 	.object({
@@ -105,10 +107,13 @@ export default function RegisterServiceScreen() {
 		},
 	})
 
+	const [isLoading, setIsLoading] = useState(true)
+
 	useFocusEffect(
 		useCallback(() => {
 			const fetchData = async () => {
 				try {
+					setIsLoading(true)
 					const services = await getServices()
 					const serviceType = await getServiceTypes()
 					const construction = await getConstructions()
@@ -120,7 +125,9 @@ export default function RegisterServiceScreen() {
 					setAllServices(services)
 				} catch (error) {
 					console.error('Failed to fetch initial data:', error)
-				}
+				} finally {
+        			setIsLoading(false)
+    			}
 			}
 
 			fetchData()
@@ -194,9 +201,15 @@ export default function RegisterServiceScreen() {
 
 	return (
 		<SafeAreaView className=" bg-[#F9FAFB]" edges={['bottom']}>
+			{ isLoading ? (
+				<>
+					<RegisterServiceSkeleton />
+					<LoadingModal visible={isLoading}/>
+				</>
+				) : (
+				<>
 			<ScrollView showsVerticalScrollIndicator={false}>
 				<View className="flex-1 gap-5 p-5">
-					{/* <KeyboardAvoidingView behavior={'height'}> */}
 					<Card className=" flex-1">
 						<Card.Header>
 							<Image
@@ -246,7 +259,6 @@ export default function RegisterServiceScreen() {
 					/>
 
 					<Card>
-						{/* <Card.Body> */}
 						<Controller
 							control={control}
 							name="confirmed"
@@ -259,7 +271,6 @@ export default function RegisterServiceScreen() {
 								/>
 							)}
 						/>
-						{/* </Card.Body> */}
 					</Card>
 					<View className="flex-row gap-4">
 						<Button
@@ -282,10 +293,10 @@ export default function RegisterServiceScreen() {
 						description={modal.description}
 						onClose={() => setModal({ visible: false, status: 'error', description: '' })}
 					/>
-
-					{/* </KeyboardAvoidingView> */}
 				</View>
 			</ScrollView>
+			</>
+			)}
 		</SafeAreaView>
 	)
 }
