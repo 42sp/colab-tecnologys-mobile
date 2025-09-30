@@ -1,5 +1,7 @@
 import { Task } from '@/api/get-tasks'
 import { FilterType } from './home'
+import { getCurrentDate } from '@/utils'
+
 
 export function toDate(dateString?: string | Date) {
 	return new Date(dateString as string)
@@ -10,27 +12,22 @@ export function toStringDate(date?: string | Date) {
 		day: '2-digit',
 		month: '2-digit',
 		year: 'numeric',
+		timeZone: 'UTC',
 	})
 }
 
 export function handleFilterChange(filter: FilterType, tasks: Task[]) {
 	const yesterday = shiftDate(-1)
-	const today = new Date()
-
-	if (filter.searchTerm) {
-		const searchTerm = filter.searchTerm!.value.toLowerCase().trim()
-		return buildResult(
-			tasks.filter((task) =>
-				task[filter.searchTerm!.type]?.toString().toLowerCase().includes(searchTerm),
-			),
-		)
-	}
+	const today = getCurrentDate() as unknown as Date
 
 	if (isEmptyFilter(filter, tasks)) {
+
 		return buildResult(tasks, { today, yesterday })
 	}
 
 	const filteredData = applyFilters(tasks, filter!)
+
+
 
 	return buildResult(filteredData)
 }
@@ -52,19 +49,8 @@ function buildResultLogic({ base, tasks, dates }: buildResultLogicProps) {
 			data: [{ title: 'Resultados do filtro', data: tasks }],
 		}
 	}
-
-	function toDate(dateString?: string) {
-		return new Date(dateString as string)
-	}
-	function toStringDate(date?: string | Date) {
-		return new Date(date as string | Date).toLocaleDateString('pt-BR', {
-			day: '2-digit',
-			month: '2-digit',
-			year: 'numeric',
-		})
-	}
 	const dataDates = tasks
-		.map(({ created_at }) => toDate(created_at))
+		.map(({ completion_date }) => toDate(completion_date))
 		.sort((a, b) => b.getTime() - a.getTime())
 		.map(toStringDate)
 	const uniqueDates = Array.from(new Set(dataDates))
@@ -80,8 +66,8 @@ function buildResultLogic({ base, tasks, dates }: buildResultLogicProps) {
 		acc.push({
 			title: displayDate,
 			data: tasks
-				.filter(({ created_at }) => toStringDate(created_at) === date)
-				.sort((a, b) => toDate(b.created_at).getTime() - toDate(a.created_at).getTime()),
+				.filter(({ completion_date }) => toStringDate(completion_date) === date)
+				.sort((a, b) => toDate(b.completion_date).getTime() - toDate(a.completion_date).getTime()),
 		})
 		return acc
 	}, [])
@@ -101,6 +87,7 @@ function buildResult(tasks: Task[], dates?: { today: Date; yesterday: Date }) {
 		percent: tasks.length ? Math.round((completedCount / tasks.length) * 100) : 0,
 		pendding: pendingCount,
 	}
+
 
 	return buildResultLogic({ base, tasks, dates })
 }
@@ -127,11 +114,11 @@ function applyFilters(tasks: Task[], filter: FilterType): Task[] {
 	return tasks
 		.filter(({ status }) => !filter.status?.length || filter.status.includes(status!))
 		.filter(
-			({ created_at }) =>
+			({ completion_date }) =>
 				!filter.dateRange?.start ||
 				!filter.dateRange?.end ||
-				(new Date(created_at as string)! >= filter.dateRange.start &&
-					new Date(created_at as string)! <= filter.dateRange.end),
+				(new Date(completion_date!.toISOString())! >= filter.dateRange.start &&
+					new Date(completion_date!.toISOString())! <= filter.dateRange.end),
 		)
 		.filter(
 			({ service_type }) =>

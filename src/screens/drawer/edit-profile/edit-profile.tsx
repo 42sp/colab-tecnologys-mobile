@@ -6,9 +6,9 @@ import { ScrollView } from 'react-native-gesture-handler'
 
 export default function EditProfileScreen() {
 	return (
-		<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-			<SafeAreaView className="bg-[#F9FAFB]" edges={['bottom']}>
-				<ScrollView showsVerticalScrollIndicator={false}>
+		<KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+  			<SafeAreaView style={{ flex: 1 }} className="bg-[#F9FAFB]" edges={['bottom']} >
+    			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
 					<View className="flex-1 py-10">
 						<EditProfileAvatar avatar={require('@/assets/default-avatar.png')} />
 						<EditProfileForm />
