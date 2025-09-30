@@ -16,6 +16,8 @@ import { handleFilterChange } from './utils'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFocusEffect } from '@react-navigation/native'
 
+import HomeSkeleton from './home-skeleton'
+
 import { RootState } from '@/libs/redux/store'
 import { ItemType } from '@/components/ui/dropdown'
 import { setTasks } from '@/libs/redux/tasks/tasks-slice'
@@ -46,12 +48,19 @@ export default function Home() {
 	const tasks = useSelector((state: RootState) => state.tasks.tasks)
 	const activityDataList = handleFilterChange(filter, tasks)
 
+	const [isLoading, setIsLoading] = useState(true)
+
+
 	useFocusEffect(
 		useCallback(() => {
 			// This function will be called when the screen comes into focus.
 			const fetchTasks = async () => {
+				setIsLoading(true)
 				const fetchedTasks = await getTasks()
 				dispatch(setTasks(fetchedTasks))
+				setTimeout(() => {
+					setIsLoading(false)
+				}, 1000)
 			}
 			fetchTasks()
 
@@ -122,35 +131,39 @@ export default function Home() {
 				onSelect={(value) => setFilter((prev) => ({ ...prev, serviceType: value }))}
 			/>
 
+			{ isLoading ? (
+					<HomeSkeleton />
+				) : (
 			<ActivityList
 				data={activityDataList.data}
 				HeaderComponent={
 					<View className="flex-row gap-3">
-						<SummaryCard
-							icon="clipboard"
-							SumaryVariant="blue"
-							value={activityDataList.amount}
-							label="Atividades"
-						/>
-						<SummaryCard
-							icon="clock"
-							SumaryVariant="orange"
-							value={activityDataList.pendding}
-							label="Pendentes"
-						/>
-						{filter.serviceType !== 'Todos' && (
-							<TouchableOpacity onPress={() => navigation.navigate('productivity')}>
-								<SummaryCard
-									icon="bar-chart"
-									SumaryVariant="green"
-									value={activityDataList.percent + '%'}
-									label="Produtividade"
-								/>
-							</TouchableOpacity>
-						)}
+							<SummaryCard
+								icon="clipboard"
+								SumaryVariant="blue"
+								value={activityDataList.amount}
+								label="Atividades"
+							/>
+							<SummaryCard
+								icon="clock"
+								SumaryVariant="orange"
+								value={activityDataList.pendding}
+								label="Pendentes"
+							/>
+							{filter.serviceType !== 'Todos' && (
+								<TouchableOpacity onPress={() => navigation.navigate('productivity')}>
+									<SummaryCard
+										icon="bar-chart"
+										SumaryVariant="green"
+										value={activityDataList.percent + '%'}
+										label="Produtividade"
+									/>
+							    </TouchableOpacity>
+							)}
 					</View>
 				}
-			/>
+				/>
+			)}
 			<Button
 				variant="rounded"
 				onPress={() => navigation.navigate('registerService')}
