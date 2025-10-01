@@ -13,11 +13,12 @@ import { DrawerParamList } from '@/_layouts/drawer/drawer'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { handleFilterChange } from './utils'
 import { useDispatch, useSelector } from 'react-redux'
-
 import { RootState } from '@/libs/redux/store'
 import { HomeSearch } from './home-search'
 import { getTasks, Task } from '@/api/get-tasks'
 import { setTasks } from '@/libs/redux/tasks/tasks-slice'
+import { LoadingModal } from '@/components/ui/loading-modal'
+import { HomeSkeleton } from './home-skeleton'
 
 export type StatusTypes = 'pending' | 'in_progress' | 'completed' | 'approved' | 'rejected'
 
@@ -42,9 +43,6 @@ export default function Home() {
 
 	const tasks = useSelector((state: RootState) => state.tasks.tasks)
 	const activityDataList = handleFilterChange(filter, tasks)
-
-	console.log('tasks', tasks)
-
 	const [isLoading, setIsLoading] = useState(true)
 
 	useFocusEffect(
@@ -85,42 +83,53 @@ export default function Home() {
 				</TouchableOpacity>
 			</View>
 
-			<HorizontalList
-				options={[
-					'Todos',
-					...new Set(tasks.map((item) => (item.service_type ? item.service_type : ''))),
-				]}
-				selected={filter.serviceType ? filter.serviceType : 'Todos'}
-				onSelect={(value) => setFilter((prev) => ({ ...prev, serviceType: value }))}
-			/>
+			{isLoading ? (
+				<>
+					<HomeSkeleton />
+					<LoadingModal visible={isLoading} />
+				</>
+			) : (
+				<>
+					<HorizontalList
+						options={[
+							'Todos',
+							...new Set(tasks.map((item) => (item.service_type ? item.service_type : ''))),
+						]}
+						selected={filter.serviceType ? filter.serviceType : 'Todos'}
+						onSelect={(value) => setFilter((prev) => ({ ...prev, serviceType: value }))}
+					/>
 
-			<ActivityList
-				data={activityDataList.data}
-				HeaderComponent={
-					<View className="flex-row gap-3">
-						<SummaryCard
-							icon="clipboard"
-							SumaryVariant="blue"
-							value={activityDataList.amount}
-							label="Atividades"
-						/>
-						<SummaryCard
-							icon="clock"
-							SumaryVariant="orange"
-							value={activityDataList.pendding}
-							label="Pendentes"
-						/>
-						<TouchableOpacity onPress={() => navigation.navigate('productivity')}>
-							<SummaryCard
-								icon="bar-chart"
-								SumaryVariant="green"
-								value={activityDataList.percent + '%'}
-								label="Produtividade"
-							/>
-						</TouchableOpacity>
-					</View>
-				}
-			/>
+					<ActivityList
+						data={activityDataList.data}
+						HeaderComponent={
+							<View className="flex-row gap-3">
+								<SummaryCard
+									icon="clipboard"
+									SumaryVariant="blue"
+									value={activityDataList.amount}
+									label="Atividades"
+								/>
+								<SummaryCard
+									icon="clock"
+									SumaryVariant="orange"
+									value={activityDataList.pendding}
+									label="Pendentes"
+								/>
+								{filter.serviceType !== 'Todos' && (
+									<TouchableOpacity onPress={() => navigation.navigate('productivity')}>
+										<SummaryCard
+											icon="bar-chart"
+											SumaryVariant="green"
+											value={activityDataList.percent + '%'}
+											label="Produtividade"
+										/>
+									</TouchableOpacity>
+								)}
+							</View>
+						}
+					/>
+				</>
+			)}
 			<Button
 				variant="rounded"
 				onPress={() => navigation.navigate('registerService')}
