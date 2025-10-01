@@ -12,7 +12,6 @@ interface UserProfileState {
 	city?: string
 	state?: string
 	postcode?: string
-	updatedAt?: string
 	roleId: null | string
 	jobTitle: null | string
 	userId?: string
@@ -30,7 +29,6 @@ const initialState: UserProfileState = {
 	city: '',
 	state: '',
 	postcode: '',
-	updatedAt: '',
 	roleId: '',
 	userId: '',
 	jobTitle: '',

@@ -1,6 +1,6 @@
 import * as SecureStore from 'expo-secure-store'
-import { useDispatch } from 'react-redux'
 import { setAuth } from '../redux/auth/auth-slice'
+import store from '../redux/store'
 
 interface SaveItemType {
 	key: string
@@ -12,6 +12,7 @@ interface FindItemType {
 }
 
 export async function saveAuthSecureStore(items: SaveItemType[]) {
+	store.dispatch(setAuth(items[0].value))
 	await Promise.all(items.map((item) => SecureStore.setItemAsync(item.key, item.value)))
 }
 

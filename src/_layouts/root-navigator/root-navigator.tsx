@@ -5,6 +5,7 @@ import DrawerLayout from '../drawer/drawer'
 import StackLayout from '../stack/stack'
 import { LoadingModal } from '@/components/ui/loading-modal'
 import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-store'
+import { logoutUser } from '@/utils'
 
 export default function RootNavigator() {
 	const dispatch = useDispatch()
@@ -18,6 +19,7 @@ export default function RootNavigator() {
 				console.log('LOG: Usuário autenticado a partir da expo-secure-store')
 			} catch (error) {
 				console.log('Error ao logar com securestore na Root. Erro retornado: ', error)
+				logoutUser(dispatch)
 			} finally {
 				setLoading(false)
 			}

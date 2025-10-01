@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Image, Text, View, Pressable, ScrollView } from 'react-native'
+import { KeyboardAvoidingView, Image, Text, View, Pressable, ScrollView, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Card from '@/components/ui/card'
 import { useState, useCallback, useEffect } from 'react'
@@ -124,10 +124,11 @@ export default function RegisterServiceScreen() {
 					setServiceTypes(serviceType.data)
 					setAllServices(services)
 				} catch (error) {
-					console.error('Failed to fetch initial data:', error)
+					console.log('Failed to fetch initial data:', error)
+					createTwoButtonAlert()
 				} finally {
-        			setIsLoading(false)
-    			}
+					setIsLoading(false)
+				}
 			}
 
 			fetchData()
@@ -147,6 +148,19 @@ export default function RegisterServiceScreen() {
 			}))
 		}
 	}, [profiles, reset])
+
+	const createTwoButtonAlert = () =>
+		Alert.alert(
+			'Erro no carregamento dos serviços',
+			'Houve um problema na hora de carregar os dados do serviço, tente novamente',
+			[
+				{
+					text: 'Entendi',
+					onPress: () => navigation.goBack(),
+					style: 'default',
+				},
+			],
+		)
 
 	async function onSubmit(data: RegisterServiceType) {
 		setRegistering(true)
@@ -201,101 +215,103 @@ export default function RegisterServiceScreen() {
 
 	return (
 		<SafeAreaView className=" bg-[#F9FAFB]" edges={['bottom']}>
-			{ isLoading ? (
+			{isLoading ? (
 				<>
 					<RegisterServiceSkeleton />
-					<LoadingModal visible={isLoading}/>
 				</>
-				) : (
+			) : (
 				<>
-			<ScrollView showsVerticalScrollIndicator={false}>
-				<View className="flex-1 gap-5 p-5">
-					<Card className=" flex-1">
-						<Card.Header>
-							<Image
-								source={require('@/assets/residential.png')}
-								className="h-48 w-full rounded-lg"
+					<ScrollView showsVerticalScrollIndicator={false}>
+						<View className="flex-1 gap-5 p-5">
+							<Card className=" flex-1">
+								<Card.Header>
+									<Image
+										source={require('@/assets/residential.png')}
+										className="h-48 w-full rounded-lg"
+									/>
+								</Card.Header>
+
+								<Card.Body>
+									<Pressable
+										className="flex-row items-center gap-4 rounded-lg bg-gray-50 p-3"
+										onPress={() => setModalVisible(true)}
+									>
+										<Image
+											source={require('@/assets/residencial-icon.png')}
+											className="h-12 w-12"
+										/>
+										<Text className="font-inter-medium  text-gray-800" numberOfLines={1}>
+											{currentResidential ? currentResidential.name : 'Selecione o residencial'}
+										</Text>
+									</Pressable>
+								</Card.Body>
+							</Card>
+
+							<ChooseResidentialModal
+								visible={modalVisible}
+								onClose={() => setModalVisible(false)}
+								residentials={residentials}
+								onSelect={handleSelectResidential}
 							/>
-						</Card.Header>
 
-						<Card.Body>
-							<Pressable
-								className="flex-row items-center gap-4 rounded-lg bg-gray-50 p-3"
-								onPress={() => setModalVisible(true)}
-							>
-								<Image source={require('@/assets/residencial-icon.png')} className="h-12 w-12" />
-								<Text className="font-inter-medium  text-gray-800" numberOfLines={1}>
-									{currentResidential ? currentResidential.name : 'Selecione o residencial'}
-								</Text>
-							</Pressable>
-						</Card.Body>
-					</Card>
+							<RegisterServiceForm
+								control={control}
+								services={allServices}
+								reset={reset}
+								resetField={resetField}
+								setValue={setValue}
+								errors={errors}
+							/>
 
-					<ChooseResidentialModal
-						visible={modalVisible}
-						onClose={() => setModalVisible(false)}
-						residentials={residentials}
-						onSelect={handleSelectResidential}
-					/>
+							<WorkersForm control={control} errors={errors} profiles={profiles} />
 
-					<RegisterServiceForm
-						control={control}
-						services={allServices}
-						reset={reset}
-						resetField={resetField}
-						setValue={setValue}
-						errors={errors}
-					/>
+							<TypeServiceForm
+								services={allServices}
+								serviceTypes={serviceTypes}
+								resetField={resetField}
+								control={control}
+								errors={errors}
+								onServiceSelected={setSelectedServiceId}
+							/>
 
-					<WorkersForm control={control} errors={errors} profiles={profiles} />
-
-					<TypeServiceForm
-						services={allServices}
-						serviceTypes={serviceTypes}
-						resetField={resetField}
-						control={control}
-						errors={errors}
-						onServiceSelected={setSelectedServiceId}
-					/>
-
-					<Card>
-						<Controller
-							control={control}
-							name="confirmed"
-							render={({ field: { value, onChange } }) => (
-								<RadioCheckOption
-									label="Confirmo que o serviço foi finalizado"
-									selected={!!value}
-									onPress={() => onChange(!value)}
-									variant="checkbox"
+							<Card>
+								<Controller
+									control={control}
+									name="confirmed"
+									render={({ field: { value, onChange } }) => (
+										<RadioCheckOption
+											label="Confirmo que o serviço foi finalizado"
+											selected={!!value}
+											onPress={() => onChange(!value)}
+											variant="checkbox"
+										/>
+									)}
 								/>
-							)}
-						/>
-					</Card>
-					<View className="flex-row gap-4">
-						<Button
-							title="Cancelar"
-							variant="outline"
-							className="flex-1"
-							onPress={() => navigation.navigate('home')}
-						/>
+							</Card>
+							<View className="flex-row gap-4">
+								<Button
+									title="Cancelar"
+									variant="outline"
+									className="flex-1"
+									onPress={() => navigation.navigate('home')}
+								/>
 
-						<LoadingButton
-							title={registering ? 'Registrando…' : 'Enviar'}
-							loading={registering}
-							onPress={handleSubmit(onSubmit)}
-							className="flex-1"
-						/>
-					</View>
-					<LogModal
-						visible={modal.visible}
-						status={modal.status}
-						description={modal.description}
-						onClose={() => setModal({ visible: false, status: 'error', description: '' })}
-					/>
-				</View>
-			</ScrollView>
-			</>
+								<LoadingButton
+									title={registering ? 'Registrando…' : 'Enviar'}
+									loading={registering}
+									onPress={handleSubmit(onSubmit)}
+									className="flex-1"
+								/>
+							</View>
+							<LogModal
+								visible={modal.visible}
+								status={modal.status}
+								description={modal.description}
+								onClose={() => setModal({ visible: false, status: 'error', description: '' })}
+							/>
+						</View>
+					</ScrollView>
+				</>
 			)}
 		</SafeAreaView>
 	)

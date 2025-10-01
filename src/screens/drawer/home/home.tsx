@@ -86,7 +86,6 @@ export default function Home() {
 			{isLoading ? (
 				<>
 					<HomeSkeleton />
-					<LoadingModal visible={isLoading} />
 				</>
 			) : (
 				<>

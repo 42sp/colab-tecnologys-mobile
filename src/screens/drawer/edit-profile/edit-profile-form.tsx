@@ -145,7 +145,6 @@ export function EditProfileForm() {
 							state: updated.state,
 							postcode: updated.postcode,
 							photo: updated.photo,
-							updatedAt: updated.updated_at.toString(),
 						}),
 					)
 					setModal({ visible: true, status: 'success', description: 'Perfil atualizado!' })
