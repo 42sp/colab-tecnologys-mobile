@@ -70,7 +70,7 @@ export function HomeSearch({ onSearch, tasksList }: SearchProps) {
 			{ key: 'service_floor', regex: /^(?:pavimento|pav)(?:\s+(.+))?/ },
 			{ key: 'worker_name' },
 			{ key: 'construction_name', prefix: 'Obra' },
-			{ key: 'service_stage', prefix: 'Etapa/Parede' },
+			{ key: 'service_stage', prefix: 'Etapa/Parede', regex: /^(?:etapa|parede)(?:\s+(.+))?/ },
 		]
 
 		const suggestions = fields.flatMap((field) => {

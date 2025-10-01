@@ -1,5 +1,5 @@
 import { ScrollView } from 'react-native'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Task } from '@/api/get-tasks'
 import { Header } from './header'
 import { Search } from './search'
@@ -10,12 +10,20 @@ import { RootState } from '@/libs/redux/store'
 import { View, Text, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { format } from 'date-fns'
+import { ProductivitySkeleton } from './productivity-skeleton'
+import { LoadingModal } from '@/components/ui/loading-modal'
 
 export default function Productivity() {
 	const [searchTerm, setSearchTerm] = useState('')
 	const [selectedDate, setSelectedDate] = useState<string | undefined>()
 	const tasksRedux = useSelector((state: RootState) => state.tasks.tasks)
+	const [isLoading, setIsLoading] = useState(true)
 
+	useEffect(() => {
+    	const timer = setTimeout(() => setIsLoading(false), 2000)
+    	return () => clearTimeout(timer)
+  	}, [])
+	
 	const tasksWithDateObjects = tasksRedux.map((task) => ({
 		...task,
 		completion_date: task.completion_date ? new Date(task.completion_date) : undefined,
@@ -37,6 +45,14 @@ export default function Productivity() {
 
 	const uniqueWorkers = Array.from(new Set(tasksWithDateObjects.map((t) => t.worker_name ?? '')))
 
+	if (isLoading) {
+		return (
+		<>
+			<ProductivitySkeleton />
+			<LoadingModal visible={isLoading} />
+    	</>
+  		)
+	}
 	return (
 		<>
 			<Search workers={uniqueWorkers} onSearch={(name) => setSearchTerm(name)} />
