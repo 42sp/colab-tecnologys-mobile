@@ -1,7 +1,7 @@
 import { View, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Feather, MaterialIcons } from '@expo/vector-icons'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { HomeFilterModal } from './filter-modal'
 import { SummaryCard } from '@/screens/drawer/home/summary-card'
 import { ActivityList } from '@/screens/drawer/home/activity-list'
@@ -10,13 +10,14 @@ import { DateRangeType } from '@/components/ui/calendar'
 import { Button } from '@/components/ui/button'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
 import { DrawerParamList } from '@/_layouts/drawer/drawer'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { handleFilterChange } from './utils'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { RootState } from '@/libs/redux/store'
 import { HomeSearch } from './home-search'
-import { Task } from '@/api/get-tasks'
+import { getTasks, Task } from '@/api/get-tasks'
+import { setTasks } from '@/libs/redux/tasks/tasks-slice'
 
 export type StatusTypes = 'pending' | 'in_progress' | 'completed' | 'approved' | 'rejected'
 
@@ -31,6 +32,7 @@ type ProfileScreenNavigationProp = DrawerNavigationProp<DrawerParamList>
 
 export default function Home() {
 	const navigation = useNavigation<ProfileScreenNavigationProp>()
+	const dispatch = useDispatch()
 
 	const [filter, setFilter] = useState<FilterType>({
 		serviceType: 'Todos',
@@ -40,6 +42,31 @@ export default function Home() {
 
 	const tasks = useSelector((state: RootState) => state.tasks.tasks)
 	const activityDataList = handleFilterChange(filter, tasks)
+
+	console.log('tasks', tasks)
+
+	const [isLoading, setIsLoading] = useState(true)
+
+	useFocusEffect(
+		useCallback(() => {
+			const fetchTasks = async () => {
+				setIsLoading(true)
+				try {
+					const fetchedTasks = await getTasks()
+					dispatch(setTasks(fetchedTasks))
+				} catch (error) {
+					console.error('Erro ao buscar tarefas:', error)
+				} finally {
+					setIsLoading(false)
+				}
+			}
+			fetchTasks()
+
+			return () => {
+				console.log('MyScreen is no longer focused!')
+			}
+		}, []),
+	)
 
 	return (
 		<SafeAreaView className="flex-1 gap-5 bg-[#F9FAFB] px-5 pt-5" edges={['bottom']}>
