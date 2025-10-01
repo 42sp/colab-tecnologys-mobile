@@ -13,6 +13,7 @@ import { saveAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
 import { LoadingModal } from '@/components/ui/loading-modal'
 import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-store'
 import { mask, unMask } from 'react-native-mask-text'
+import { setAuthProfile } from '@/utils'
 
 const signInSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve conter 11 caracteres'),
@@ -45,14 +46,8 @@ export function SignInForm() {
 			const auth = await signIn({ ...user })
 			console.log('Resposta do signIn:', auth)
 
-			const { accessToken } = auth
-			const { id } = auth.user
-			await saveAuthSecureStore([
-				{ key: 'token', value: accessToken },
-				{ key: 'profile_id', value: id },
-				{ key: 'userid', value: id },
-			])
-			await loadAuthSecureStore(dispatch)
+			await setAuthProfile(auth, dispatch)
+
 			console.log('LOG: Usuário autenticado a partir do login manual')
 			drawer('home')
 		} catch (error: any) {

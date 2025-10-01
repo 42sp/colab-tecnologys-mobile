@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 
 // types
-interface AuthState {
+export interface AuthState {
 	token: string | null
 	id: string | null
 }

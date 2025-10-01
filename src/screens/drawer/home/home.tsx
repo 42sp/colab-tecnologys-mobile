@@ -51,22 +51,21 @@ export default function Home() {
 
 	const [isLoading, setIsLoading] = useState(true)
 
-
 	useFocusEffect(
 		useCallback(() => {
 			// This function will be called when the screen comes into focus.
 			const fetchTasks = async () => {
-			setIsLoading(true)
-      		try {
-        		const fetchedTasks = await getTasks()
-        		dispatch(setTasks(fetchedTasks))
-      		} catch (error) {
-        		console.error('Erro ao buscar tarefas:', error)
-      		} finally {
-        		setIsLoading(false)
-    		}
-    	}
-    	fetchTasks()
+				setIsLoading(true)
+				try {
+					const fetchedTasks = await getTasks()
+					dispatch(setTasks(fetchedTasks))
+				} catch (error) {
+					console.error('Erro ao buscar tarefas:', error)
+				} finally {
+					setIsLoading(false)
+				}
+			}
+			fetchTasks()
 
 			// You can return a cleanup function here.
 			// This function will be called when the screen goes out of focus,
@@ -126,52 +125,51 @@ export default function Home() {
 				</TouchableOpacity>
 			</View>
 
-			{ isLoading ? (
-					<>
-						<HomeSkeleton />
-						<LoadingModal visible={isLoading}/>
-					</>
-				) : (
+			{isLoading ? (
 				<>
-				<HorizontalList
-					options={[
-						'Todos',
-						...new Set(tasks.map((item) => (item.service_type ? item.service_type : ''))),
-					]}
-					selected={filter.serviceType ? filter.serviceType : 'Todos'}
-					onSelect={(value) => setFilter((prev) => ({ ...prev, serviceType: value }))}
-				/>
+					<HomeSkeleton />
+				</>
+			) : (
+				<>
+					<HorizontalList
+						options={[
+							'Todos',
+							...new Set(tasks.map((item) => (item.service_type ? item.service_type : ''))),
+						]}
+						selected={filter.serviceType ? filter.serviceType : 'Todos'}
+						onSelect={(value) => setFilter((prev) => ({ ...prev, serviceType: value }))}
+					/>
 
-			<ActivityList
-				data={activityDataList.data}
-				HeaderComponent={
-					<View className="flex-row gap-3">
-							<SummaryCard
-								icon="clipboard"
-								SumaryVariant="blue"
-								value={activityDataList.amount}
-								label="Atividades"
-							/>
-							<SummaryCard
-								icon="clock"
-								SumaryVariant="orange"
-								value={activityDataList.pendding}
-								label="Pendentes"
-							/>
-							{filter.serviceType !== 'Todos' && (
-								<TouchableOpacity onPress={() => navigation.navigate('productivity')}>
-									<SummaryCard
-										icon="bar-chart"
-										SumaryVariant="green"
-										value={activityDataList.percent + '%'}
-										label="Produtividade"
-									/>
-							    </TouchableOpacity>
-							)}
-					</View>
-			}
-				/>
-			</>
+					<ActivityList
+						data={activityDataList.data}
+						HeaderComponent={
+							<View className="flex-row gap-3">
+								<SummaryCard
+									icon="clipboard"
+									SumaryVariant="blue"
+									value={activityDataList.amount}
+									label="Atividades"
+								/>
+								<SummaryCard
+									icon="clock"
+									SumaryVariant="orange"
+									value={activityDataList.pendding}
+									label="Pendentes"
+								/>
+								{filter.serviceType !== 'Todos' && (
+									<TouchableOpacity onPress={() => navigation.navigate('productivity')}>
+										<SummaryCard
+											icon="bar-chart"
+											SumaryVariant="green"
+											value={activityDataList.percent + '%'}
+											label="Produtividade"
+										/>
+									</TouchableOpacity>
+								)}
+							</View>
+						}
+					/>
+				</>
 			)}
 			<Button
 				variant="rounded"

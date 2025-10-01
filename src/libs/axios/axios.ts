@@ -6,7 +6,7 @@ import { logoutUser } from '@/utils'
 
 export const api = axios.create({
 	baseURL: API_URL,
-	timeout: 5000,
+	timeout: 15000,
 })
 
 // Log de criação do axios
@@ -23,12 +23,13 @@ api.interceptors.request.use(
 		const authHeader = getAuthHeader()
 		if (authHeader) {
 			config.headers.Authorization = authHeader
+			config.headers['Content-Type'] = 'application/json'
 		}
 		console.log('[AXIOS][REQUEST]', {
 			url: config.url,
 			method: config.method,
 			headers: config.headers,
-			//data: config.data,
+			data: config.data,
 		})
 		return config
 	},
@@ -48,9 +49,8 @@ api.interceptors.response.use(
 		return response
 	},
 	(error) => {
-		console.log('[AXIOS][RESPONSE][ERROR]:', error.response.data.message)
-		if (error.response) {
-			const info = error.response.data.message || error.response.data.error || error.message
+		if (error?.response) {
+			const info = error.response?.data?.message || error.response?.data?.error || error?.message
 			match({ info })
 				.with({ info: P.when((c: any) => c.indexOf('duplicate key value') !== -1) }, (e) =>
 					console.log('Erro de chave duplicada detectado:', e),
@@ -60,8 +60,8 @@ api.interceptors.response.use(
 					logoutUser(store.dispatch)
 				})
 				.otherwise(() => false)
-			//console.log('[AXIOS][RESPONSE][ERROR][DATA]:', error.response.data)
-			console.log('[AXIOS][RESPONSE][ERROR][STATUS]:', error.response.status)
+			console.log('[AXIOS][RESPONSE][ERROR][DATA]:', error.response?.data)
+			console.log('[AXIOS][RESPONSE][ERROR][STATUS]:', error.response?.status)
 		}
 		return Promise.reject(error)
 	},
