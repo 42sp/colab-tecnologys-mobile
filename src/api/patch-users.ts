@@ -5,6 +5,8 @@ interface PatchUsersProps {
 	cpf?: string
 	password?: string
 	role_id?: string
+	newPassword?: string
+	oldPassword?: string
 }
 
 interface PatchUsersResponse {
