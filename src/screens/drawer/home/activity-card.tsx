@@ -22,7 +22,7 @@ export function ActivityCard({
 	completion_date,
 	status,
 }: ActivityCardProps) {
-	const title = `${service_type} - ${service_stage} ${service_floor}/${service_apartment} - Torre ${service_tower}`
+	const title = `${service_type} | Parede ${service_stage} - ${service_floor} - Torre ${service_tower} - Ap ${service_apartment}`
 	const time = new Date(completion_date as Date)
 	const [isVisibleApprove, setIsVisibleApprove] = useState(false)
 	const { hierarchy_level } = useSelector((state: RootState) => state.roles)
@@ -91,15 +91,11 @@ export function ActivityCard({
 							<Text className="flex-1 font-inter text-sm">{worker_name}</Text>
 						</View>
 					</View>
-					<View className="self-end flex-row gap-3">
-						{!isVisibleApprove && ["pending"].includes(statusTask ?? '') && (
+					<View className="flex-row gap-3 self-end">
+						{!isVisibleApprove && ['pending'].includes(statusTask ?? '') && (
 							<View className="self-end">
-								<View
-									className="h-10 w-32 flex-row gap-1 bg-orange-100 rounded-full items-center justify-center"
-								>
-									<Text className="font-inter-medium text-[#EAB308]">
-										Pendente
-									</Text>
+								<View className="h-10 w-32 flex-row items-center justify-center gap-1 rounded-full bg-orange-100">
+									<Text className="font-inter-medium text-[#EAB308]">Pendente</Text>
 									{statusTask === 'approved' && <CheckCheck stroke="#fff" />}
 								</View>
 							</View>

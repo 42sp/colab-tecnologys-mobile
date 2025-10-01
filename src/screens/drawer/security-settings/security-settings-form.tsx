@@ -26,6 +26,7 @@ const SecuritySettingsSchema = z
 			.regex(/[A-Z]/, 'Senha deve conter pelo menos 1 letra maiúscula')
 			.regex(/[^A-Za-z0-9]/, 'Senha deve conter pelo menos 1 caractere especial'),
 		confirmPassword: z.string().nonempty('A confirmação da senha é obrigatória'),
+		oldPassword: z.string().nonempty('A confirmação da senha é obrigatória'),
 	})
 	.refine((data) => data.newPassword === data.confirmPassword, {
 		message: 'As senhas não correspondem',
@@ -37,14 +38,12 @@ type SecuritySettingsType = z.infer<typeof SecuritySettingsSchema>
 // const flux = 'first-access' // 'reset-password' ou 'first-access'
 
 export function SecuritySettingsForm() {
-	const { accessToken, exp } = useSelector((state: RootState) => state.passwordRecovery)
 	const { userId } = useSelector((state: RootState) => state.userProfile)
-	const isExpired = accessToken && Date.now() > Number(exp) * 1000
-	const navigate = useNavigate()
 	const dispatch = useDispatch()
 	const [modal, setModal] = useState<{
 		visible: boolean
 		description: string
+		status?: 'error' | 'success'
 	}>({
 		visible: false,
 		description: '',
@@ -62,32 +61,25 @@ export function SecuritySettingsForm() {
 		},
 	})
 
-	useEffect(() => {
-		if (accessToken && exp) {
-			if (!accessToken || isExpired) {
-				setModal({
-					visible: true,
-					description: 'Não foi possível resetar sua senha. Tente novamente mais tarde.',
-				})
-				navigate.navigation.goBack()
-			}
-		}
-	}, [accessToken, exp])
-	async function onSubmit({ newPassword }: SecuritySettingsType) {
+	async function onSubmit({ newPassword, oldPassword }: SecuritySettingsType) {
 		try {
-			await patchUsers({ id: userId, password: newPassword })
+			await patchUsers({ id: userId, newPassword: newPassword, oldPassword })
 			dispatch(clearPasswordRecovery())
-			navigate.navigation.goBack()
+			setModal({
+				visible: true,
+				description: 'Senha alterada com sucesso',
+				status: 'success',
+			})
 		} catch (error) {
 			console.log(error)
 			setModal({
 				visible: true,
 				description: 'Não foi possível resetar sua senha. Tente novamente mais tarde.',
 			})
-			navigate.navigation.goBack()
 		}
 	}
 
+	const [hideoldPassword, setHideoldPassword] = useState(true)
 	const [hideNewPassword, setHideNewPassword] = useState(true)
 	const [hideConfirmPassword, setHideConfirmPassword] = useState(true)
 
@@ -95,6 +87,29 @@ export function SecuritySettingsForm() {
 		<View className="mb-20 gap-5 p-5">
 			<Card className="gap-5">
 				<Card.Body className="gap-5 pb-10">
+					<View className="gap-1">
+						<Text>Senha atual</Text>
+						<Controller
+							control={control}
+							name="oldPassword"
+							render={({ field: { onChange, value } }) => (
+								<Input
+									placeholder="Senha atual"
+									IconLeft={'lock'}
+									IconRight={hideoldPassword ? 'eye-off' : 'eye'}
+									iconPress={() => setHideoldPassword(!hideoldPassword)}
+									secureTextEntry={hideoldPassword}
+									className="self-center"
+									value={value}
+									onChangeText={onChange}
+									hasError={!!errors.oldPassword}
+								/>
+							)}
+						/>
+						{errors.oldPassword && (
+							<Text className="text-red-500">{errors.oldPassword.message}</Text>
+						)}
+					</View>
 					<View className="gap-1">
 						<Text>Nova senha</Text>
 						<Controller
@@ -177,6 +192,7 @@ export function SecuritySettingsForm() {
 				visible={modal.visible}
 				description={modal.description}
 				onClose={() => setModal({ visible: false, description: '' })}
+				status={modal.status}
 			/>
 		</View>
 	)
