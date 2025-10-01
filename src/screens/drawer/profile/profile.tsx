@@ -14,10 +14,11 @@ import { DrawerNavigationProp } from '@react-navigation/drawer'
 import { DrawerParamList } from '@/_layouts/drawer/drawer'
 import { resetAuth } from '@/libs/redux/auth/auth-slice'
 import { LogoutModal } from '@/components/ui/logout-modal'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { deleteAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-store'
 import { LogModal } from '@/components/ui/log-modal'
 import { mask } from 'react-native-mask-text'
+import { LoadingModal } from '@/components/ui/loading-modal'
 
 export default function ProfileScreen() {
 	const user = useSelector((state: RootState) => state.userProfile)
@@ -30,6 +31,13 @@ export default function ProfileScreen() {
 		status: 'error'
 		description: string
 	}>({ visible: false, status: 'error', description: '' })
+
+	const [isLoading, setIsLoading] = useState(true)
+
+	useEffect(() => {
+		const timer = setTimeout(() => setIsLoading(false), 1000)
+  		return () => clearTimeout(timer)
+	}, [])
 
 	async function confirmLogout() {
 		try {
@@ -52,17 +60,18 @@ export default function ProfileScreen() {
 						</Card.Header>
 
 						<Card.Body className="gap-4">
-							<ProfileInfoItem label="Nome completo" value={user.name || ''} icon="user" />
-							<ProfileInfoItem label="Email" value={user.email || ''} icon="mail" />
-							<ProfileInfoItem label="Número de telefone" value={mask(user.phone || '', '(99) 9 9999-9999')} icon="phone" />
+							<ProfileInfoItem label="Nome completo" value={user.name || ''} icon="user" isLoading={isLoading} />
+							<ProfileInfoItem label="Email" value={user.email || ''} icon="mail"  isLoading={isLoading}/>
+							<ProfileInfoItem label="Número de telefone" value={mask(user.phone || '', '(99) 9 9999-9999')} icon="phone" isLoading={isLoading} />
 							<ProfileInfoItem
 								label="Data de nascimento"
 								value={
 									user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('pt-BR') : ''
 								}
 								icon="calendar"
+								isLoading={isLoading}
 							/>
-							<ProfileInfoItem label="Endereço" value={user.address || ''} icon="map-pin" />
+							<ProfileInfoItem label="Endereço" value={user.address || ''} icon="map-pin" isLoading={isLoading} />
 
 							<Card.Footer className="mt-4">
 								<TouchableOpacity
@@ -117,6 +126,7 @@ export default function ProfileScreen() {
 					description={modal.description}
 					onClose={() => setModal({ visible: false, status: 'error', description: '' })}
 				/>
+				<LoadingModal visible={isLoading} />
 			</ScrollView>
 		</SafeAreaView>
 	)
