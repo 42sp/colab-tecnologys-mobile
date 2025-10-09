@@ -2,13 +2,19 @@ import { Text, View } from 'react-native'
 import Card from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PaintRoller, Building2, Blocks, BrickWall, User, CheckCheck } from 'lucide-react-native'
-import { Task } from '@/api/get-tasks'
+import { getTasks, Task } from '@/api/get-tasks'
 import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import { patchTasks } from '@/api/patch-tasks'
 import { RootState } from '@/libs/redux/store'
+import { getCurrentDate } from '@/utils'
+import { toStringDate, toStringDateClean } from './utils'
+import { cn } from '@/lib/utils'
+import LoadingButton from '@/components/ui/loadingButton'
 
-interface ActivityCardProps extends Task {}
+interface ActivityCardProps extends Task {
+	onRefresh: () => Promise<void>
+}
 
 export function ActivityCard({
 	id,
@@ -21,24 +27,22 @@ export function ActivityCard({
 	service_tower,
 	completion_date,
 	status,
+	onRefresh,
 }: ActivityCardProps) {
 	const title = `${service_type} | Parede ${service_stage} - ${service_floor} - Torre ${service_tower} - Ap ${service_apartment}`
 	const time = new Date(completion_date as Date)
-	const [isVisibleApprove, setIsVisibleApprove] = useState(false)
 	const { hierarchy_level } = useSelector((state: RootState) => state.roles)
 	const [statusTask, setStatusTask] = useState(status)
+	const [patching, setPatching] = useState(false)
 
 	const { userId } = useSelector((state: RootState) => state.userProfile)
 
-	useEffect(() => {
-		if (hierarchy_level >= 50) setIsVisibleApprove(true)
-	}, [hierarchy_level])
-
 	async function handlePatchTasks() {
 		try {
-			if (!id) return
+			if (!id || hierarchy_level <= 49) return
+			setPatching(true)
 			await patchTasks({ id, approver_id: userId, status: 'completed' })
-			setStatusTask('approved')
+			await onRefresh()
 		} catch (error) {
 			console.log(error)
 		}
@@ -68,56 +72,54 @@ export function ActivityCard({
 	}
 
 	return (
-		<View className="">
+		<>
 			<Card className="flex-row">
 				{getJobTypeIcon()}
 				<Card.Body className="flex-1 justify-between gap-4 ">
 					<View className="flex-row justify-between">
 						<Text className="text-md max-w-52 font-inter-bold">{title}</Text>
 
-						<Text className="font-inter text-xs">
-							{time
-								? time.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
-								: '00:00'}
-						</Text>
+						<Text className="font-inter text-sm">{time ? toStringDateClean(time) : '00:00'}</Text>
 					</View>
-					<View>
-						<View className="flex-row gap-2">
-							<Building2 size={14} color="black" />
-							<Text className="flex-1 font-inter text-sm">{construction_name}</Text>
+					<View className="flex-row justify-between">
+						<View className="w-23">
+							<View className="flex-row gap-3">
+								<Building2 size={14} color="black" />
+								<Text className="font-inter text-sm">{construction_name}</Text>
+							</View>
+							<View className="flex-row gap-3">
+								<User size={14} color="black" />
+								<Text className="font-inter text-sm">{worker_name}</Text>
+							</View>
 						</View>
 						<View className="flex-row gap-2">
-							<User size={14} color="black" />
-							<Text className="flex-1 font-inter text-sm">{worker_name}</Text>
+							<View className="">
+								{statusTask === 'completed' ? (
+									<View className="h-10 w-20 flex-row items-center justify-center gap-1 rounded-full bg-green-700">
+										<CheckCheck stroke="#fff" />
+									</View>
+								) : (
+									<LoadingButton
+										title={'Pendente'}
+										loading={patching}
+										onPress={handlePatchTasks}
+										className={cn(`w-27 h-11 flex-row `, ' bg-orange-700')}
+									/>
+								)}
+							</View>
 						</View>
-					</View>
-					<View className="flex-row gap-3 self-end">
-						{!isVisibleApprove && ['pending'].includes(statusTask ?? '') && (
-							<View className="self-end">
-								<View className="h-10 w-32 flex-row items-center justify-center gap-1 rounded-full bg-orange-100">
-									<Text className="font-inter-medium text-[#EAB308]">Pendente</Text>
-									{statusTask === 'approved' && <CheckCheck stroke="#fff" />}
-								</View>
-							</View>
-						)}
-						{isVisibleApprove && (
-							<View className="self-end">
-								<Button
-									className="h-10 w-32 flex-row gap-1 bg-green-800"
-									variant="rounded"
-									onPress={() => handlePatchTasks()}
-									disabled={statusTask === 'approved'}
-								>
-									<Text className="font-inter-medium text-neutral-100">
-										{statusTask === 'approved' ? 'Aprovado' : 'Aprovar'}
-									</Text>
-									{statusTask === 'approved' && <CheckCheck stroke="#fff" />}
-								</Button>
-							</View>
-						)}
 					</View>
 				</Card.Body>
 			</Card>
-		</View>
+		</>
 	)
 }
+
+/*<Button
+										className={cn(`h-10 w-28 flex-row gap-1`, ' bg-orange-700')}
+										variant="rounded"
+										onPress={() => handlePatchTasks()}
+										disabled={hierarchy_level <= 49 ? true : false}
+									>
+										<Text className="font-inter-medium text-neutral-100">{'Pendente'}</Text>
+									</Button>*/

@@ -16,8 +16,8 @@ export const logoutUser = async (dispatch: AppDispatch) => {
 	await deleteAuthSecureStore([{ key: 'token' }, { key: 'expiryDate' }, { key: 'userid' }])
 }
 
-export const getCurrentDate = () => {
-	const now = new Date()
+export const getCurrentDate = (date?: string) => {
+	const now = new Date(date ? date : '')
 	return now.toLocaleString('sv-SE', { timeZone: 'America/Sao_Paulo' }) as unknown as Date
 }
 
@@ -46,8 +46,8 @@ export const setAuthProfile = async (auth: any, dispatch: Dispatch) => {
 			postcode: profile.postcode,
 			photo: profile.photo,
 			roleId: profile.role_id || undefined,
-			userId: profile.user_id,
-			profileId: profile.id,
+			userId: id,
+			profileId: id,
 		}),
 	)
 	dispatch(setRoles(role))

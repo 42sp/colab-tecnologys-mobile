@@ -47,7 +47,7 @@ export default function LoadingButton({
 			disabled={isDisabled}
 			className={[
 				// base styles
-				'relative items-center justify-center rounded-2xl px-5 py-3',
+				'relative items-center justify-center rounded-2xl px-5 py-1',
 				// colors
 				isDisabled ? 'bg-gray-400' : 'bg-green-700',
 				// press feedback

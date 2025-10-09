@@ -14,7 +14,7 @@ type CardComponent = React.FC<CardBaseProps> & {
 
 const Card: CardComponent = ({ children, className }) => {
 	return (
-		<View className={`gap-4 rounded-xl border border-neutral-100 bg-white p-5 ${className}`}>
+		<View className={`gap-2 rounded-xl border border-neutral-100 bg-white p-3 ${className}`}>
 			{children}
 		</View>
 	)

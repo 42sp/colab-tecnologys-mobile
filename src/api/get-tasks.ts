@@ -21,7 +21,7 @@ export interface Task {
 	service_type?: string
 }
 
-export async function getTasks() {
-	const response = await api.get<Task[]>('/tasks')
+export async function getTasks(signal: any) {
+	const response = await api.get<Task[]>('/tasks', { signal })
 	return response.data
 }

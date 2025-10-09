@@ -24,7 +24,7 @@ type SignInType = z.infer<typeof signInSchema>
 
 export function SignInForm() {
 	const { stack, drawer } = useNavigate()
-	const [hidePassword, setHidePassword] = useState(true)
+	const [hidePassword, setHidePassword] = useState('hidden')
 	const dispatch = useDispatch()
 	const [showErrorModal, setShowErrorModal] = useState(false)
 
@@ -76,7 +76,6 @@ export function SignInForm() {
 							keyboardType="numeric"
 							autoCapitalize="none"
 							placeholder="CPF"
-							onBlur={onBlur}
 							value={mask(value || '', '999.999.999-99')}
 							onChangeText={(text) => onChange(unMask(text).slice(0, 11))}
 							hasError={!!errors.cpf}
@@ -85,27 +84,30 @@ export function SignInForm() {
 					</View>
 				)}
 			/>
-
-			<Controller
-				control={control}
-				name="password"
-				render={({ field: { onChange, onBlur, value } }) => (
-					<View>
+			<View className="">
+				<Controller
+					control={control}
+					name="password"
+					render={({ field: { onChange, value } }) => (
 						<Input
+							key={hidePassword ? 'hidden' : 'shown'}
 							placeholder="Senha"
-							IconRight="eye"
-							iconPress={() => (hidePassword ? setHidePassword(false) : setHidePassword(true))}
-							secureTextEntry={hidePassword}
+							IconRight={hidePassword === 'hidden' ? 'eye-off' : 'eye'}
+							iconPress={() => setHidePassword(hidePassword === 'hidden' ? 'shown' : 'hidden')}
+							secureTextEntry={hidePassword === 'hidden' ? true : false}
 							onChangeText={onChange}
-							onBlur={onBlur}
 							value={value}
 							hasError={!!errors.password}
+							inputStyle={{
+								color: '#111827', // texto visível
+								letterSpacing: hidePassword === 'shown' ? 0 : 3, // evitar bug de render
+								fontFamily: hidePassword === 'shown' ? undefined : 'Inter', // sem fonte custom com senha
+							}}
 						/>
-						{errors.password && <Text className="text-red-500">{errors.password.message}</Text>}
-					</View>
-				)}
-			/>
-
+					)}
+				/>
+				{errors.password && <Text className="text-red-500">{errors.password.message}</Text>}
+			</View>
 			<TouchableOpacity
 				activeOpacity={0.5}
 				onPress={() => {
