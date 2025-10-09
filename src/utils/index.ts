@@ -13,6 +13,7 @@ export const logoutUser = async (dispatch: AppDispatch) => {
 	dispatch(resetAuth())
 	dispatch(clearProfile())
 	dispatch(clearTasks())
+
 	await deleteAuthSecureStore([{ key: 'token' }, { key: 'expiryDate' }, { key: 'userid' }])
 }
 
