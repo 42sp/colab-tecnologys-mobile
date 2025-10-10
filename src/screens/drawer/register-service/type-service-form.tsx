@@ -235,7 +235,7 @@ export function TypeServiceForm({
 									IconRight={'chevron-down'}
 									options={measurementUnitOptions}
 									variant="outline"
-									placeholder="Selecione a unidade de medida"
+									placeholder="Selecione a unidade de medição"
 									value={value}
 									onChangeText={onChange}
 									hasError={!!errors.measurementUnit}
