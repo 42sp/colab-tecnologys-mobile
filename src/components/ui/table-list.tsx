@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, Text } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { Button } from '@/components/ui/button'
+import { CircleX, ClosedCaption, CopyMinus, Divide, FolderClosed, PanelLeftClose, SidebarClose, X } from 'lucide-react-native'
 
 interface TableListProps {
 	options: string[]
@@ -30,11 +31,12 @@ export function TableList({ title, options, onChange }: TableListProps) {
 					<Button
 						key={item}
 						variant="redPill"
-						className="flex-row "
+						className="flex-row justify-center"
 						onPress={() => removeItem(item)}
+						accessibilityLabel={`Remover Apto ${item}`}
 					>
-						<Text className="pr-2 font-inter text-xl text-black">{item}</Text>
-						<Feather name="x" size={18} color="black" />
+						<Text className="pr-2 font-inter-bold text-lg text-black">Apto {item}</Text>
+						<CircleX height={18} width={18} />
 					</Button>
 				))}
 			</View>

@@ -91,8 +91,8 @@ export function TypeServiceForm({
 		return apartments.map((apartment) => ({
 			label: apartment,
 			value: apartment,
-		}))
-	}, [servicesFilteredByServiceType])
+		})).filter(f => !selectedApartments.includes(f.value))
+	}, [servicesFilteredByServiceType, selectedApartments])
 
 	const servicesFilteredByApartments = useMemo(() => {
 		if (!selectedApartments?.length) return []
