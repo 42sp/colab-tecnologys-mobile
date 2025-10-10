@@ -90,14 +90,14 @@ export default function RegisterServiceScreen() {
 		reset,
 		resetField,
 		setValue,
-		formState: { errors },
+		formState: { errors, isDirty, dirtyFields },
 	} = useForm<RegisterServiceType>({
 		resolver: zodResolver(registerServiceSchema),
 		defaultValues: {
 			dateOfService: '',
 			tower: '',
 			floor: '',
-			workers: [{ percent: 100, worker_id: '' }],
+			workers: [{ percent: 100, worker_id: userId || '' }],
 			typeOfService: '',
 			apartments: [],
 			measurementUnit: '',
@@ -213,6 +213,24 @@ export default function RegisterServiceScreen() {
 		setModalVisible(false)
 	}
 
+	const handleCancel = () => {
+		reset({
+			dateOfService: '',
+			tower: '',
+			floor: '',
+			workers: [{ percent: 100, worker_id: userId || '' }],
+			typeOfService: '',
+			apartments: [],
+			measurementUnit: '',
+			classification: '',
+			services: '',
+			confirmed: false,
+		})
+		setSelectedServiceId(null)
+		setModalVisible(false)
+		navigation.goBack()
+	}
+
 	return (
 		<SafeAreaView className=" bg-[#F9FAFB]" edges={['bottom']}>
 			{isLoading ? (
@@ -290,10 +308,10 @@ export default function RegisterServiceScreen() {
 							</Card>
 							<View className="flex-row gap-4">
 								<Button
-									title="Cancelar"
+									title={isDirty ? "Cancelar" : "Voltar"}
 									variant="outline"
 									className="flex-1"
-									onPress={() => navigation.navigate('home')}
+									onPress={handleCancel}
 								/>
 
 								<LoadingButton

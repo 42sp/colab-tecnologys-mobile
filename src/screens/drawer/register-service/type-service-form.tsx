@@ -137,7 +137,7 @@ export function TypeServiceForm({
 		}))
 
 		return options
-	}, [servicesFilteredByEnvType])
+	}, [servicesFilteredByEnvType, serviceTypeOptions])
 
 	const filteredServices = useMemo(() => {
 		if (!selectedService) return []
@@ -176,6 +176,31 @@ export function TypeServiceForm({
 						/>
 						{errors.typeOfService && (
 							<Text className="text-md  text-red-500">{errors.typeOfService.message}</Text>
+						)}
+					</View>
+					<View className="gap-2">
+						<Controller
+							control={control}
+							name="services"
+							render={({ field: { onChange, value } }) => (
+								<Dropdown
+									IconLeft={'list'}
+									IconRight={'chevron-down'}
+									options={serviceOptions}
+									variant="outline"
+									placeholder="Selecione os serviços"
+									value={serviceOptions.find((opt) => opt.value === value)?.label || ''}
+									onChangeText={(label) => {
+										const matched = serviceOptions.find((opt) => opt.label === label)
+										const val = matched?.value ?? label
+										onChange(val)
+									}}
+									hasError={!!errors.services}
+								/>
+							)}
+						/>
+						{errors.services && (
+							<Text className="text-md mb-2 text-red-500">{errors.services.message as string}</Text>
 						)}
 					</View>
 					<Text className=" text-lg">Apartamentos</Text>
@@ -268,31 +293,6 @@ export function TypeServiceForm({
 							<Text className="text-md mb-2 text-red-500">
 								{errors.classification.message as string}
 							</Text>
-						)}
-					</View>
-					<View className="gap-2">
-						<Controller
-							control={control}
-							name="services"
-							render={({ field: { onChange, value } }) => (
-								<Dropdown
-									IconLeft={'list'}
-									IconRight={'chevron-down'}
-									options={serviceOptions}
-									variant="outline"
-									placeholder="Selecione os serviços"
-									value={serviceOptions.find((opt) => opt.value === value)?.label || ''}
-									onChangeText={(label) => {
-										const matched = serviceOptions.find((opt) => opt.label === label)
-										const val = matched?.value ?? label
-										onChange(val)
-									}}
-									hasError={!!errors.services}
-								/>
-							)}
-						/>
-						{errors.services && (
-							<Text className="text-md mb-2 text-red-500">{errors.services.message as string}</Text>
 						)}
 					</View>
 					{selectedService && (
