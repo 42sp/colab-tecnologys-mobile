@@ -1,17 +1,17 @@
 import { View, Text } from 'react-native'
 import { ActivityCard } from './activity-card'
-import { Task } from '@/api/get-tasks'
+import { TasksServices } from '@/api/get-tasks'
 import { useMemo } from 'react'
 import { toDate } from '../home/utils'
 
 interface ActivityProps {
-	tasks?: Task[]
+	tasks?: TasksServices[]
 }
 
 export function Activity({ tasks }: ActivityProps) {
 
 	const tasksEntries = useMemo(() => {
-		const tasksByDate = tasks?.reduce((acc: Record<string, Task[]>, task: Task) => {
+		const tasksByDate = tasks?.reduce((acc: Record<string, TasksServices[]>, task: TasksServices) => {
 				const dateKey = toDate(task.completion_date)?.toISOString().split("T")[0]
 				if (dateKey) {
 					if (!acc[dateKey]) {
@@ -21,11 +21,11 @@ export function Activity({ tasks }: ActivityProps) {
 				}
 				return acc
 			},
-			{} as Record<string, Task[]>,
+			{} as Record<string, TasksServices[]>,
 		)
 		const tasksEntries = Object.entries(tasksByDate ?? []).sort((a, b) => toDate(a[0]).getTime() - toDate(b[0]).getTime())
 
-		return tasksEntries.map(([date, dateTasks]: [string, Task[]]) => ([date, dateTasks])) as [string, Task[]][]
+		return tasksEntries.map(([date, dateTasks]: [string, TasksServices[]]) => ([date, dateTasks])) as [string, TasksServices[]][]
 	}, [tasks])
 	return (
 		<View className="m-4">

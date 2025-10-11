@@ -10,7 +10,7 @@ export const api = axios.create({
 })
 
 // Log de criação do axios
-console.log('[AXIOS] API_URL:', API_URL)
+// console.log('[AXIOS] API_URL:', API_URL)
 
 const getAuthHeader = () => {
 	const token = store.getState().auth.token
@@ -25,12 +25,12 @@ api.interceptors.request.use(
 			config.headers.Authorization = authHeader
 			config.headers['Content-Type'] = 'application/json'
 		}
-		console.log('[AXIOS][REQUEST]', {
-			url: config.url,
-			method: config.method,
-			headers: config.headers,
-			data: config.data,
-		})
+		// console.log('[AXIOS][REQUEST]', {
+		// 	url: config.url,
+		// 	method: config.method,
+		// 	headers: config.headers,
+		// 	data: config.data,
+		// })
 		return config
 	},
 	(error) => {

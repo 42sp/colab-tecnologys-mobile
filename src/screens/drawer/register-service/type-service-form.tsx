@@ -27,7 +27,7 @@ type Props = {
 
 const radioOptions = [{ label: 'Externa' }, { label: 'Interna' }]
 
-const serviceMap: Record<string, string> = {
+export const serviceMap: Record<string, string> = {
 	C: 'Contrapiso',
 	M: 'Marcação',
 	E: 'Elevação',
@@ -53,6 +53,8 @@ export function TypeServiceForm({
 	const [selectedStage, setSelectedStage] = useState<string | null>(null)
 
 	const baseFilteredServices = useMemo(() => {
+		// console.log(services)
+		// services.map(s => console.log(s.id))
 		if (!selectedTower || !selectedFloor) return []
 		return services.filter(
 			(s) =>

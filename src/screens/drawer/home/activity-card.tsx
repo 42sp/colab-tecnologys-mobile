@@ -2,7 +2,7 @@ import { Text, View } from 'react-native'
 import Card from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PaintRoller, Building2, Blocks, BrickWall, User, CheckCheck } from 'lucide-react-native'
-import { getTasks, Task } from '@/api/get-tasks'
+import { getTasks, Task, TasksServices } from '@/api/get-tasks'
 import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import { patchTasks } from '@/api/patch-tasks'
@@ -11,8 +11,9 @@ import { getCurrentDate } from '@/utils'
 import { toStringDate, toStringDateClean } from './utils'
 import { cn } from '@/lib/utils'
 import LoadingButton from '@/components/ui/loadingButton'
+import { serviceMap } from '../register-service/type-service-form'
 
-interface ActivityCardProps extends Task {
+interface ActivityCardProps extends TasksServices {
 	onRefresh: () => Promise<void>
 }
 
@@ -28,8 +29,9 @@ export function ActivityCard({
 	completion_date,
 	status,
 	onRefresh,
+	service_acronym
 }: ActivityCardProps) {
-	const title = `${service_type} | Parede ${service_stage} - ${service_floor} - Torre ${service_tower} - Ap ${service_apartment}`
+	const title = `${serviceMap[service_acronym ?? ""]} | Parede ${service_stage} - ${service_floor} - Torre ${service_tower} - Ap ${service_apartment}`
 	const time = new Date(completion_date as Date)
 	const { hierarchy_level } = useSelector((state: RootState) => state.roles)
 	const [statusTask, setStatusTask] = useState(status)
