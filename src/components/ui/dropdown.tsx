@@ -28,6 +28,7 @@ const dropdownVariants: Record<DropdownVariant, { container: string; text: strin
 
 export interface ItemType {
 	label: string
+	value?: string
 }
 
 interface DropdownProps extends TextInputProps {
@@ -41,6 +42,7 @@ interface DropdownProps extends TextInputProps {
 	value?: string
 	onChangeText?: (text: string) => void
 	hasError?: boolean
+	disabled?: boolean
 }
 
 export function Dropdown({
@@ -54,6 +56,7 @@ export function Dropdown({
 	value,
 	onChangeText,
 	hasError = false,
+	disabled
 }: DropdownProps) {
 	const [open, setOpen] = useState(false)
 
@@ -67,6 +70,7 @@ export function Dropdown({
 
 	return (
 		<Pressable
+			disabled={disabled}
 			onPress={() => (open === true ? setOpen(false) : setOpen(true))}
 			className={`w-full ${className}`}
 		>
@@ -89,7 +93,7 @@ export function Dropdown({
 				>
 					{options.map((item) => (
 						<TouchableOpacity
-							key={item.label}
+							key={item.value || item.label}
 							className="w-full bg-white px-4 py-3 hover:bg-neutral-100"
 							onPress={() => {
 								onChangeText?.(item.label)
