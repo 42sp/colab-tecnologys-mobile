@@ -42,9 +42,9 @@ export function SignInForm() {
 
 	async function onSubmit(user: SignInType) {
 		try {
-			console.log('Tentando fazer login com:', user)
+			// console.log('Tentando fazer login com:', user)
 			const auth = await signIn({ ...user })
-			console.log('Resposta do signIn:', auth)
+			// console.log('Resposta do signIn:', auth)
 
 			await setAuthProfile(auth, dispatch)
 
@@ -53,15 +53,15 @@ export function SignInForm() {
 		} catch (error: any) {
 			setShowErrorModal(true)
 			if (error.response) {
-				console.log('Erro Axios - response:', error.response)
-				console.log('Erro Axios - data:', error.response.data)
-				console.log('Erro Axios - status:', error.response.status)
+				// console.log('Erro Axios - response:', error.response)
+				// console.log('Erro Axios - data:', error.response.data)
+				// console.log('Erro Axios - status:', error.response.status)
 			} else if (error.request) {
-				console.log('Erro Axios - request:', error.request)
+				// console.log('Erro Axios - request:', error.request)
 			} else {
-				console.log('Erro desconhecido:', error.message)
+				// console.log('Erro desconhecido:', error.message)
 			}
-			console.log('Erro ao fazer login em SignIn. Erro retornado: ', error)
+			// console.log('Erro ao fazer login em SignIn. Erro retornado: ', error)
 		}
 	}
 
