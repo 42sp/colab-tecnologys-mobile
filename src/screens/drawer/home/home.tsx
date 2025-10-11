@@ -67,7 +67,7 @@ export default function Home() {
 		const controller = new AbortController()
 		;(async () => {
 			try {
-				const fetchedTasks = await getTasks(controller.signal)
+				const fetchedTasks = await getTasks()
 
 				if (!alive) return
 				// startTransition deixa a UI respirar mesmo com muitos itens
@@ -88,7 +88,7 @@ export default function Home() {
 		setRefreshing(true)
 		const controller = new AbortController()
 		try {
-			const fetchedTasks = await getTasks(controller.signal)
+			const fetchedTasks = await getTasks()
 			console.log('refreshed')
 			startTransition(() => dispatch(setTasks(fetchedTasks) as any))
 		} finally {
@@ -98,11 +98,11 @@ export default function Home() {
 	}
 
 	// 3) Refetch ao focar (opcional) sem desmontar nada
-	useDeferredFocusEffect(async ({ isActive, signal }) => {
+	useDeferredFocusEffect(async ({ isActive }) => {
 		if (!hasInitialDataRef.current) return
 		setRefetching(true)
 		try {
-			const fetchedTasks = await getTasks(signal)
+			const fetchedTasks = await getTasks()
 			if (isActive()) startTransition(() => dispatch(setTasks(fetchedTasks) as any))
 		} finally {
 			if (isActive()) setRefetching(false)
