@@ -208,14 +208,6 @@ export default function Home() {
 					/>*/}
 			</>
 
-			<Button
-				variant="rounded"
-				onPress={() => navigation.navigate('registerService')}
-				className="absolute bottom-16 right-5 size-16"
-			>
-				<Feather name="plus" size={32} color="#FFFFFF" />
-			</Button>
-
 			<HomeFilterModal
 				isVisible={showFilter}
 				onClose={() => setShowFilter(false)}
