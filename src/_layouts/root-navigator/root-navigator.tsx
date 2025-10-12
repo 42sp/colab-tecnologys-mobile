@@ -6,6 +6,7 @@ import StackLayout from '../stack/stack'
 import { LoadingModal } from '@/components/ui/loading-modal'
 import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-store'
 import { logoutUser } from '@/utils'
+import TabsLayout from '../tabs/tabs'
 
 export default function RootNavigator() {
 	const dispatch = useDispatch()
@@ -30,5 +31,5 @@ export default function RootNavigator() {
 	if (loading) {
 		return <LoadingModal visible={loading} />
 	}
-	return token ? <DrawerLayout /> : <StackLayout />
+	return token ? <TabsLayout /> : <StackLayout />
 }
