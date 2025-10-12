@@ -5,6 +5,7 @@ import Card from '@/components/ui/card'
 import { Dropdown } from '@/components/ui/dropdown'
 import { Feather } from '@expo/vector-icons'
 import { Profile } from '@/api/get-profile'
+import { useEffect } from 'react'
 
 type Props = {
 	control: Control<RegisterServiceType>
@@ -57,21 +58,27 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 		const newTotal = fields.length + 1
 		const newDistribution = distributeEvenly(newTotal)
 
-		fields.forEach((_, index) => {
-			const updatedWorker = { ...(rows?.[index] ?? {}), percent: newDistribution[index] }
-			update(index, updatedWorker)
-		})
-
 		// Pega os IDs já selecionados
 		const selectedIds = rows.map((w) => w.worker_id).filter(Boolean)
 		// Encontra o primeiro worker disponível
 		const firstAvailable = workerOptions.find((opt) => !selectedIds.includes(opt.value))
 
 		append({
-			percent: newDistribution[newTotal - 1],
+			percent: newDistribution[newTotal],
 			worker_id: firstAvailable ? firstAvailable.value : '', // valor padrão
 		})
 	}
+
+	useEffect(() => {
+		const newTotal = fields.length;
+		const newDistribution = distributeEvenly(newTotal);
+
+		fields.forEach((_, index) => {
+			const updatedWorker = { ...(rows?.[index] ?? {}), percent: newDistribution[index] }
+			update(index, updatedWorker)
+		});
+
+	}, [fields.length]);
 
 	return (
 		<View>
@@ -99,14 +106,16 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 										name={`workers.${idx}.percent` as const}
 										render={({ field: { onChange, value } }) => (
 											<Dropdown
-												IconRight={'chevron-down'}
+												disabled={fields.length === 1}
+												IconRight={fields.length === 1 ? undefined : 'chevron-down'}
 												options={percentOptions}
 												variant="outline"
 												placeholder="50%"
 												value={typeof value === 'number' ? `${value}%` : ''}
-												onChangeText={(v: any) =>
-													onChange(parseInt(String(v).replace(/[^0-9]/g, ''), 10))
-												}
+												onChangeText={(v: any) => {
+													onChange(parseInt(String(v).replace(/[^0-9]/g, ''), 10));
+													update(idx, { ...rows[idx], percent: parseInt(String(v).replace(/[^0-9]/g, ''), 10) })
+												}}
 												hasError={!!rowError?.percent}
 											/>
 										)}
@@ -168,13 +177,20 @@ export function WorkersForm({ control, errors, profiles }: Props) {
 									</View>
 								</View>
 
-								<Pressable onPress={() => remove(idx)} className="justify-center pb-4">
-									<Feather name="x" size={18} color="#374151" />
-								</Pressable>
+								{
+									fields.length > 1 && (
+										<Pressable
+											onPress={() => remove(idx)}
+											className="justify-center pb-4"
+											disabled={fields.length <= 1}
+										>
+											<Feather name="x" size={18} color="#374151" />
+										</Pressable>
+									)
+								}
 							</View>
 						)
 					})}
-
 					{errors.workers?.root?.message && (
 						<Text className="mt-2 text-red-500">{String(errors.workers.root.message)}</Text>
 					)}
