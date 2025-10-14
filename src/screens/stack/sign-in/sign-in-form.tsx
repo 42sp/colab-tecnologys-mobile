@@ -23,7 +23,7 @@ const signInSchema = z.object({
 type SignInType = z.infer<typeof signInSchema>
 
 export function SignInForm() {
-	const { stack, drawer } = useNavigate()
+	const { stack } = useNavigate()
 	const [hidePassword, setHidePassword] = useState('hidden')
 	const dispatch = useDispatch()
 	const [showErrorModal, setShowErrorModal] = useState(false)
@@ -49,7 +49,7 @@ export function SignInForm() {
 			await setAuthProfile(auth, dispatch)
 
 			console.log('LOG: Usuário autenticado a partir do login manual')
-			drawer('home')
+			stack('tab')
 		} catch (error: any) {
 			setShowErrorModal(true)
 			if (error.response) {

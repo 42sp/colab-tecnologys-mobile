@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Card from '@/components/ui/card'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/libs/redux/store'
-import { useNavigation } from '@react-navigation/native'
+import { TabNavigationState, useNavigation } from '@react-navigation/native'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
 import { DrawerParamList } from '@/_layouts/drawer/drawer'
 import { EditProfile } from '@/api/edit-profile'
@@ -17,6 +17,8 @@ import { useState } from 'react'
 import { LogModal } from '@/components/ui/log-modal'
 import { LoadingModal } from '@/components/ui/loading-modal'
 import { mask, unMask } from 'react-native-mask-text'
+import { useNavigate } from '@/libs/react-navigation/useNavigate'
+import { TabParamList } from '@/_layouts/tabs/tabs'
 
 const editProfileSchema = z.object({
 	name: z.string().nonempty('Nome completo é obrigatório'),
@@ -49,8 +51,7 @@ export function EditProfileForm() {
 		},
 	})
 
-	type ProfileScreenNavigationProp = DrawerNavigationProp<DrawerParamList>
-	const navigation = useNavigation<ProfileScreenNavigationProp>()
+	const { navigation } = useNavigate();
 	const dispatch = useDispatch()
 	const [modal, setModal] = useState<{
 		visible: boolean
@@ -149,7 +150,7 @@ export function EditProfileForm() {
 					)
 					setModal({ visible: true, status: 'success', description: 'Perfil atualizado!' })
 					setTimeout(() => {
-						navigation.navigate('profile')
+						navigation.navigate('tab', { screen: 'profile' });
 						setModal({ visible: false, status: 'success', description: 'Perfil atualizado!' })
 					}, 2000)
 				}
@@ -174,7 +175,7 @@ export function EditProfileForm() {
 				: '',
 			address: profile.address || '',
 		})
-		navigation.navigate('profile')
+		navigation.navigate('tab', { screen: 'profile' });
 	}
 
 	return (

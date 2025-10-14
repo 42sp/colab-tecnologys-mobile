@@ -19,11 +19,13 @@ import { deleteAuthSecureStore } from '@/libs/expo-secure-store/expo-secure-stor
 import { LogModal } from '@/components/ui/log-modal'
 import { mask } from 'react-native-mask-text'
 import { LoadingModal } from '@/components/ui/loading-modal'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { StackParamList } from '@/_layouts/stack/stack'
+import { useNavigate } from '@/libs/react-navigation/useNavigate'
 
 export default function ProfileScreen() {
 	const user = useSelector((state: RootState) => state.userProfile)
-	type ProfileScreenNavigationProp = DrawerNavigationProp<DrawerParamList>
-	const navigation = useNavigation<ProfileScreenNavigationProp>()
+	const { stack } = useNavigate();
 	const dispatch = useDispatch()
 	const [isModalVisible, setIsModalVisible] = useState(false)
 	const [modal, setModal] = useState<{
@@ -77,7 +79,7 @@ export default function ProfileScreen() {
 								<TouchableOpacity
 									activeOpacity={0.8}
 									className="p-2"
-									onPress={() => navigation.navigate('editProfile')}
+									onPress={() => stack('editProfile')}
 								>
 									<Text className="self-center font-inter-bold text-lg text-blue-500">
 										Editar informações
@@ -104,7 +106,7 @@ export default function ProfileScreen() {
 
 						<TouchableOpacity
 							className=" text-pu w-full flex-row items-center gap-4 rounded-b-xl border border-neutral-100 p-3"
-							onPress={() => navigation.navigate('security')}
+							onPress={() => stack('security')}
 						>
 							<ProfileIcon icon="lock" color={'#a855f7'} background="#f3e8ff" />
 							<Text className="font-inter-medium text-xl">Segurança</Text>
