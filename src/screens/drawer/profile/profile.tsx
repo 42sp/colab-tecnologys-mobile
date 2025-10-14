@@ -109,6 +109,7 @@ export default function ProfileScreen() {
 							<ProfileIcon icon="lock" color={'#a855f7'} background="#f3e8ff" />
 							<Text className="font-inter-medium text-xl">Segurança</Text>
 						</TouchableOpacity>
+
 					</View>
 
 					<Button variant="red" title="Sair" onPress={() => setIsModalVisible(true)}>
