@@ -31,5 +31,5 @@ export default function RootNavigator() {
 	if (loading) {
 		return <LoadingModal visible={loading} />
 	}
-	return token ? <TabsLayout /> : <StackLayout />
+	return <StackLayout />
 }
