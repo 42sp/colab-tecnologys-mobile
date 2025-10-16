@@ -7,8 +7,9 @@ import { Feather } from '@expo/vector-icons'
 export function StackHeader({ navigation, route, options }: StackHeaderProps) {
 	const title = getHeaderTitle(options, route.name)
 	const paddingSize = Platform.OS === 'ios' ? 'p-2' : 'p-4'
+	const heightSize = Platform.OS === 'ios' ? 'h-28' : 'h-24'
 	return (
-		<View className=" relative h-24 w-full " style={{ backgroundColor: 'transparent' }}>
+		<View className={`relative ${heightSize} w-full`} style={{ backgroundColor: 'transparent' }}>
 			<LinearGradient
 				colors={['#B73131', '#EAA233']}
 				start={{ x: 0, y: 0.5 }}
@@ -23,6 +24,15 @@ export function StackHeader({ navigation, route, options }: StackHeaderProps) {
 						<Feather name="chevron-left" size={24} color="#fff" />
 					</TouchableOpacity>
 					<Text className=" mx-auto font-inter-bold text-xl text-white">{title}</Text>
+					{
+						route.name === 'notification' &&
+						<TouchableOpacity
+							className={`absolute right-0 ${paddingSize}`}
+							onPress={() => navigation.navigate('notificationConfig')}
+						>
+							<Feather name="settings" size={24} color="#fff" />
+						</TouchableOpacity>
+					}
 				</View>
 			</LinearGradient>
 		</View>

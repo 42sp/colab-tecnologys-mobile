@@ -6,6 +6,8 @@ import Home from '@/screens/drawer/home/home';
 import { HomeIcon, Plus, UserIcon } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 import ProfileScreen from '@/screens/drawer/profile/profile';
+import { useEffect } from 'react';
+import TabsHeader from './tab-header';
 
 export type TabParamList = {
 	home: undefined
@@ -17,10 +19,15 @@ export type TabParamList = {
 	productivity: undefined
 }
 
+const triggerSeconds = 60 * 60;
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const TabsLayout = () => {
+
+
+
+
 	return (
 		<Tab.Navigator
 			screenOptions={{
@@ -33,6 +40,7 @@ const TabsLayout = () => {
 				options={{
 					title: 'Home',
 					tabBarIcon: ({ color, size }) => <HomeIcon color={color} size={size} />,
+					header: TabsHeader
 				}}
 			/>
 			<Tab.Screen
@@ -49,7 +57,8 @@ const TabsLayout = () => {
 							color={focused ? '#FFFFFF' : color}
 							size={size}
 						/>
-					</View>
+					</View>,
+					header: TabsHeader
 				}}
 			/>
 			<Tab.Screen
@@ -58,6 +67,7 @@ const TabsLayout = () => {
 				options={{
 					title: "Perfil",
 					tabBarIcon: ({ color, size }) => <UserIcon color={color} size={size} />,
+					header: TabsHeader
 				}}
 			/>
 		</Tab.Navigator>

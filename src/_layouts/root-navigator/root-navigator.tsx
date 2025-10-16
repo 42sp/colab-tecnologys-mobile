@@ -7,6 +7,7 @@ import { LoadingModal } from '@/components/ui/loading-modal'
 import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-store'
 import { logoutUser } from '@/utils'
 import TabsLayout from '../tabs/tabs'
+import { StatusBar } from 'react-native'
 
 export default function RootNavigator() {
 	const dispatch = useDispatch()
@@ -31,5 +32,8 @@ export default function RootNavigator() {
 	if (loading) {
 		return <LoadingModal visible={loading} />
 	}
-	return token ? <TabsLayout /> : <StackLayout />
+	return <>
+		<StatusBar translucent barStyle="dark-content" backgroundColor="transparent" />
+		<StackLayout />
+	</>
 }

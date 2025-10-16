@@ -12,8 +12,6 @@ import { DrawerHeader } from './drawer-header'
 export type DrawerParamList = {
 	home: undefined
 	profile: undefined
-	security: undefined
-	editProfile: undefined
 	registerService: undefined
 	homeManager: undefined
 	productivity: undefined
@@ -49,24 +47,6 @@ export default function DrawerLayout() {
 					drawerLabel: 'Perfil',
 					title: 'Perfil',
 					drawerIcon: ({ color, size }) => <Feather name="user" color={color} size={size} />,
-				}}
-			/>
-			<Drawer.Screen
-				name="editProfile"
-				component={EditProfileScreen}
-				options={{
-					drawerLabel: 'Editar Perfil',
-					title: 'Editar Perfil',
-					drawerIcon: ({ color, size }) => <Feather name="edit" color={color} size={size} />,
-				}}
-			/>
-			<Drawer.Screen
-				name="security"
-				component={SecuritySettingsScreen}
-				options={{
-					drawerLabel: 'Segurança',
-					title: 'Segurança',
-					drawerIcon: ({ color, size }) => <Feather name="shield" color={color} size={size} />,
 				}}
 			/>
 			<Drawer.Screen

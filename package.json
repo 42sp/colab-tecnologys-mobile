@@ -13,6 +13,7 @@
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.1",
     "@hookform/resolvers": "^5.2.1",
+    "@react-native-community/datetimepicker": "8.4.1",
     "@react-navigation/bottom-tabs": "^7.4.8",
     "@react-navigation/drawer": "^7.5.5",
     "@react-navigation/native": "^7.1.17",
@@ -28,6 +29,7 @@
     "expo-image-manipulator": "~13.1.7",
     "expo-image-picker": "~16.1.4",
     "expo-linear-gradient": "~14.1.5",
+    "expo-notifications": "~0.31.4",
     "expo-secure-store": "~14.2.4",
     "lucide-react": "^0.544.0",
     "lucide-react-native": "^0.539.0",
