@@ -21,6 +21,8 @@ export function Input({
 	inputStyle,
 	hasError = false,
 	secureTextEntry,
+	keyboardType,
+	onFocus,
 	...rest
 }: InputProps) {
 	const errorClass = hasError ? 'border-2 border-red-400' : ''
@@ -41,6 +43,8 @@ export function Input({
 				secureTextEntry={secureTextEntry}
 				{...rest}
 				style={{ ...inputStyle }}
+				keyboardType={keyboardType || 'default'}
+				onFocus={onFocus}
 			/>
 
 			{IconRight && (

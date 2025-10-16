@@ -1,5 +1,6 @@
 import { DrawerParamList } from '@/_layouts/drawer/drawer'
 import { StackParamList } from '@/_layouts/stack/stack'
+import { TabParamList } from '@/_layouts/tabs/tabs'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -16,14 +17,14 @@ export function useNavigate() {
 		navigation.navigate(screen, params)
 	}
 
-	function drawer<T extends keyof DrawerParamList>(screen: T): void
-	function drawer<T extends keyof DrawerParamList>(screen: T, params: DrawerParamList[T]): void
-	function drawer<T extends keyof DrawerParamList>(screen: T, params?: DrawerParamList[T]) {
-		navigation.navigate('drawer', {
+	function tab<T extends keyof TabParamList>(screen: T): void
+	function tab<T extends keyof TabParamList>(screen: T, params: TabParamList[T]): void
+	function tab<T extends keyof TabParamList>(screen: T, params?: TabParamList[T]) {
+		navigation.navigate('tab', {
 			screen,
 			params,
 		})
 	}
 
-	return { stack, drawer, navigation }
+	return { stack, tab, navigation }
 }
