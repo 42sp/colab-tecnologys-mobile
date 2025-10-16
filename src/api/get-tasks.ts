@@ -44,8 +44,8 @@ export interface TasksServices {
 	service_acronym?: string
 }
 
-export async function getTasks() {
-	const response = await api.get<TasksServices[]>('/tasks_services')
+export async function getTasks(signal: any) {
+	const response = await api.get<TasksServices[]>('/tasks_services', { signal })
 	// console.log("Response", response)
 	return response.data
 }
