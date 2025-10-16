@@ -5,13 +5,13 @@ import SignUpScreen from '@/screens/stack/sign-up/sign-up'
 import ForgotPasswordScreen from '@/screens/stack/forgot-password/forgot-password'
 import VerifyCode from '@/screens/stack/verify-code/verify-code'
 import ResetPassword from '@/screens/stack/reset-password/reset-password'
-import DrawerLayout, { DrawerParamList } from '@/_layouts/drawer/drawer'
 import { StackHeader } from './stack-header'
 import EditProfileScreen from '@/screens/drawer/edit-profile/edit-profile'
 import SecuritySettingsScreen from '@/screens/drawer/security-settings/security-settings'
-import HomeScreen from '@/screens/stack/home/home'
 import TabsLayout, { TabParamList } from '@/_layouts/tabs/tabs'
-import Home from '@/screens/drawer/home/home'
+import {Notification} from '@/screens/stack/notification/notification'
+import { StatusBar } from 'react-native'
+import NotificationConfig from '@/screens/stack/notification-config/notifivation-config'
 
 export type StackParamList = {
 	home: undefined
@@ -23,6 +23,8 @@ export type StackParamList = {
 	tab: NavigatorScreenParams<TabParamList>
 	security: undefined
 	editProfile: undefined
+	notification: undefined
+	notificationConfig: undefined
 }
 const Stack = createStackNavigator<StackParamList>()
 
@@ -74,6 +76,24 @@ export default function StackLayout() {
 				options={{
 					headerShown: true,
 					headerTitle: "Editar perfil",
+					header: StackHeader,
+				}}
+			/>
+			<Stack.Screen
+				name="notification"
+				component={Notification}
+				options={{
+					headerShown: true,
+					headerTitle: "Notificações",
+					header: StackHeader,
+				}}
+			/>
+			<Stack.Screen
+				name="notificationConfig"
+				component={NotificationConfig}
+				options={{
+					headerShown: true,
+					headerTitle: "Configurar Notificações",
 					header: StackHeader,
 				}}
 			/>

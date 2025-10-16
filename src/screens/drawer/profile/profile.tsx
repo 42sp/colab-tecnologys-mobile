@@ -46,6 +46,7 @@ export default function ProfileScreen() {
 			setIsModalVisible(false)
 			dispatch(resetAuth())
 			await deleteAuthSecureStore([{ key: 'token' }, { key: 'profile_id' }, { key: 'userid' }])
+			stack('signIn');
 		} catch (error) {
 			console.log('Erro no secure-store ao fazer log out: ', error)
 		}
@@ -92,13 +93,7 @@ export default function ProfileScreen() {
 					<View className="rounded-xl bg-white">
 						<TouchableOpacity
 							className="w-full flex-row items-center gap-4 rounded-t-xl border border-neutral-100 p-3"
-							onPress={() =>
-								setModal({
-									visible: true,
-									status: 'error',
-									description: 'Esta funcionalidade ainda não está disponível.',
-								})
-							}
+							onPress={() => stack('notification')}
 						>
 							<ProfileIcon icon="bell" color={'#d97706'} background="#fef3c7" />
 							<Text className="font-inter-medium text-xl">Notificações</Text>
