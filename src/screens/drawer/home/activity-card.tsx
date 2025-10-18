@@ -11,7 +11,7 @@ import { getCurrentDate } from '@/utils'
 import { toStringDate, toStringDateClean } from './utils'
 import { cn } from '@/lib/utils'
 import LoadingButton from '@/components/ui/loadingButton'
-import { serviceMap } from '../register-service/type-service-form'
+import { serviceMap } from '@/screens/drawer/register-service/type-service-form'
 
 interface ActivityCardProps extends TasksServices {
 	onRefresh: () => Promise<void>
