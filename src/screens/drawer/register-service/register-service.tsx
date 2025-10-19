@@ -206,13 +206,6 @@ export default function RegisterServiceScreen() {
 		setRegistering(false)
 	}
 
-	function handleSelectResidential(index: number) {
-		reset()
-		setResIndex(index)
-		setSelectedServiceId(null)
-		setModalVisible(false)
-	}
-
 	const handleCancel = () => {
 		reset({
 			dateOfService: '',
@@ -229,6 +222,12 @@ export default function RegisterServiceScreen() {
 		setSelectedServiceId(null)
 		setModalVisible(false)
 		navigation.goBack()
+	}
+
+
+	const handleSelectResidential = (index: number) => {
+		setResIndex(index)
+		setModalVisible(false)
 	}
 
 	return (
@@ -311,7 +310,7 @@ export default function RegisterServiceScreen() {
 									title={isDirty ? "Cancelar" : "Voltar"}
 									variant="outline"
 									className="flex-1"
-									onPress={handleCancel}
+									onPress={() => handleCancel()}
 								/>
 
 								<LoadingButton
