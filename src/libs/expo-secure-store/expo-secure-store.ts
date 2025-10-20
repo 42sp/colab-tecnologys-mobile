@@ -36,5 +36,11 @@ export async function getAuthSecureStore(items: FindItemType[]) {
 }
 
 export async function deleteAuthSecureStore(items: FindItemType[]) {
-	await Promise.all(items.map((item) => SecureStore.deleteItemAsync(item.key)))
+	try {
+		await Promise.all(items.map((item) => SecureStore.deleteItemAsync(item.key)))
+	} catch (e) {
+		console.log(e)
+	}
+
+	return true
 }

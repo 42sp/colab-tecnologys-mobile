@@ -23,8 +23,8 @@ const signInSchema = z.object({
 type SignInType = z.infer<typeof signInSchema>
 
 export function SignInForm() {
-	const { stack, drawer } = useNavigate()
-	const [hidePassword, setHidePassword] = useState(true)
+	const { stack } = useNavigate()
+	const [hidePassword, setHidePassword] = useState('hidden')
 	const dispatch = useDispatch()
 	const [showErrorModal, setShowErrorModal] = useState(false)
 
@@ -42,26 +42,26 @@ export function SignInForm() {
 
 	async function onSubmit(user: SignInType) {
 		try {
-			console.log('Tentando fazer login com:', user)
+			// console.log('Tentando fazer login com:', user)
 			const auth = await signIn({ ...user })
-			console.log('Resposta do signIn:', auth)
+			// console.log('Resposta do signIn:', auth)
 
 			await setAuthProfile(auth, dispatch)
 
 			console.log('LOG: Usuário autenticado a partir do login manual')
-			drawer('home')
+			stack('tab')
 		} catch (error: any) {
 			setShowErrorModal(true)
 			if (error.response) {
-				console.log('Erro Axios - response:', error.response)
-				console.log('Erro Axios - data:', error.response.data)
-				console.log('Erro Axios - status:', error.response.status)
+				// console.log('Erro Axios - response:', error.response)
+				// console.log('Erro Axios - data:', error.response.data)
+				// console.log('Erro Axios - status:', error.response.status)
 			} else if (error.request) {
-				console.log('Erro Axios - request:', error.request)
+				// console.log('Erro Axios - request:', error.request)
 			} else {
-				console.log('Erro desconhecido:', error.message)
+				// console.log('Erro desconhecido:', error.message)
 			}
-			console.log('Erro ao fazer login em SignIn. Erro retornado: ', error)
+			// console.log('Erro ao fazer login em SignIn. Erro retornado: ', error)
 		}
 	}
 
@@ -76,7 +76,6 @@ export function SignInForm() {
 							keyboardType="numeric"
 							autoCapitalize="none"
 							placeholder="CPF"
-							onBlur={onBlur}
 							value={mask(value || '', '999.999.999-99')}
 							onChangeText={(text) => onChange(unMask(text).slice(0, 11))}
 							hasError={!!errors.cpf}
@@ -85,27 +84,30 @@ export function SignInForm() {
 					</View>
 				)}
 			/>
-
-			<Controller
-				control={control}
-				name="password"
-				render={({ field: { onChange, onBlur, value } }) => (
-					<View>
+			<View className="">
+				<Controller
+					control={control}
+					name="password"
+					render={({ field: { onChange, value } }) => (
 						<Input
+							key={hidePassword ? 'hidden' : 'shown'}
 							placeholder="Senha"
-							IconRight="eye"
-							iconPress={() => (hidePassword ? setHidePassword(false) : setHidePassword(true))}
-							secureTextEntry={hidePassword}
+							IconRight={hidePassword === 'hidden' ? 'eye-off' : 'eye'}
+							iconPress={() => setHidePassword(hidePassword === 'hidden' ? 'shown' : 'hidden')}
+							secureTextEntry={hidePassword === 'hidden' ? true : false}
 							onChangeText={onChange}
-							onBlur={onBlur}
 							value={value}
 							hasError={!!errors.password}
+							inputStyle={{
+								color: '#111827', // texto visível
+								letterSpacing: hidePassword === 'shown' ? 0 : 3, // evitar bug de render
+								fontFamily: hidePassword === 'shown' ? undefined : 'Inter', // sem fonte custom com senha
+							}}
 						/>
-						{errors.password && <Text className="text-red-500">{errors.password.message}</Text>}
-					</View>
-				)}
-			/>
-
+					)}
+				/>
+				{errors.password && <Text className="text-red-500">{errors.password.message}</Text>}
+			</View>
 			<TouchableOpacity
 				activeOpacity={0.5}
 				onPress={() => {

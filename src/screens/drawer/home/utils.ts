@@ -15,6 +15,14 @@ export function toStringDate(date?: string | Date) {
 	})
 }
 
+export function toStringDateClean(date?: string | Date) {
+	return new Date(date as string | Date).toLocaleDateString('pt-BR', {
+		day: '2-digit',
+		month: '2-digit',
+		timeZone: 'UTC',
+	})
+}
+
 export function handleFilterChange(filter: FilterType, tasks: Task[]) {
 	const yesterday = shiftDate(-1)
 	const today = getCurrentDate() as unknown as Date

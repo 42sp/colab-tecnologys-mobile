@@ -9,15 +9,15 @@ const baseStyle = `p-2 items-center justify-center rounded-full`
 
 const sumaryVariants: Record<SumaryVariant, { container: string; iconColor: string }> = {
 	blue: {
-		container: `${baseStyle} bg-blue-100`,
+		container: `${baseStyle} bg-blue-300`,
 		iconColor: '#3B82F6',
 	},
 	orange: {
-		container: `${baseStyle} bg-orange-100`,
+		container: `${baseStyle} bg-orange-700`,
 		iconColor: '#EAB308',
 	},
 	green: {
-		container: `${baseStyle} bg-green-100`,
+		container: `${baseStyle} bg-green-700`,
 		iconColor: '#22C55E',
 	},
 }
@@ -33,13 +33,19 @@ export function SummaryCard({ icon, SumaryVariant, value, label }: SummaryCardPr
 	return (
 		<Card className="flex-1 items-center justify-between">
 			<Card.Header className={sumaryVariants[SumaryVariant].container}>
-				<Feather name={icon} size={16} color={sumaryVariants[SumaryVariant].iconColor} />
+				<Feather
+					name={icon}
+					size={16}
+					color={sumaryVariants[SumaryVariant].iconColor}
+					className="px-2"
+				>
+					<Text adjustsFontSizeToFit className="font-inter-bold font-bold color-white">
+						{` ${value}`}
+					</Text>
+				</Feather>
 			</Card.Header>
 			<Card.Body className="items-center">
-				<Text adjustsFontSizeToFit numberOfLines={1} className="font-inter-bold text-xl font-bold">
-					{value}
-				</Text>
-				<Text adjustsFontSizeToFit numberOfLines={1} className="font-inter text-sm text-gray-500">
+				<Text adjustsFontSizeToFit className="font-inter text-sm text-gray-500">
 					{label}
 				</Text>
 			</Card.Body>

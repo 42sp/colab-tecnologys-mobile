@@ -123,8 +123,8 @@ export function ResetPasswordForm({ route }: any) {
 		}
 	}
 
-	const [hideNewPassword, setHideNewPassword] = useState(true)
-	const [hideConfirmPassword, setHideConfirmPassword] = useState(true)
+	const [hideNewPassword, setHideNewPassword] = useState('hidden')
+	const [hideConfirmPassword, setHideConfirmPassword] = useState('hidden')
 
 	return (
 		<View className="mb-20 gap-5 p-5">
@@ -137,15 +137,23 @@ export function ResetPasswordForm({ route }: any) {
 							name="newPassword"
 							render={({ field: { onChange, value } }) => (
 								<Input
+									key={hideNewPassword ? 'hidden' : 'shown'}
 									placeholder="Nova senha"
 									IconLeft={'lock'}
-									IconRight={hideNewPassword ? 'eye-off' : 'eye'}
-									iconPress={() => setHideNewPassword(!hideNewPassword)}
-									secureTextEntry={hideNewPassword}
+									IconRight={hideNewPassword === 'hidden' ? 'eye-off' : 'eye'}
+									iconPress={() =>
+										setHideNewPassword(hideNewPassword === 'hidden' ? 'shown' : 'hidden')
+									}
+									secureTextEntry={hideNewPassword === 'hidden' ? true : false}
 									className="self-center"
 									value={value}
 									onChangeText={onChange}
 									hasError={!!errors.newPassword}
+									inputStyle={{
+										color: '#111827', // texto visível
+										letterSpacing: hideNewPassword === 'shown' ? 0 : 3, // evitar bug de render
+										fontFamily: hideNewPassword === 'shown' ? undefined : 'Inter', // sem fonte custom com senha
+									}}
 								/>
 							)}
 						/>
@@ -160,15 +168,23 @@ export function ResetPasswordForm({ route }: any) {
 							name="confirmPassword"
 							render={({ field: { onChange, value } }) => (
 								<Input
+									key={hideConfirmPassword ? 'hidden' : 'shown'}
 									placeholder="Confirme sua senha"
 									IconLeft={'lock'}
-									IconRight={hideConfirmPassword ? 'eye-off' : 'eye'}
-									iconPress={() => setHideConfirmPassword(!hideConfirmPassword)}
-									secureTextEntry={hideConfirmPassword}
+									IconRight={hideConfirmPassword === 'hidden' ? 'eye-off' : 'eye'}
+									iconPress={() =>
+										setHideConfirmPassword(hideConfirmPassword === 'hidden' ? 'shown' : 'hidden')
+									}
+									secureTextEntry={hideConfirmPassword === 'hidden' ? true : false}
 									className="self-center"
 									onChangeText={onChange}
 									value={value}
 									hasError={!!errors.confirmPassword}
+									inputStyle={{
+										color: '#111827', // texto visível
+										letterSpacing: hideConfirmPassword === 'shown' ? 0 : 3, // evitar bug de render
+										fontFamily: hideConfirmPassword === 'shown' ? undefined : 'Inter', // sem fonte custom com senha
+									}}
 								/>
 							)}
 						/>

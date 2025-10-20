@@ -1,4 +1,13 @@
-import { KeyboardAvoidingView, Image, Text, View, Pressable, ScrollView, Alert } from 'react-native'
+import {
+	KeyboardAvoidingView,
+	Image,
+	Text,
+	View,
+	Pressable,
+	ScrollView,
+	Alert,
+	InteractionManager,
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Card from '@/components/ui/card'
 import { useState, useCallback, useEffect } from 'react'
@@ -111,27 +120,35 @@ export default function RegisterServiceScreen() {
 
 	useFocusEffect(
 		useCallback(() => {
-			const fetchData = async () => {
-				try {
-					setIsLoading(true)
-					const services = await getServices()
-					const serviceType = await getServiceTypes()
-					const construction = await getConstructions()
-					const profile = await getProfile({})
+			setIsLoading(true)
+			let isActive = true
 
-					setProfiles(profile.data)
-					setResidentials(construction.data)
-					setServiceTypes(serviceType.data)
-					setAllServices(services)
-				} catch (error) {
-					console.log('Failed to fetch initial data:', error)
-					createTwoButtonAlert()
-				} finally {
-					setIsLoading(false)
+			const handle = InteractionManager.runAfterInteractions(async () => {
+				const fetchData = async () => {
+					try {
+						const services = await getServices()
+						const serviceType = await getServiceTypes()
+						const construction = await getConstructions()
+						const profile = await getProfile({})
+
+						setProfiles(profile.data)
+						setResidentials(construction.data)
+						setServiceTypes(serviceType.data)
+						setAllServices(services)
+					} catch (error) {
+						console.log('Failed to fetch initial data:', error)
+						createTwoButtonAlert()
+					} finally {
+						setIsLoading(false)
+					}
 				}
-			}
 
-			fetchData()
+				fetchData()
+			})
+			return () => {
+				isActive = false
+				handle.cancel?.()
+			}
 		}, []),
 	)
 

@@ -87,7 +87,7 @@ export function HomeFilterModal({ isVisible, onClose, setFilter, filter }: Filte
 							<View className="gap-2">
 								<Text className="font-inter-medium">Status</Text>
 								<View className="flex-row gap-2">
-									{(['pending', 'approved', 'completed'] as StatusType[]).map((status) => {
+									{(['pending', 'completed'] as StatusType[]).map((status) => {
 										const isSelected = filter?.status?.includes(status)
 										return (
 											<Button
