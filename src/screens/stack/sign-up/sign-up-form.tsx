@@ -20,11 +20,14 @@ import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-s
 import { mask, unMask } from 'react-native-mask-text'
 import { passwordRecovery } from '@/api/password-recovery'
 import { updateState } from '@/libs/redux/user-profile/user-profile-slice'
+import { isValidCPF } from '@brazilian-utils/brazilian-utils';
 
 const signUpSchema = z.object({
 	name: z.string().nonempty('Nome é obrigatório'),
 	email: z.string(),
-	cpf: z.string().length(11, 'CPF deve conter 11 caracteres'),
+	cpf: z.string().length(11, 'CPF deve conter 11 caracteres').refine((cpf) => isValidCPF(cpf), {
+		message: 'CPF inválido',
+	}),
 	phone: z.string().nonempty('Número de telefone é obrigatório'),
 	jobTitle: z.string().nonempty('Função é obrigatória'),
 })
