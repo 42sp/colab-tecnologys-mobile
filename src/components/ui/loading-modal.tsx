@@ -1,10 +1,10 @@
 import { Modal, View, ActivityIndicator, Platform } from 'react-native'
 
 interface LoadingModalProps {
-	visible: boolean
+	visible?: boolean
 }
 
-export function LoadingModal({ visible }: LoadingModalProps) {
+export function LoadingModal({ visible = true }: LoadingModalProps) {
 	const getSize = Platform.OS === 'ios' ? 'large' : 60
 	return (
 		<Modal transparent animationType="none" visible={visible}>

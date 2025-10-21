@@ -26,7 +26,6 @@ export const setAuthProfile = async (auth: any, dispatch: Dispatch) => {
 	const { accessToken } = auth
 	const { id } = auth.user
 	const { profile, role } = auth.meta
-	console.log(role)
 
 	await saveAuthSecureStore([
 		{ key: 'token', value: accessToken },

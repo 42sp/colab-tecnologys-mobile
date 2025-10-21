@@ -26,8 +26,8 @@ export default function RootNavigator() {
 				setLoading(false)
 			}
 		}
-		loadAuth()
-	}, [])
+		loadAuth();
+	}, [token])
 
 	if (loading) {
 		return <LoadingModal visible={loading} />

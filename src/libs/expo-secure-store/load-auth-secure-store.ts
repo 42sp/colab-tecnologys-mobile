@@ -17,7 +17,7 @@ export async function loadAuthSecureStore(dispatch: Dispatch) {
 
 	dispatch(setAuth(data[0].value))
 
-	console.log('data do secure store no loadAuthSecureStore: ', data[1].value, data[2].value)
+	// console.log('data do secure store no loadAuthSecureStore: ', data[1].value, data[2].value)
 
 	const profileResponse = await getProfile({ userId: data[1].value })
 	const userProfile = profileResponse.data[0]

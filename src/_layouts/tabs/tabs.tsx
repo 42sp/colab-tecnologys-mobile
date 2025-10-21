@@ -8,6 +8,7 @@ import TabsHeader from './tab-header';
 import Dashboard from '@/screens/stack/home/dashboard';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/libs/redux/store';
+import { LoadingModal } from '@/components/ui/loading-modal';
 
 export type TabParamList = {
 	home: undefined
@@ -34,7 +35,11 @@ const TabsLayout = () => {
 				name="home"
 				component={
 					['executor', 'encarregado'].includes(role.role_name)
-					? Home : Dashboard }
+					? Home
+					: ['admin'].includes(role.role_name)
+					? Dashboard
+					: LoadingModal
+				}
 				options={{
 					title: 'Home',
 					tabBarIcon: ({ color, size }) => <HomeIcon color={color} size={size} />,
