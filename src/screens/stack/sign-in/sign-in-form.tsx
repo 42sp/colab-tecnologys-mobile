@@ -14,6 +14,8 @@ import { LoadingModal } from '@/components/ui/loading-modal'
 import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-store'
 import { mask, unMask } from 'react-native-mask-text'
 import { setAuthProfile } from '@/utils'
+import * as SecureStore from 'expo-secure-store'
+import { resetRoles, setRoles } from '@/libs/redux/roles/roles-slice'
 
 const signInSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve conter 11 caracteres'),
@@ -43,12 +45,13 @@ export function SignInForm() {
 	async function onSubmit(user: SignInType) {
 		try {
 			// console.log('Tentando fazer login com:', user)
+			dispatch(resetRoles());
 			const auth = await signIn({ ...user })
 			// console.log('Resposta do signIn:', auth)
 
 			await setAuthProfile(auth, dispatch)
 
-			console.log('LOG: Usuário autenticado a partir do login manual')
+			// console.log('LOG: Usuário autenticado a partir do login manual')
 			stack('tab')
 		} catch (error: any) {
 			setShowErrorModal(true)
