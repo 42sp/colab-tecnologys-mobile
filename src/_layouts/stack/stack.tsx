@@ -12,6 +12,7 @@ import TabsLayout, { TabParamList } from '@/_layouts/tabs/tabs'
 import {Notification} from '@/screens/stack/notification/notification'
 import { StatusBar } from 'react-native'
 import NotificationConfig from '@/screens/stack/notification-config/notifivation-config'
+import Productivity from '@/screens/drawer/productivity/productivity'
 
 export type StackParamList = {
 	home: undefined
@@ -25,6 +26,7 @@ export type StackParamList = {
 	editProfile: undefined
 	notification: undefined
 	notificationConfig: undefined
+	productivity: undefined
 }
 const Stack = createStackNavigator<StackParamList>()
 
@@ -94,6 +96,15 @@ export default function StackLayout() {
 				options={{
 					headerShown: true,
 					headerTitle: "Configurar Notificações",
+					header: StackHeader,
+				}}
+			/>
+			<Stack.Screen
+				name="productivity"
+				component={Productivity}
+				options={{
+					headerShown: true,
+					headerTitle: "Produtividade",
 					header: StackHeader,
 				}}
 			/>
