@@ -98,6 +98,9 @@ export function ActivityList({
 						<View className="w-0.5 flex-1 bg-gray-400" />
 					</View>
 					<View className="mb-2 ml-2 flex-1">
+						{/* <Text selectable style={{ fontFamily: 'monospace', fontSize: 12 }}>
+							{JSON.stringify(item, null, 2)}
+						</Text> */}
 						<ActivityCard {...item} onRefresh={onRefresh} />
 					</View>
 				</View>

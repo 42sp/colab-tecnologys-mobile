@@ -30,8 +30,8 @@ export function Activity({ tasks }: ActivityProps) {
 	return (
 		<View className="m-4">
 			{tasksEntries.map(([date, dateTasks]) => (
-					<ActivityCard key={date} date={dateTasks[0].completion_date?.toISOString()!} dateTasks={dateTasks} />
-				))}
+				<ActivityCard key={date} date={dateTasks[0].completion_date?.toISOString()!} dateTasks={dateTasks} />
+			))}
 		</View>
 	)
 }
