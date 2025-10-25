@@ -91,7 +91,7 @@ const Dashboard = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			const data = await getReport();
-			const aux = data.productivity.map((item: any) => {
+			const aux = data.Report.map((item: any) => {
 				const [ano, mes] = item.ano_mes.split('-');
 				const mesAbrev = meses[parseInt(mes, 10) - 1];
 
