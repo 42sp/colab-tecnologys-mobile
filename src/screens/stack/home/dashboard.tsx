@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Dimensions, Pressable } from 'react-native';
 import { Bell, Search, BarChart3, ClipboardCheck, Layers, Zap, TrendingUp, Building2, Building } from 'lucide-react-native';
 import { Input } from '@/components/ui/input';
 import {
@@ -13,6 +13,7 @@ import {
 } from "react-native-chart-kit";
 import { GroupedBarChart } from '@/components/GroupedBarChart';
 import GroupedLineChart from '@/components/GroupedLineChart';
+import { getReport } from '@/api/get-report';
 
 const stats = [
   {
@@ -55,10 +56,107 @@ const dataLineChart = {
 	],
 };
 
+interface ProductivityChartData {
+	labels: string[];
+	datasets: {
+		data: number[];
+		color: string;
+		label: string;
+		active: boolean;
+	}[];
+};
+
+const generateColor = (() => {
+	const usedColors = new Set<string>();
+	return () => {
+		let color;
+		do {
+			const hue = Math.floor(Math.random() * 360);
+			color = `hsl(${hue}, 70%, 60%)`;
+		} while (usedColors.has(color));
+		usedColors.add(color);
+		return color;
+	};
+})();
+
+const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
 const Dashboard = () => {
   const [activePeriod, setActivePeriod] = useState('Todos');
   const [search, setSearch] = useState('');
+	const [floor, setFloor] = useState(null);
+
+  const [productivityData, setProductivityData] = useState<ProductivityChartData | null>(null);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			const data = await getReport();
+			const aux = data.productivity.map((item: any) => {
+				const [ano, mes] = item.ano_mes.split('-');
+				const mesAbrev = meses[parseInt(mes, 10) - 1];
+
+				return {
+					mes: mesAbrev,
+					floor: item.floor
+						.split(' ')
+						.map((m: string, index: number) =>  index === 0 ? '' : m )
+						.join(' '),
+					total: item.total_worker_quantity
+				}
+			});
+
+			const labels = aux
+				.map((item: any) => item.mes)
+				.filter((v: any, i: number, a: any[]) => a.indexOf(v) === i);
+
+			const floors = aux
+				.map((item: any) => item.floor)
+				.filter((v: any, i: number, a: any[]) => a.indexOf(v) === i);
+
+			const datasets = floors.map((floor: string) => {
+				const color = generateColor();
+				const data = labels.map((mes: string) => {
+					const found = aux.find((item: any) => item.floor === floor && item.mes === mes);
+					return found ? Number(found.total) : 0;
+				});
+				return { floor, data, color };
+			});
+
+			const chartData = {
+				labels,
+				datasets: datasets.map((ds: any) => ({
+					data: ds.data,
+					color: ds.color,
+					label: ds.floor,
+					active: true,
+				})).sort((a: any, b: any) => Number(a.label) - Number(b.label)),
+			};
+			// chartData.datasets.map(m => console.log(m))
+			setProductivityData(chartData);
+		}
+		fetchData();
+	}, []);
+
+  const selectProductivityData = (item: any) => {
+    if (!productivityData) return;
+
+		const productivity = productivityData.datasets
+			.find(ds => ds.label === item.label);
+
+		const allActive = productivityData.datasets.filter(f => f.active).length === productivityData.datasets.length;
+
+		console.log(productivity)
+
+    const newDatasets = productivityData.datasets.map(ds => ({
+      ...ds,
+      active: !allActive && productivity?.active ? true : ds.label === item.label,
+    }));
+
+    setProductivityData({
+      ...productivityData,
+      datasets: newDatasets,
+    });
+  }
 
   return (
     <View className="flex-1 bg-gray-100">
@@ -111,26 +209,31 @@ const Dashboard = () => {
           </View>
 
           <View className="h-75 rounded-xl items-center justify-center">
-						<GroupedLineChart
-							data={dataLineChart}
-							width={300}
-							height={150}
-						/>
+            {productivityData && (
+              <GroupedLineChart
+                data={productivityData}
+                width={300}
+                height={150}
+              />
+            )}
           </View>
 
           <View className="flex-row justify-center gap-4 mt-4">
-            <View className="flex-row items-center gap-2">
-              <View className="w-4 h-4 rounded-full bg-blue-500" />
-              <Text className="text-sm">Andar 1</Text>
-            </View>
-            <View className="flex-row items-center gap-2">
-              <View className="w-4 h-4 rounded-full bg-green-500" />
-              <Text className="text-sm">Andar 2</Text>
-            </View>
-            <View className="flex-row items-center gap-2">
-              <View className="w-4 h-4 rounded-full bg-yellow-400" />
-              <Text className="text-sm">Andar 3</Text>
-            </View>
+						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+							{
+								productivityData &&
+								productivityData.datasets.map(m =>
+									<Pressable
+										className="flex-row items-center gap-2 px-4"
+										key={m.label}
+										onPress={() => selectProductivityData(m)}
+									>
+										<View className="w-4 h-4 rounded-full" style={{ backgroundColor: m.color }} />
+										<Text className="text-sm">Andar {m.label}</Text>
+									</Pressable>
+								)
+							}
+						</ScrollView>
           </View>
         </View>
 
