@@ -104,6 +104,18 @@ export default function VerifyCode({ route }: any) {
 
 	useEffect(() => {
 		console.log('response no verify-code: ', response)
+		if (response)
+		{
+			const { code } = response;
+			setCode([
+				code[0],
+				code[1],
+				code[2],
+				code[4],
+				code[5],
+				code[6],
+			]);
+		}
 	}, [response])
 
 	const verifyCode = (enteredCode: string[]) => {
@@ -158,6 +170,7 @@ export default function VerifyCode({ route }: any) {
 				id: response?.userId ?? '',
 				phone: response?.phone ?? phone,
 			})
+
 		} catch (error) {
 			console.log(error)
 		}
@@ -210,88 +223,96 @@ export default function VerifyCode({ route }: any) {
 
 	return (
 		<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-			<SafeAreaView className="mb-10 bg-[#F9FAFB]" edges={['bottom']}>
-				<ScrollView showsVerticalScrollIndicator={false}>
-					<Card className="m-5">
-						<View className="items-center gap-4 p-4">
-							<Image
-								source={require('@/assets/fingerprint-icon.png')}
-								className="h-20 w-20 self-center"
-								resizeMode="contain"
-							/>
-							<Text className="mt-4 font-inter-bold text-2xl">Verificação de Código</Text>
-							<View>
-								<Text className="text-md mt-4 font-inter text-gray-500">
-									Digite o código de 6 digitos enviado para
-								</Text>
-								<View className="mt-2 flex-row justify-center gap-2">
-									<Text className="font-inter-bold text-xl text-gray-500">
-										(XX) XXXXX-{response?.phone?.slice(-4)}
+			{false  ? (
+
+				<SafeAreaView className="mb-10 bg-[#F9FAFB]" edges={['bottom']}>
+					<ScrollView showsVerticalScrollIndicator={false}>
+						<Card className="m-5">
+							<View className="items-center gap-4 p-4">
+								<Image
+									source={require('@/assets/fingerprint-icon.png')}
+									className="h-20 w-20 self-center"
+									resizeMode="contain"
+								/>
+								<Text className="mt-4 font-inter-bold text-2xl">Verificação de Código</Text>
+								<View>
+									<Text className="text-md mt-4 font-inter text-gray-500">
+										Digite o código de 6 digitos enviado para
 									</Text>
-									<FontAwesome name="whatsapp" size={24} color="#25D366" />
+									<View className="mt-2 flex-row justify-center gap-2">
+										<Text className="font-inter-bold text-xl text-gray-500">
+											(XX) XXXXX-{response?.phone?.slice(-4)}
+										</Text>
+										<FontAwesome name="whatsapp" size={24} color="#25D366" />
+									</View>
 								</View>
 							</View>
-						</View>
 
-						<View className="my-6 flex-row justify-center gap-2 ">
-							<Controller
-								name="otp"
-								control={control}
-								render={({ field: { onChange } }) => (
-									<View>
-										<OTPTextView
-											handleTextChange={onChange}
-											handleCellTextChange={handleCellTextChange}
-											inputCount={6}
-											keyboardType="numeric"
-											tintColor={'#d16a32'}
-											textInputStyle={{
-												borderWidth: 1,
-												borderColor: '#ccc',
-												borderRadius: 8,
-												width: 42,
-												height: 52,
-												backgroundColor: '#fff',
-											}}
-										/>
-									</View>
-								)}
+							<View className="my-6 flex-row justify-center gap-2 ">
+								<Controller
+									name="otp"
+									control={control}
+									render={({ field: { onChange } }) => (
+										<View>
+											<OTPTextView
+												handleTextChange={onChange}
+												handleCellTextChange={handleCellTextChange}
+												inputCount={6}
+												keyboardType="numeric"
+												tintColor={'#d16a32'}
+												textInputStyle={{
+													borderWidth: 1,
+													borderColor: '#ccc',
+													borderRadius: 8,
+													width: 42,
+													height: 52,
+													backgroundColor: '#fff',
+												}}
+											/>
+										</View>
+									)}
+								/>
+							</View>
+
+							{errors.otp && (
+								<Text className="pb-2 text-center font-inter text-red-500">{errors.otp.message}</Text>
+							)}
+
+							<View className=" items-center gap-4 p-4">
+								<Text className=" font-inter font-bold text-blue-400">
+									Aguarde {formatTimer(timer)} para enviar novamente
+								</Text>
+
+								<TouchableOpacity
+									activeOpacity={0.5}
+									onPress={() => {
+										console.log('Reenviar código')
+										const newBase = baseTimer * 2
+										setBaseTimer(newBase)
+										setTimer(newBase)
+										setIsButtonDisabled(true)
+										sendCode()
+									}}
+									disabled={isButtonDisabled}
+								>
+									<Text className="font-inter-bold text-blue-400">Reenviar código</Text>
+								</TouchableOpacity>
+							</View>
+							<LogModal
+								visible={modal.visible}
+								description={modal.description}
+								onClose={() => setModal({ visible: false, description: '' })}
 							/>
-						</View>
-
-						{errors.otp && (
-							<Text className="pb-2 text-center font-inter text-red-500">{errors.otp.message}</Text>
-						)}
-
-						<View className=" items-center gap-4 p-4">
-							<Text className=" font-inter font-bold text-blue-400">
-								Aguarde {formatTimer(timer)} para enviar novamente
-							</Text>
-
-							<TouchableOpacity
-								activeOpacity={0.5}
-								onPress={() => {
-									console.log('Reenviar código')
-									const newBase = baseTimer * 2
-									setBaseTimer(newBase)
-									setTimer(newBase)
-									setIsButtonDisabled(true)
-									sendCode()
-								}}
-								disabled={isButtonDisabled}
-							>
-								<Text className="font-inter-bold text-blue-400">Reenviar código</Text>
-							</TouchableOpacity>
-						</View>
-						<LogModal
-							visible={modal.visible}
-							description={modal.description}
-							onClose={() => setModal({ visible: false, description: '' })}
-						/>
-						<LoadingModal visible={isSubmitting} />
-					</Card>
-				</ScrollView>
-			</SafeAreaView>
+							<LoadingModal visible={isSubmitting} />
+						</Card>
+					</ScrollView>
+				</SafeAreaView>
+			) : (
+				<SafeAreaView className='flex items-center justify-center'>
+					<Text>Loading...</Text>
+				</SafeAreaView>
+			)
+			}
 		</KeyboardAvoidingView>
 	)
 }
