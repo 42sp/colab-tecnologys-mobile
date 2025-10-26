@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react'
 import OTPTextView from 'react-native-otp-textinput'
-import { Text, View, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from 'react-native'
+import {
+	Text,
+	View,
+	TouchableOpacity,
+	Image,
+	KeyboardAvoidingView,
+	Platform,
+	Alert,
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { passwordRecovery } from '@/api/password-recovery'
 import { useDispatch, useSelector } from 'react-redux'
@@ -104,6 +112,15 @@ export default function VerifyCode({ route }: any) {
 
 	useEffect(() => {
 		console.log('response no verify-code: ', response)
+		setTimeout(() => {
+			Alert.alert('Token', `Digite o token ${response.code} para validar`, [
+				{
+					text: 'Entendi',
+					onPress: () => {},
+					style: 'default',
+				},
+			])
+		}, 2000)
 	}, [response])
 
 	const verifyCode = (enteredCode: string[]) => {

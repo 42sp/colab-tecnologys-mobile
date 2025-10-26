@@ -61,7 +61,7 @@ export default function ForgotPasswordScreen() {
 			<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
 				<ScrollView showsVerticalScrollIndicator={false}>
 					<View className="p-10">
-						<Image source={require('@/assets/tecnologys-logo.png')} className="mb-5 self-center" />
+						<Image source={require('@/assets/alvenatech.png')} className="mb-5 self-center" />
 						<View className="my-5 items-center">
 							<Text className="font-inter-bold text-3xl">Esqueci minha senha</Text>
 							<Text className="mt-2 text-center font-inter text-lg text-neutral-500">
