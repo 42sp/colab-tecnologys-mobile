@@ -2,59 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Dimensions, Pressable } from 'react-native';
 import { Bell, Search, BarChart3, ClipboardCheck, Layers, Zap, TrendingUp, Building2, Building } from 'lucide-react-native';
 import { Input } from '@/components/ui/input';
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart,
-	AbstractChart
-} from "react-native-chart-kit";
 import { GroupedBarChart } from '@/components/GroupedBarChart';
 import GroupedLineChart from '@/components/GroupedLineChart';
 import { getReport } from '@/api/get-report';
 
-const stats = [
-  {
-    icon: <ClipboardCheck color="#2563eb" size={24} />,
-    value: 320,
-    label: 'Atividades Concluídas',
-    bg: 'bg-blue-100',
-  },
-  {
-    icon: <Layers color="#eab308" size={24} />,
-    value: 12,
-    label: 'Andares em Andamento',
-    bg: 'bg-yellow-100',
-  },
-  {
-    icon: <Zap color="#22c55e" size={24} />,
-    value: '98%',
-    label: 'Eficiência Geral',
-    bg: 'bg-green-100',
-  },
-];
-
 const periods = ['Mês', 'Trimestre', 'Ano', 'Todos'];
+const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
-const data = {
-  labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6', 'Sem 7', 'Sem 8'],
-  datasets: [
-    { data: [12.5, 30, 45, 60, 75, 80, 90, 95], color: '#22c55e' },
-    { data: [0, 10, 20, 35, 50, 60, 70, 75], color: '#2563eb' },
-    { data: [0, 0, 5, 15, 25, 35, 40, 45], color: '#eab308' },
-  ],
-};
-
-const dataLineChart = {
-	labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-	datasets: [
-		{ data: [320, 330, 340, 345, 350, 355, 360, 340, 345, 350, 345, 340], color: '#22c55e' },
-		{ data: [330, 340, 350, 355, 360, 365, 370, 360, 365, 370, 365, 360], color: '#eab308' },
-		{ data: [340, 350, 360, 365, 370, 375, 380, 370, 375, 380, 375, 370], color: '#2563eb' },
-	],
-};
+interface statsData {
+	icon: React.ReactNode;
+	value: number | string;
+	label: string;
+	bg: string;
+}
 
 interface ProductivityChartData {
 	labels: string[];
@@ -63,6 +23,7 @@ interface ProductivityChartData {
 		color: string;
 		label: string;
 		active: boolean;
+		floor: string;
 	}[];
 };
 
@@ -79,7 +40,102 @@ const generateColor = (() => {
 	};
 })();
 
-const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+const calculateProductivity = (data: any[]) : ProductivityChartData => {
+	if (!data || !Array.isArray(data)) return { labels: [], datasets: [] };
+
+	const aux = data.map((item: any) => {
+		const [ano, mes] = item.ano_mes.split('-');
+		const mesAbrev = meses[parseInt(mes, 10) - 1];
+
+		return {
+			mes: mesAbrev,
+			floor: item.floor
+				.split(' ')
+				.map((m: string, index: number) =>  index === 0 ? '' : m )
+				.join(' '),
+			total: item.total_worker_quantity
+		}
+	});
+
+	const labels = aux
+		.map((item: any) => item.mes)
+		.filter((v: any, i: number, a: any[]) => a.indexOf(v) === i);
+
+	const floors = aux
+		.map((item: any) => item.floor)
+		.filter((v: any, i: number, a: any[]) => a.indexOf(v) === i);
+
+	const datasets = floors.map((floor: string) => {
+		const color = generateColor();
+		const data = labels.map((mes: string) => {
+			const found = aux.find((item: any) => item.floor === floor && item.mes === mes);
+			return found ? Number(found.total) : 0;
+		});
+		return { floor, data, color };
+	});
+
+	const chartData = {
+		labels,
+		datasets: datasets.map((ds: any) => ({
+			data: ds.data,
+			color: ds.color,
+			label: ds.floor,
+			active: true,
+			floor: ds.floor,
+		})).sort((a: any, b: any) => Number(a.label) - Number(b.label)),
+	};
+
+	return chartData;
+}
+
+const calculateProgressByFloor = (data: any[]) => {
+	if (!data || !Array.isArray(data)) return { labels: [], datasets: [] };
+
+	// data.map(m => Number(m.porcentagem_acumulada) > 0 && console.log(m.floor.padEnd(7), m.semana, m.porcentagem_acumulada))
+
+	const datasets = data.map((item: any) => ({
+		floor: item.floor,
+		data: data
+			.filter(d => d.floor === item.floor)
+			.map(d => Number(d.porcentagem_acumulada)),
+		color: generateColor(),
+	})).reduce((acc: any[], curr: any) => {
+		if (!acc.find(a => a.floor === curr.floor)) {
+			acc.push(curr);
+		}
+		return acc;
+	}, []);
+
+	// datasets.forEach(m => console.log(m.data));
+
+	return {
+		labels: data.map(d => d.semana).filter((v: any, i: number, a: any[]) => a.indexOf(v) === i),
+		datasets,
+	};
+};
+
+const defineResume = (data: any) => {
+	return [
+		{
+			icon: <ClipboardCheck color="#2563eb" size={24} />,
+			value: data.totalCompletedActivities,
+			label: 'Atividades Concluídas',
+			bg: 'bg-blue-100',
+		},
+		{
+			icon: <Layers color="#eab308" size={24} />,
+			value: data.activitiesPerFloorCount,
+			label: 'Andares em Andamento',
+			bg: 'bg-yellow-100',
+		},
+		// {
+		// 	icon: <Zap color="#22c55e" size={24} />,
+		// 	value: '98%',
+		// 	label: 'Eficiência Geral',
+		// 	bg: 'bg-green-100',
+		// }
+	]
+}
 
 const Dashboard = () => {
   const [activePeriod, setActivePeriod] = useState('Todos');
@@ -87,52 +143,20 @@ const Dashboard = () => {
 	const [floor, setFloor] = useState(null);
 
   const [productivityData, setProductivityData] = useState<ProductivityChartData | null>(null);
+	const [progressData, setProgressData] = useState<ProductivityChartData | null>(null);
+	const [stats, setStats] = useState<statsData[]>([]);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			const data = await getReport();
-			const aux = data.Report.map((item: any) => {
-				const [ano, mes] = item.ano_mes.split('-');
-				const mesAbrev = meses[parseInt(mes, 10) - 1];
 
-				return {
-					mes: mesAbrev,
-					floor: item.floor
-						.split(' ')
-						.map((m: string, index: number) =>  index === 0 ? '' : m )
-						.join(' '),
-					total: item.total_worker_quantity
-				}
-			});
+			const productivity = calculateProductivity(data.produtivity);
+			const progressByFloor = calculateProgressByFloor(data.progressByFloor);
+			const resume = defineResume(data.resume);
 
-			const labels = aux
-				.map((item: any) => item.mes)
-				.filter((v: any, i: number, a: any[]) => a.indexOf(v) === i);
-
-			const floors = aux
-				.map((item: any) => item.floor)
-				.filter((v: any, i: number, a: any[]) => a.indexOf(v) === i);
-
-			const datasets = floors.map((floor: string) => {
-				const color = generateColor();
-				const data = labels.map((mes: string) => {
-					const found = aux.find((item: any) => item.floor === floor && item.mes === mes);
-					return found ? Number(found.total) : 0;
-				});
-				return { floor, data, color };
-			});
-
-			const chartData = {
-				labels,
-				datasets: datasets.map((ds: any) => ({
-					data: ds.data,
-					color: ds.color,
-					label: ds.floor,
-					active: true,
-				})).sort((a: any, b: any) => Number(a.label) - Number(b.label)),
-			};
-			// chartData.datasets.map(m => console.log(m))
-			setProductivityData(chartData);
+			setStats(resume);
+			setProductivityData(productivity);
+			setProgressData(progressByFloor);
 		}
 		fetchData();
 	}, []);
@@ -145,7 +169,7 @@ const Dashboard = () => {
 
 		const allActive = productivityData.datasets.filter(f => f.active).length === productivityData.datasets.length;
 
-		console.log(productivity)
+		// console.log(productivity)
 
     const newDatasets = productivityData.datasets.map(ds => ({
       ...ds,
@@ -249,45 +273,62 @@ const Dashboard = () => {
           </View>
 
           <View className="h-50 rounded-xl items-center justify-center">
-            <GroupedBarChart
-							data={data}
-							width={300}
-							height={120}
-							yAxisSuffix="%"
-							chartConfig={{
-								backgroundColor: '#fff',
-								backgroundGradientFrom: '#fff',
-								backgroundGradientTo: '#fff',
-								decimalPlaces: 0,
-								color: (opacity = 1) => `rgba(0,0,0,${opacity})`,
-								labelColor: (opacity = 1) => `rgba(0,0,0,${opacity})`,
-								barPercentage: 0.6,
-							}}
-						/>
+						{
+							progressData && (
+								<GroupedBarChart
+									data={progressData}
+									width={300}
+									height={120}
+									yAxisSuffix="%"
+									chartConfig={{
+										backgroundColor: '#fff',
+										backgroundGradientFrom: '#fff',
+										backgroundGradientTo: '#fff',
+										decimalPlaces: 0,
+										color: (opacity = 1) => `rgba(0,0,0,${opacity})`,
+										labelColor: (opacity = 1) => `rgba(0,0,0,${opacity})`,
+										barPercentage: 0.6,
+									}}
+								/>
+							)
+						}
           </View>
 
           <View className="mt-6 space-y-4">
-            {[
-              { name: 'Andar 1', percent: 95, color: 'bg-green-500' },
-              { name: 'Andar 2', percent: 75, color: 'bg-blue-500' },
-              { name: 'Andar 3', percent: 45, color: 'bg-yellow-400' },
-            ].map((floor, idx) => (
-              <View key={idx} className="my-2 flex-row items-center justify-between">
-                <View className="flex-row items-center gap-3">
-                  <View className={`p-2 rounded-full ${floor.color}`}>
-                    <Building color="white" size={16} />
-                  </View>
-                  <Text className="font-medium">{floor.name}</Text>
-                </View>
-                <View className="flex-row items-center gap-3">
-                  <View className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <View style={{ width: `${floor.percent}%` }} className={`h-full rounded-full ${floor.color}`} />
-                  </View>
-                  <Text className="font-mono font-semibold text-sm">{floor.percent}%</Text>
-                </View>
-              </View>
-            ))}
-          </View>
+						<ScrollView
+							showsVerticalScrollIndicator={false}
+							style={{ maxHeight: 200 }}
+						>
+	            {progressData?.datasets
+								.filter(f => f.data.reduce((acc: number, val: number) => acc + val, 0) > 0)
+								.sort((a, b) => Number(a.floor.replace('PAV ', '')) - Number(b.floor.replace('PAV ', '')))
+								.map((dataset, idx) => { return (
+								<View key={idx} className="my-2 flex-row items-center justify-between">
+									<View className="flex-row items-center gap-3">
+										<View
+											className={`p-2 rounded-full ${dataset.color}`}
+											style={{ backgroundColor: dataset.color }}
+										>
+											<Building color="white" size={16} />
+										</View>
+										<Text className="font-medium">{dataset.floor.replace('PAV ', 'Andar ')}</Text>
+									</View>
+									<View className="flex-row items-center gap-3">
+										<View className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+											<View
+												style={{
+													width: `${dataset.data.reduce((acc: number, val: number) => acc + val, 0)}%`,
+													backgroundColor: dataset.color
+												}}
+												className={`h-full rounded-full`}
+											/>
+										</View>
+										<Text className="font-mono font-semibold text-sm">{dataset.data.reduce((acc: number, val: number) => acc + val, 0).toString().padStart(6)}%</Text>
+									</View>
+								</View>
+							)})}
+						</ScrollView>
+					</View>
         </View>
       </ScrollView>
     </View>

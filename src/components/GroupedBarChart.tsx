@@ -5,15 +5,6 @@ import Svg, { Rect, Text as SvgText, G } from 'react-native-svg';
 
 const screenWidth = Dimensions.get('window').width;
 
-const chartData = {
-  labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6', 'Sem 7', 'Sem 8'],
-  datasets: [
-    { data: [15, 30, 45, 60, 75, 80, 90, 95], color: '#22c55e' }, // verde
-    { data: [0, 10, 20, 35, 50, 60, 70, 75], color: '#2563eb' },  // azul
-    { data: [0, 0, 5, 15, 25, 35, 40, 45], color: '#eab308' },    // amarelo
-  ],
-};
-
 class GroupedBarChartComponent extends AbstractChart<any, any> {
   render() {
     const { labels, datasets } = this.props.data;
@@ -25,7 +16,19 @@ class GroupedBarChartComponent extends AbstractChart<any, any> {
 		const groupSpacing = 16;
 		const maxValue = Math.max(...datasets.flatMap((ds: any) => ds.data));
     const totalGroups = labels.length;
-    const dynamicWidth = padding * 2 + totalGroups * (datasets.length * (barWidth + barSpacing) + groupSpacing);
+    const dynamicWidth = padding * 2 + totalGroups * ((datasets.filter((f: any) => f.data.reduce((acc: number, val: number) => acc + val, 0) > 0).length + 1)* (barWidth + barSpacing) + groupSpacing);
+		const allValues = datasets.flatMap((ds: any) => ds.data);
+		const minValue = Math.min(...allValues);
+		const maxValueY = Math.max(...allValues);
+		const yTicks = [0.25, 0.5, 0.75, 1].map(p => {
+			// Interpolate between minValue and maxValueY
+			const value = minValue + (maxValueY - minValue) * p;
+			return {
+				percent: p,
+				value,
+				label: `${Math.round(value)}%`
+			};
+		});
 
     return (
       <View style={{ width: '100%', flexDirection: 'row' }}>
@@ -39,16 +42,16 @@ class GroupedBarChartComponent extends AbstractChart<any, any> {
           >
             0%
           </SvgText>
-          {[0.25, 0.5, 0.75, 1].map((p, idx) => (
+          {yTicks.map((p, idx) => (
             <SvgText
               key={idx}
               x={0}
-              y={chartHeight - chartHeight * p + 10}
+              y={chartHeight - chartHeight * p.percent + 10}
               fontSize={12}
               fill="#888"
               textAnchor="start"
             >
-              {`${Math.round(p * 100)}%`}
+              {`${p.value}%`}
             </SvgText>
           ))}
         </Svg>
@@ -70,31 +73,33 @@ class GroupedBarChartComponent extends AbstractChart<any, any> {
               fill="#e5e7eb"
             />
             {labels.map((label: string, i: number) => {
-              const groupX = padding + i * (datasets.length * (barWidth + barSpacing) + groupSpacing);
+              const groupX = padding + i * ((datasets.filter((f: any) => f.data[i] > 0).length + 1)* (barWidth + barSpacing) + groupSpacing);
               return (
                 <G key={label}>
-                  {datasets.map((ds: any, j: number) => {
-                    const value = ds.data[i];
-                    const barHeight = (value / maxValue) * chartHeight;
-                    const x = groupX + j * (barWidth + barSpacing);
-                    const y = chartHeight - barHeight + 10;
-                    return (
-                      <Rect
-                        key={j}
-                        x={x}
-                        y={y}
-                        width={barWidth}
-                        height={barHeight}
-                        fill={ds.color}
-                        rx={2}
-												onPress={() => this.props.onBarPress && this.props.onBarPress(
-													{x, y, datasets, i}
-												)}
-                      />
-                    );
+                  {datasets
+										.filter((f: any) => f.data[i] > 0)
+										.map((ds: any, j: number) => {
+											const value = ds.data[i];
+											const barHeight = (value / maxValue) * chartHeight;
+											const x = groupX + j * (barWidth + barSpacing);
+											const y = (chartHeight - barHeight + 10);
+											return (
+												<Rect
+													key={j}
+													x={x}
+													y={y}
+													width={barWidth}
+													height={barHeight}
+													fill={ds.color}
+													rx={2}
+													onPress={() => this.props.onBarPress && this.props.onBarPress(
+														{x, y, datasets, i}
+													)}
+												/>
+											);
                   })}
                   <SvgText
-                    x={groupX + (datasets.length * (barWidth + barSpacing)) / 2}
+                    x={groupX + (datasets.filter((f: any) => f.data[i] > 0).length * (barWidth + barSpacing)) / 2}
                     y={chartHeight + 30}
                     fontSize={12}
                     fill="#222"
@@ -140,7 +145,7 @@ const GroupedBarChart = (props: any) => {
 		{
 			setTimeout(() => {
 				setTooltip({ ...tooltip, visible: false });
-			}, 99999);
+			}, 5000);
 		}
 	}, [tooltip])
 
@@ -164,27 +169,33 @@ const GroupedBarChart = (props: any) => {
         <View style={{
           position: 'absolute',
           left: screenWidth / 2 - 90,
-          top: tooltip.y,
+          top: 0,
           backgroundColor: '#222',
           padding: 8,
           borderRadius: 8,
+					zIndex: 1000,
         }}>
-					{tooltip.value.map((value, index) => (
-						<View key={index} className="flex-row my-1">
-							<View style={
-								{
-									width: 18,
-									height: 18,
-									borderRadius: 4,
-									backgroundColor: tooltip.datasets[index] ? (tooltip.datasets[index].color + '22') : '',
-									borderWidth: 2,
-									borderColor: tooltip.datasets[index] ? (tooltip.datasets[index].color) : '',
-									marginRight: 8
-								}}
-							/>
-							<Text key={index} style={{color: '#fff'}}>Andar {index + 1}: {value}%</Text>
-						</View>
-					))}
+					<ScrollView
+						style={{ maxHeight: 200 }}
+					>
+						{tooltip.value.filter(f => f > 0).map((value, index) => (
+							<View key={index} className="flex-row my-1">
+								<View style={
+									{
+										width: 18,
+										height: 18,
+										borderRadius: 4,
+										backgroundColor: tooltip.datasets[index] ? (tooltip.datasets[index].color + '22') : '',
+										borderWidth: 2,
+										borderColor: tooltip.datasets[index] ? (tooltip.datasets[index].color) : '',
+										marginRight: 8,
+										zIndex: 10
+									}}
+								/>
+								<Text key={index} style={{color: '#fff'}}>Andar {index + 1}: {value}%</Text>
+							</View>
+						))}
+					</ScrollView>
         </View>
       )}
     </View>
