@@ -41,7 +41,7 @@ export default function SignInScreen() {
 				>
 					<View style={{ flex: 1, justifyContent: 'center' }}>
 						<Image
-							source={require('@/assets/tecnologys-logo.png')}
+							source={require('@/assets/alvenatech.png')}
 							style={{
 								alignSelf: 'center',
 								marginBottom: 24,
@@ -53,7 +53,7 @@ export default function SignInScreen() {
 
 						<View style={{ alignItems: 'center', marginBottom: 24 }}>
 							<Text style={{ fontFamily: 'Inter_700Bold', fontSize: 28, textAlign: 'center' }}>
-								Bem vindo ao Alvenatech
+								Bem vindo
 							</Text>
 							<Text
 								style={{

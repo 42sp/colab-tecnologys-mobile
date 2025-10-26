@@ -43,10 +43,13 @@ type SecuritySettingsType = z.infer<typeof SecuritySettingsSchema>
 
 export function ResetPasswordForm({ route }: any) {
 	const { userId, accessToken, exp } = useSelector((state: RootState) => state.passwordRecovery)
-	const { name, email, phone, roleId } = useSelector((state: RootState) => state.userProfile)
+	const { name, email, phone, roleId, jobTitle } = useSelector(
+		(state: RootState) => state.userProfile,
+	)
 	const isExpired = accessToken && Date.now() > Number(exp) * 1000
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
+	const role = useSelector((state: RootState) => state.roles)
 	const { flux, cpf, id } = route.params
 	const [modal, setModal] = useState<{
 		visible: boolean
@@ -112,6 +115,10 @@ export function ResetPasswordForm({ route }: any) {
 				])
 
 				dispatch(setAuth(payload.accessToken))
+
+				console.log('----> ROLES', role)
+
+				navigate.stack('tab')
 			}
 		} catch (error) {
 			console.log(error)

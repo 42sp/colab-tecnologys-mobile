@@ -20,14 +20,18 @@ import { loadAuthSecureStore } from '@/libs/expo-secure-store/load-auth-secure-s
 import { mask, unMask } from 'react-native-mask-text'
 import { passwordRecovery } from '@/api/password-recovery'
 import { updateState } from '@/libs/redux/user-profile/user-profile-slice'
-import { isValidCPF } from '@brazilian-utils/brazilian-utils';
+import { isValidCPF } from '@brazilian-utils/brazilian-utils'
+import { setRoles } from '@/libs/redux/roles/roles-slice'
 
 const signUpSchema = z.object({
 	name: z.string().nonempty('Nome é obrigatório'),
 	email: z.string(),
-	cpf: z.string().length(11, 'CPF deve conter 11 caracteres').refine((cpf) => isValidCPF(cpf), {
-		message: 'CPF inválido',
-	}),
+	cpf: z
+		.string()
+		.length(11, 'CPF deve conter 11 caracteres')
+		.refine((cpf) => isValidCPF(cpf), {
+			message: 'CPF inválido',
+		}),
 	phone: z.string().nonempty('Número de telefone é obrigatório'),
 	jobTitle: z.string().nonempty('Função é obrigatória'),
 })
@@ -74,7 +78,11 @@ export function SignUpForm() {
 		try {
 			const roles = (await getRoles()) as any
 			console.log('roles', roles)
-			const list = roles.map(({ id, role_name }: any) => ({ id, label: role_name }))
+			const list = roles
+				//	.filter((item: any) => item.hierarchy_level !== 100)
+				.map(({ id, role_name }: any) => ({ id, label: role_name }))
+
+			console.log('roles filtered', list)
 			setRolesList(list)
 		} catch (error) {
 			console.log(error)
@@ -87,37 +95,12 @@ export function SignUpForm() {
 
 	async function onSubmit(profile: SignUpType) {
 		console.log('Dados de registro ', profile)
-		const jobTitle = rolesList.find((r) => r.id === profile.jobTitle)?.role_name
+		const role = rolesList.find((r) => r.id === profile.jobTitle)
 		const role_id = profile.jobTitle
-		dispatch(updateState({ ...profile, jobTitle: jobTitle || '', roleId: role_id }))
-		//await passwordRecovery({ cpf: profile.cpf, phone: profile.phone })
+		dispatch(updateState({ ...profile, jobTitle: role?.label || '', roleId: role_id }))
+		dispatch(setRoles({ role_name: role?.label || '', id: role_id }))
+		console.log('Set Roles', role?.label, role_id)
 		navigate.stack('verifyCode', { flux: 'first-access', cpf: profile.cpf, phone: profile.phone })
-		try {
-			/*await createUser({
-				cpf: profile.cpf,
-				password: profile.password,
-			})*/
-			//const auth = await signIn({ cpf: profile.cpf, password: profile.password })
-			//const { payload } = auth.authentication
-			/*await saveAuthSecureStore([
-				{ key: 'token', value: auth.accessToken },
-				{ key: 'expiryDate', value: payload.exp.toString() },
-				{ key: 'userid', value: payload.sub.toString() },
-			])
-			dispatch(setAuth({ token: auth.accessToken, expiry: payload.exp, id: payload.sub }))
-			await createProfile({
-				name: profile.name,
-				phone: profile.phone,
-				role_id: profile.jobTitle,
-			})
-			await loadAuthSecureStore(dispatch)*/
-		} catch (error) {
-			console.log(error)
-			setModal({
-				visible: true,
-				description: 'Não foi possível criar uma conta. Tente novamente mais tarde.',
-			})
-		}
 	}
 
 	return (
