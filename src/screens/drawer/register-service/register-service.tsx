@@ -48,7 +48,6 @@ const registerServiceSchema = z
 		typeOfService: z.string().nonempty('Tipo de serviço é obrigatório.'),
 		apartments: z.array(z.string()).min(1, 'Pelo menos um apartamento deve ser selecionado.'),
 		measurementUnit: z.string().nonempty('Unidade de medida é obrigatória.'),
-		classification: z.string().nonempty('Escolha a classificação.'),
 		services: z.string().nonempty('Serviço é obrigatório.'),
 		confirmed: z.boolean().optional(),
 	})
@@ -110,7 +109,6 @@ export default function RegisterServiceScreen() {
 			typeOfService: '',
 			apartments: [],
 			measurementUnit: '',
-			classification: '',
 			services: '',
 			confirmed: false,
 		},
@@ -181,6 +179,7 @@ export default function RegisterServiceScreen() {
 
 	async function onSubmit(data: RegisterServiceType) {
 		setRegistering(true)
+
 		try {
 			console.log('Dados do Serviço: ', JSON.stringify(data))
 
@@ -224,6 +223,7 @@ export default function RegisterServiceScreen() {
 	}
 
 	const handleCancel = () => {
+		console.log('voltar')
 		reset({
 			dateOfService: '',
 			tower: '',
@@ -232,7 +232,6 @@ export default function RegisterServiceScreen() {
 			typeOfService: '',
 			apartments: [],
 			measurementUnit: '',
-			classification: '',
 			services: '',
 			confirmed: false,
 		})
@@ -240,7 +239,6 @@ export default function RegisterServiceScreen() {
 		setModalVisible(false)
 		navigation.goBack()
 	}
-
 
 	const handleSelectResidential = (index: number) => {
 		setResIndex(index)
@@ -324,7 +322,7 @@ export default function RegisterServiceScreen() {
 							</Card>
 							<View className="flex-row gap-4">
 								<Button
-									title={isDirty ? "Cancelar" : "Voltar"}
+									title={isDirty ? 'Cancelar' : 'Voltar'}
 									variant="outline"
 									className="flex-1"
 									onPress={() => handleCancel()}

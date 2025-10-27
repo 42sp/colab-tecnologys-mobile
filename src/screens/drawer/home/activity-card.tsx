@@ -32,9 +32,9 @@ export function ActivityCard({
 	status,
 	onRefresh,
 	service_acronym,
-	service_id_full
+	service_id_full,
 }: ActivityCardProps) {
-	const title = `${serviceMap[service_acronym ?? ""]} | Parede ${service_stage} - ${service_floor} - Torre ${service_tower} - Ap ${service_apartment}`
+	const title = `${serviceMap[service_acronym ?? '']} | Parede ${service_stage} - ${service_floor} - Torre ${service_tower} - Ap ${service_apartment}`
 	const time = new Date(completion_date as Date)
 	const { hierarchy_level } = useSelector((state: RootState) => state.roles)
 	const [statusTask, setStatusTask] = useState(status)
@@ -44,14 +44,14 @@ export function ActivityCard({
 
 	async function handlePatchTasks() {
 		try {
-			if (!id || hierarchy_level <= 49) return
+			if (!id || hierarchy_level == null || hierarchy_level <= 49) return
 			setPatching(true)
 			await patchTasks({ id, approver_id: userId, status: 'completed' })
 			await patchServices({
 				id: service_id_full,
 				is_active: false,
-				is_done: true
-			});
+				is_done: true,
+			})
 			setStatusTask('completed')
 			await onRefresh()
 		} catch (error) {
@@ -60,6 +60,10 @@ export function ActivityCard({
 			setPatching(false)
 		}
 	}
+
+	useEffect(() => {
+		setStatusTask(status)
+	}, [status])
 
 	function getJobTypeIcon() {
 		switch (service_type) {

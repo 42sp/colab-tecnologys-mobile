@@ -36,7 +36,7 @@ export const serviceMap: Record<string, string> = {
 }
 
 const getKeyByValue = (value: string) => {
-	return Object.keys(serviceMap).find(key => serviceMap[key] === value)
+	return Object.keys(serviceMap).find((key) => serviceMap[key] === value)
 }
 
 export function TypeServiceForm({
@@ -53,7 +53,6 @@ export function TypeServiceForm({
 	const selectedService = useWatch({ name: 'services', control })
 	const selectedApartments = useWatch({ name: 'apartments', control })
 	const selectedMeasurementUnit = useWatch({ name: 'measurementUnit', control })
-	const selectedEnvironmentType = useWatch({ name: 'classification', control })
 	const [selectedStage, setSelectedStage] = useState<string | null>(null)
 
 	const baseFilteredServices = useMemo(() => {
@@ -90,39 +89,36 @@ export function TypeServiceForm({
 	const serviceOptions = useMemo(() => {
 		const item = services
 			.filter(
-				f => f.tower?.toString().trim() === selectedTower?.toString().trim()
-				&& f.floor?.toString().trim() === selectedFloor?.toString().trim()
-				&& f.service_type_id?.toString().trim() === selectedServiceType
+				(f) =>
+					f.tower?.toString().trim() === selectedTower?.toString().trim() &&
+					f.floor?.toString().trim() === selectedFloor?.toString().trim() &&
+					f.service_type_id?.toString().trim() === selectedServiceType,
 			)
 			.reduce((acc: any[], curr: any) => {
 				if (!acc.some((item: any) => item.acronym === curr.acronym)) {
 					acc.push(curr)
 				}
 				return acc
-			}, []);
+			}, [])
 		return item
 	}, [selectedServiceType])
 
 	const apartmentOptions = useMemo(() => {
 		const list = services
-			.filter(f => f.tower?.toString().trim() === selectedTower?.toString().trim())
-			.filter(f => f.floor?.toString().trim() === selectedFloor?.toString().trim())
-			.filter(f => f.service_type_id?.toString().trim() === selectedServiceType)
-			.filter(f => f.acronym?.toString().trim() === getKeyByValue(selectedService))
+			.filter((f) => f.tower?.toString().trim() === selectedTower?.toString().trim())
+			.filter((f) => f.floor?.toString().trim() === selectedFloor?.toString().trim())
+			.filter((f) => f.service_type_id?.toString().trim() === selectedServiceType)
+			.filter((f) => f.acronym?.toString().trim() === getKeyByValue(selectedService))
 			.reduce((acc: any[], curr: any) => {
 				if (!acc.some((item: any) => item.apartment === curr.apartment)) {
 					acc.push(curr)
 				}
 				return acc
 			}, [])
-			.filter(f => !selectedApartments.includes(f.apartment?.toString().trim() ?? ''))
-			.sort((a, b) => Number(a.apartment) - Number(b.apartment));
+			.filter((f) => !selectedApartments.includes(f.apartment?.toString().trim() ?? ''))
+			.sort((a, b) => Number(a.apartment) - Number(b.apartment))
 
-		const apartments = [
-			...new Set(
-				list.map((s) => s.apartment?.toString().trim()).filter(Boolean),
-			),
-		]
+		const apartments = [...new Set(list.map((s) => s.apartment?.toString().trim()).filter(Boolean))]
 
 		return apartments.map((apartment) => ({
 			label: apartment,
@@ -150,42 +146,37 @@ export function TypeServiceForm({
 
 	const filteredServices = useMemo(() => {
 		const item = services
-			.filter(f => f.tower?.toString().trim() === selectedTower?.toString().trim())
-			.filter(f => f.floor?.toString().trim() === selectedFloor?.toString().trim())
-			.filter(f => f.service_type_id?.toString().trim() === selectedServiceType)
-			.filter(f => f.acronym?.toString().trim() === getKeyByValue(selectedService))
-			.filter(f => selectedApartments.includes(f.apartment?.toString().trim() ?? ''))
-			.filter(f => f.measurement_unit?.toString().trim() === selectedMeasurementUnit)
-			.filter(f => f.environment_type?.toUpperCase() === selectedEnvironmentType.toUpperCase())
+			.filter((f) => f.tower?.toString().trim() === selectedTower?.toString().trim())
+			.filter((f) => f.floor?.toString().trim() === selectedFloor?.toString().trim())
+			.filter((f) => f.service_type_id?.toString().trim() === selectedServiceType)
+			.filter((f) => f.acronym?.toString().trim() === getKeyByValue(selectedService))
+			.filter((f) => selectedApartments.includes(f.apartment?.toString().trim() ?? ''))
+			.filter((f) => f.measurement_unit?.toString().trim() === selectedMeasurementUnit)
 
 		if (!selectedService) return []
 
 		return item
-	}, [selectedEnvironmentType])
+	}, [selectedMeasurementUnit])
 
 	useEffect(() => {
 		resetField('floor')
-	}, [selectedTower]);
+	}, [selectedTower])
 
 	useEffect(() => {
-		resetField('typeOfService');
-	}, [selectedFloor]);
+		resetField('typeOfService')
+	}, [selectedFloor])
 
 	useEffect(() => {
-		resetField('services');
-	}, [selectedServiceType]);
+		resetField('services')
+	}, [selectedServiceType])
 
 	useEffect(() => {
-		resetField('apartments');
-	}, [selectedService]);
+		resetField('apartments')
+	}, [selectedService])
 
 	useEffect(() => {
-		resetField('measurementUnit');
-	}, [selectedApartments]);
-
-	useEffect(() => {
-		resetField('classification');
-	}, [selectedMeasurementUnit]);
+		resetField('measurementUnit')
+	}, [selectedApartments])
 
 	return (
 		<View>
@@ -314,30 +305,6 @@ export function TypeServiceForm({
 						/>
 						{errors.measurementUnit && (
 							<Text className="text-md text-red-500">{errors.measurementUnit.message}</Text>
-						)}
-					</View>
-					<View className="gap-2">
-						<Controller
-							control={control}
-							name="classification"
-							render={({ field: { value, onChange } }) => (
-								<View className="flex-row">
-									{radioOptions.map((opt) => (
-										<RadioCheckOption
-											key={opt.label}
-											label={opt.label}
-											selected={value === opt.label}
-											onPress={() => onChange(opt.label)}
-											variant="radio"
-										/>
-									))}
-								</View>
-							)}
-						/>
-						{errors.classification && (
-							<Text className="text-md mb-2 text-red-500">
-								{errors.classification.message as string}
-							</Text>
 						)}
 					</View>
 					{selectedService && (
