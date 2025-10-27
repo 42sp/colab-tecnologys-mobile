@@ -38,8 +38,9 @@ export async function getAuthSecureStore(items: FindItemType[]) {
 export async function deleteAuthSecureStore(items: FindItemType[]) {
 	try {
 		for (const item of items) {
-			const value = await SecureStore.getItemAsync(item.key);
-			console.log(`Valor antes de deletar a key ${item.key}: `, value);
+			const value = await SecureStore.getItemAsync(item.key)
+			console.log(`Valor antes de deletar a key ${item.key}: `, value)
+			await SecureStore.deleteItemAsync(item.key)
 		}
 	} catch (e) {
 		console.log(e)

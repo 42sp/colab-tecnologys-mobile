@@ -16,6 +16,7 @@ import { mask, unMask } from 'react-native-mask-text'
 import { setAuthProfile } from '@/utils'
 import * as SecureStore from 'expo-secure-store'
 import { resetRoles, setRoles } from '@/libs/redux/roles/roles-slice'
+import { logoutUser } from '@/utils'
 
 const signInSchema = z.object({
 	cpf: z.string().nonempty('CPF é obrigatório').length(11, 'CPF deve conter 11 caracteres'),
@@ -45,7 +46,8 @@ export function SignInForm() {
 	async function onSubmit(user: SignInType) {
 		try {
 			// console.log('Tentando fazer login com:', user)
-			dispatch(resetRoles());
+			//dispatch(resetRoles());
+			logoutUser(dispatch)
 			const auth = await signIn({ ...user })
 			// console.log('Resposta do signIn:', auth)
 

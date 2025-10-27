@@ -2,6 +2,7 @@ import { AppDispatch } from '@/libs/redux/store'
 import { resetAuth } from '@/libs/redux/auth/auth-slice'
 import { clearProfile, updateState } from '@/libs/redux/user-profile/user-profile-slice'
 import { clearTasks } from '@/libs/redux/tasks/tasks-slice'
+import { resetRoles } from '@/libs/redux/roles/roles-slice'
 import {
 	deleteAuthSecureStore,
 	saveAuthSecureStore,
@@ -13,6 +14,7 @@ export const logoutUser = async (dispatch: AppDispatch) => {
 	dispatch(resetAuth())
 	dispatch(clearProfile())
 	dispatch(clearTasks())
+	dispatch(resetRoles())
 
 	await deleteAuthSecureStore([{ key: 'token' }, { key: 'expiryDate' }, { key: 'userid' }])
 }
@@ -25,7 +27,7 @@ export const getCurrentDate = (date?: string) => {
 export const setAuthProfile = async (auth: any, dispatch: Dispatch) => {
 	const { accessToken } = auth
 	const { id } = auth.user
-	const { profile, role } = auth.meta
+	const { profile, roles } = auth.meta
 
 	await saveAuthSecureStore([
 		{ key: 'token', value: accessToken },
@@ -50,7 +52,7 @@ export const setAuthProfile = async (auth: any, dispatch: Dispatch) => {
 			profileId: id,
 		}),
 	)
-	dispatch(setRoles(role))
+	dispatch(setRoles(roles))
 
 	return true
 }
