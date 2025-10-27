@@ -12,6 +12,8 @@ import { toStringDate, toStringDateClean } from './utils'
 import { cn } from '@/lib/utils'
 import LoadingButton from '@/components/ui/loadingButton'
 import { serviceMap } from '@/screens/drawer/register-service/type-service-form'
+import { is } from 'zod/v4/locales'
+import { patchServices } from '@/api/patch-services'
 
 interface ActivityCardProps extends TasksServices {
 	onRefresh: () => Promise<void>
@@ -29,7 +31,8 @@ export function ActivityCard({
 	completion_date,
 	status,
 	onRefresh,
-	service_acronym
+	service_acronym,
+	service_id_full
 }: ActivityCardProps) {
 	const title = `${serviceMap[service_acronym ?? ""]} | Parede ${service_stage} - ${service_floor} - Torre ${service_tower} - Ap ${service_apartment}`
 	const time = new Date(completion_date as Date)
@@ -44,9 +47,17 @@ export function ActivityCard({
 			if (!id || hierarchy_level <= 49) return
 			setPatching(true)
 			await patchTasks({ id, approver_id: userId, status: 'completed' })
+			await patchServices({
+				id: service_id_full,
+				is_active: false,
+				is_done: true
+			});
+			setStatusTask('completed')
 			await onRefresh()
 		} catch (error) {
 			console.log(error)
+		} finally {
+			setPatching(false)
 		}
 	}
 

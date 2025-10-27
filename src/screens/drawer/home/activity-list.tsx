@@ -2,6 +2,7 @@ import { SectionList, Text, View, StyleSheet, Animated, RefreshControl } from 'r
 import { ActivityCard } from './activity-card'
 import { Task } from '@/api/get-tasks'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { ColoredProgressBar } from '@/components/ColoredProgressBar'
 
 const ColorDotVariants: Record<'Alvenaria' | 'Contrapiso' | 'Pintura', { color: string }> = {
 	Alvenaria: {
@@ -15,7 +16,12 @@ const ColorDotVariants: Record<'Alvenaria' | 'Contrapiso' | 'Pintura', { color: 
 	},
 }
 
-type Item = { id: string; service_type: string /* ...outros campos do item... */ }
+type Item = {
+	id: string;
+	service_type: string;
+	service_worker_quantity: number;
+	 /* ...outros campos do item... */
+}
 type Section = { title: string; data: Item[] }
 
 type Props = {
@@ -61,12 +67,23 @@ export function ActivityList({
 
 	// memoizações para evitar recriar funções a cada render
 	const keyExtractor = useCallback((item: Item) => String(item.id), [])
-	const renderSectionHeader = useCallback(
-		({ section }: { section: Section }) => (
-			<Text className="py-3 font-inter text-neutral-600">{section.title}</Text>
-		),
-		[],
-	)
+	const renderSectionHeader = ({ section }: { section: Section }) => {
+		const meta = 50.0000;
+		const worker_quantity = data
+			.filter(f => f.title === section.title)
+			.map(m => m.data.map(item => item.service_worker_quantity || 0));
+		const sum = worker_quantity.flat().reduce((acc, curr) => Number(acc) + Number(curr), 0);
+		const progress = sum / meta;
+
+		return (
+		<>
+			<Text className="mt-2 font-inter text-neutral-600">{section.title}</Text>
+			<ColoredProgressBar
+				className="my-2"
+				value={progress}
+			/>
+		</>
+	)};
 
 	const renderItem = useCallback(
 		({ item, onRefresh }: { item: Item; onRefresh: () => Promise<void> }) => {
@@ -81,6 +98,9 @@ export function ActivityList({
 						<View className="w-0.5 flex-1 bg-gray-400" />
 					</View>
 					<View className="mb-2 ml-2 flex-1">
+						{/* <Text selectable style={{ fontFamily: 'monospace', fontSize: 12 }}>
+							{JSON.stringify(item, null, 2)}
+						</Text> */}
 						<ActivityCard {...item} onRefresh={onRefresh} />
 					</View>
 				</View>

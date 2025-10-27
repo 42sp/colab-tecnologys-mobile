@@ -63,6 +63,7 @@ function buildResultLogic({ base, tasks, dates }: buildResultLogicProps) {
 			data: [{ title: 'Resultados do filtro', data: tasks }],
 		}
 	}
+	const meta = 50.0000;
 	const dataDates = tasks
 		.map(({ completion_date }) => toDate(completion_date))
 		.sort((a, b) => b.getTime() - a.getTime())
@@ -89,6 +90,7 @@ function buildResultLogic({ base, tasks, dates }: buildResultLogicProps) {
 	return {
 		...base,
 		data,
+		meta
 	}
 }
 

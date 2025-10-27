@@ -42,6 +42,7 @@ export interface TasksServices {
 	service_stage?: string
 	service_type?: string
 	service_acronym?: string
+	service_id_full?: string
 }
 
 export async function getTasks(signal: any) {

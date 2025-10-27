@@ -139,30 +139,40 @@ export default function Home() {
 				<ActivityList
 					data={activityDataList.data}
 					HeaderComponent={
-						<View className="flex-row gap-2">
-							<SummaryCard
-								icon="clipboard"
-								SumaryVariant="blue"
-								value={activityDataList.amount}
-								label="Atividades"
-							/>
-							<SummaryCard
-								icon="clock"
-								SumaryVariant="orange"
-								value={activityDataList.pendding}
-								label="Pendentes"
-							/>
-							{filter.serviceType !== 'Todos' && (
-								<TouchableOpacity onPress={() => navigation.navigate('productivity')}>
-									<SummaryCard
-										icon="bar-chart"
-										SumaryVariant="green"
-										value={activityDataList.percent + '%'}
-										label="Produtividade"
-									/>
-								</TouchableOpacity>
-							)}
-						</View>
+						<>
+							<View className="flex-row gap-2">
+								<SummaryCard
+									icon="clipboard"
+									SumaryVariant="blue"
+									value={activityDataList.amount}
+									label="Atividades"
+								/>
+								<SummaryCard
+									icon="clock"
+									SumaryVariant="orange"
+									value={activityDataList.pendding}
+									label="Pendentes"
+								/>
+								{filter.serviceType !== 'Todos' && (
+									<TouchableOpacity onPress={() => navigation.navigate('productivity')}>
+										<SummaryCard
+											icon="bar-chart"
+											SumaryVariant="green"
+											value={activityDataList.percent + '%'}
+											label="Produtividade"
+										/>
+									</TouchableOpacity>
+								)}
+							</View>
+							<View className="flex-row gap-1">
+								<SummaryCard
+									icon="flag"
+									SumaryVariant="purple"
+									value={'50 m²'}
+									label="Meta do dia"
+								/>
+							</View>
+						</>
 					}
 					firstLoad={isLoading} // true só no primeiro load
 					refreshing={isRefreshing} // spinner nativo

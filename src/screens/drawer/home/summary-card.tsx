@@ -3,7 +3,7 @@ import { Text } from 'react-native'
 
 import Card from '@/components/ui/card'
 
-type SumaryVariant = 'blue' | 'orange' | 'green'
+type SumaryVariant = 'blue' | 'orange' | 'green' | 'purple'
 
 const baseStyle = `p-2 items-center justify-center rounded-full`
 
@@ -19,6 +19,10 @@ const sumaryVariants: Record<SumaryVariant, { container: string; iconColor: stri
 	green: {
 		container: `${baseStyle} bg-green-700`,
 		iconColor: '#22C55E',
+	},
+	purple: {
+		container: `${baseStyle} bg-purple-300`,
+		iconColor: '#8B5CF6',
 	},
 }
 

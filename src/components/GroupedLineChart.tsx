@@ -86,7 +86,9 @@ class GroupedLineChartComponent extends AbstractChart<any, any> {
 							/>
 						))}
 
-						{datasets.map((ds: any, idx: number) => (
+						{datasets
+							.filter((f: any) => f.active)
+							.map((ds: any, idx: number) => (
 							<Path
 								key={idx}
 								d={getFillPath(ds.data)}
@@ -95,7 +97,9 @@ class GroupedLineChartComponent extends AbstractChart<any, any> {
 							/>
 						))}
 
-						{datasets.map((ds: any, idx: number) => (
+						{datasets
+							.filter((f: any) => f.active)
+							.map((ds: any, idx: number) => (
 							<Path
 								key={idx}
 								d={getLinePath(ds.data)}
@@ -105,7 +109,11 @@ class GroupedLineChartComponent extends AbstractChart<any, any> {
 							/>
 						))}
 
-						{datasets.map((ds: any, idx: number) => (
+						{datasets
+							.filter((f: any) => f.active)
+							.map((ds: any, idx: number) => {
+							// console.log(ds);
+							return (
 							ds.data.map((value: number, i: number) => {
 								const { x, y } = getPoint(i, value);
 								return (
@@ -134,7 +142,7 @@ class GroupedLineChartComponent extends AbstractChart<any, any> {
 									/>
 								);
 							})
-						))}
+						)})}
 
 						{labels.map((label: string, i: number) => (
 							<SvgText
@@ -171,7 +179,12 @@ const GroupedLineChart = (props: any) => {
 		}, [tooltip.visible]);
 
 	return (
-		<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+		<View style={{
+			flex: 1,
+			justifyContent: 'center',
+			alignItems: 'center',
+			zIndex: 1
+		}}>
 			<GroupedLineChartComponent
 				data={props.data}
 				width={props.width}
@@ -180,7 +193,7 @@ const GroupedLineChart = (props: any) => {
 					setTooltip({
 						visible: true,
 						x: (info.x % screenWidth), //- (info.x + 180 > screenWidth ? 140 : 50),
-						y: info.y - 120,
+						y: 0,
 						label: info.label,
 						values: info.values,
 						datasets: info.datasets
@@ -201,10 +214,12 @@ const GroupedLineChart = (props: any) => {
 					shadowRadius: 8,
 				}}>
 					<Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16, marginBottom: 8 }}>{tooltip.label}</Text>
-					{tooltip.datasets.map((ds, idx) => (
+					{tooltip.datasets
+						// .sort((a, b) =>  Number(a.label) - Number(b.label))
+						.map((ds, idx) => (
 						<View key={idx} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
 							<View style={{ width: 18, height: 18, borderRadius: 4, backgroundColor: ds.color + '22', borderWidth: 2, borderColor: ds.color, marginRight: 8 }} />
-							<Text style={{ color: '#fff', fontSize: 15 }}>{ds.label || `Executor ${idx + 1}`}: {tooltip.values[idx]}%</Text>
+							<Text style={{ color: '#fff', fontSize: 15 }}>Andar {ds.label || `Executor ${idx + 1}`}: {tooltip.values[idx]}%</Text>
 						</View>
 					))}
 				</View>
