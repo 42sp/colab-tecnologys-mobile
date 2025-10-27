@@ -185,7 +185,8 @@ const Dashboard = () => {
   return (
     <View className="flex-1 bg-gray-100">
       <ScrollView className="flex-1 px-4 py-6" showsVerticalScrollIndicator={false}>
-        <View className="flex-row gap-3 mb-4 items-center">
+        {/*
+				<View className="flex-row gap-3 mb-4 items-center">
           <View className="flex-1 relative m-2">
             <Input
 							IconLeft='search'
@@ -198,8 +199,10 @@ const Dashboard = () => {
             <BarChart3 color="white" size={18} />
           </TouchableOpacity>
         </View>
+				*/}
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-3 pb-2 mb-4">
+        {/*
+				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-3 pb-2 mb-4">
           {periods.map((p) => (
             <TouchableOpacity
               key={p}
@@ -210,6 +213,7 @@ const Dashboard = () => {
             </TouchableOpacity>
           ))}
         </ScrollView>
+				*/}
 
         <View className="flex-row justify-between mb-6">
           {stats.map((stat, idx) => (
