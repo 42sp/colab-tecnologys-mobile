@@ -42,7 +42,7 @@ const TabsLayout = () => {
 							: LoadingModal
 				}
 				options={{
-					title: 'Home',
+					title: 'Progresso da Obra',
 					tabBarIcon: ({ color, size }) => <HomeIcon color={color} size={size} />,
 					header: TabsHeader,
 				}}

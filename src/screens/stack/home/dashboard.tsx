@@ -191,68 +191,82 @@ const Dashboard = () => {
 
 		// console.log(productivity)
 
-		const newDatasets = productivityData.datasets.map((ds) => ({
-			...ds,
-			active: !allActive && productivity?.active ? true : ds.label === item.label,
-		}))
+    const newDatasets = productivityData.datasets.map(ds => ({
+      ...ds,
+      active: !allActive && productivity?.active ? true : ds.label === item.label,
+    }));
 
-		setProductivityData({
-			...productivityData,
-			datasets: newDatasets,
-		})
-	}
+    setProductivityData({
+      ...productivityData,
+      datasets: newDatasets,
+    });
+  }
 
-	return (
-		<View className="flex-1 bg-gray-100">
-			<ScrollView className="mb-2 flex-1 px-4 py-6" showsVerticalScrollIndicator={false}>
-				<View className="flex-row items-center"></View>
+  return (
+    <View className="flex-1 bg-gray-100">
+      <ScrollView className="flex-1 px-4 py-6" showsVerticalScrollIndicator={false}>
+        {/*
+				<View className="flex-row gap-3 mb-4 items-center">
+          <View className="flex-1 relative m-2">
+            <Input
+							IconLeft='search'
+              value={search}
+              onChangeText={setSearch}
+              className="bg-gray-100 rounded-full text-base"
+            />
+          </View>
+          <TouchableOpacity className="bg-black rounded-full items-center justify-center h-[40px] w-[40px]">
+            <BarChart3 color="white" size={18} />
+          </TouchableOpacity>
+        </View>
+				*/}
 
-				<ScrollView
-					horizontal
-					showsHorizontalScrollIndicator={false}
-					className="mb-4 flex-row gap-3 pb-2"
-				>
-					{periods.map((p) => (
-						<TouchableOpacity
-							key={p}
-							className={`mx-2 rounded-full px-4 py-2 ${activePeriod === p ? 'bg-black' : 'bg-gray-200'} `}
-							onPress={() => setActivePeriod(p)}
-						>
-							<Text className={`font-medium ${activePeriod === p ? 'text-white' : 'text-black'}`}>
-								{p}
-							</Text>
-						</TouchableOpacity>
-					))}
-				</ScrollView>
+        {/*
+				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-3 pb-2 mb-4">
+          {periods.map((p) => (
+            <TouchableOpacity
+              key={p}
+              className={`mx-2 px-4 py-2 rounded-full ${activePeriod === p ? 'bg-black' : 'bg-gray-200'} `}
+              onPress={() => setActivePeriod(p)}
+            >
+              <Text className={`font-medium ${activePeriod === p ? 'text-white' : 'text-black'}`}>{p}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+				*/}
 
-				<View className="mb-6 flex-row justify-between">
-					{stats.map((stat, idx) => (
-						<View key={idx} className={`mx-1 flex-1 items-center rounded-xl bg-white p-4 shadow`}>
-							<View className={`mb-3 rounded-full p-3 ${stat.bg}`}>{stat.icon}</View>
-							<Text className="text-2xl font-bold">{stat.value}</Text>
-							<Text className="mt-1 text-center text-xs text-gray-500">{stat.label}</Text>
-						</View>
-					))}
-				</View>
+        <View className="flex-row justify-between mb-6">
+          {stats.map((stat, idx) => (
+            <View key={idx} className={`flex-1 mx-1 bg-white rounded-xl shadow p-4 items-center`}>
+              <View className={`mb-3 p-3 rounded-full ${stat.bg}`}>{stat.icon}</View>
+              <Text className="text-2xl font-bold">{stat.value}</Text>
+              <Text className="text-xs text-gray-500 mt-1 text-center">{stat.label}</Text>
+            </View>
+          ))}
+        </View>
 
-				<View className="mb-6 rounded-xl bg-white p-4 shadow">
-					<View className="mb-4 flex-row items-center gap-3">
-						<View className="rounded-full bg-blue-100 p-3">
-							<TrendingUp color="#2563eb" size={24} />
-						</View>
-						<View>
-							<Text className="text-lg font-semibold">Produtividade</Text>
-							<Text className="text-sm text-gray-500">Desempenho ao longo do tempo</Text>
-						</View>
-					</View>
+        <View className="bg-white rounded-xl shadow p-4 mb-6">
+          <View className="flex-row items-center gap-3 mb-4">
+            <View className="p-3 rounded-full bg-blue-100">
+              <TrendingUp color="#2563eb" size={24} />
+            </View>
+            <View>
+              <Text className="text-lg font-semibold">Produtividade</Text>
+              <Text className="text-sm text-gray-500">Desempenho ao longo do tempo</Text>
+            </View>
+          </View>
 
-					<View className="h-75 items-center justify-center rounded-xl">
-						{productivityData && (
-							<GroupedLineChart data={productivityData} width={300} height={150} />
-						)}
-					</View>
+          <View className="h-75 rounded-xl items-center justify-center">
+            {productivityData && (
+              <GroupedLineChart
+                data={productivityData}
+                width={300}
+                height={150}
+              />
+            )}
+          </View>
 
-					<View className="mt-4 flex-row justify-center gap-4">
+          <View className="flex-row justify-center gap-4 mt-4">
 						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
 							{productivityData &&
 								productivityData.datasets.map((m) => (
