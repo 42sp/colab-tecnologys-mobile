@@ -52,6 +52,7 @@ export const setAuthProfile = async (auth: any, dispatch: Dispatch) => {
 			profileId: id,
 		}),
 	)
+
 	dispatch(setRoles(roles))
 
 	return true
