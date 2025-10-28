@@ -14,6 +14,9 @@ import {
 } from '@expo-google-fonts/inter'
 import '@/global.css'
 import RootNavigator from './_layouts/root-navigator/root-navigator'
+import { PushNotifications } from './libs/notifications/PushNotifications'
+
+new PushNotifications().init()
 
 enableScreens()
 
