@@ -1,11 +1,24 @@
 {
 	"expo": {
 		"name": "alvenatech-app",
-		"slug": "alvenatech-segy",
+		"slug": "tecnologys-segy",
 		"version": "1.0.0",
 		"scheme": "tecnologys-app-scheme",
 		"main": "./src/app.tsx",
-		"plugins": ["expo-font", "expo-secure-store"],
+		"plugins": [
+			"expo-font",
+			"expo-secure-store",
+			[
+				"expo-notifications",
+				{
+					"icon": "",
+					"color": "#ffffff",
+					"defaultChannel": "default",
+					"sounds": [],
+					"enableBackgroundRemoteNotifications": false
+				}
+			]
+		],
 		"web": {
 			"favicon": "./src/assets/favicon.png"
 		},
@@ -30,7 +43,8 @@
 				"foregroundImage": "./src/assets/adaptive-icon.png",
 				"backgroundColor": "#ffffff"
 			},
-			"package": "com.quarentaedois.labs.tecnologys"
+			"package": "com.quarentaedois.labs.tecnologys",
+			"googleServicesFile": "./google-services.json"
 		},
 		"extra": {
 			"eas": {

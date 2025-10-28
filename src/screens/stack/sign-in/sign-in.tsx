@@ -35,7 +35,8 @@ export default function SignInScreen() {
 					contentContainerStyle={{
 						flexGrow: 1,
 						justifyContent: 'center',
-						padding: 24,
+						padding: 10,
+						paddingHorizontal: 20,
 					}}
 					showsVerticalScrollIndicator={false}
 				>
@@ -44,7 +45,7 @@ export default function SignInScreen() {
 							source={require('@/assets/alvenatech.png')}
 							style={{
 								alignSelf: 'center',
-								marginBottom: 24,
+								marginBottom: 2,
 								width: 180,
 								height: 180,
 								resizeMode: 'contain',

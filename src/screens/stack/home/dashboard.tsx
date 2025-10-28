@@ -1,118 +1,138 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Dimensions, Pressable } from 'react-native';
-import { Bell, Search, BarChart3, ClipboardCheck, Layers, Zap, TrendingUp, Building2, Building } from 'lucide-react-native';
-import { Input } from '@/components/ui/input';
-import { GroupedBarChart } from '@/components/GroupedBarChart';
-import GroupedLineChart from '@/components/GroupedLineChart';
-import { getReport } from '@/api/get-report';
+import React, { useEffect, useState } from 'react'
+import {
+	View,
+	Text,
+	TextInput,
+	ScrollView,
+	TouchableOpacity,
+	Dimensions,
+	Pressable,
+} from 'react-native'
+import {
+	Bell,
+	Search,
+	BarChart3,
+	ClipboardCheck,
+	Layers,
+	Zap,
+	TrendingUp,
+	Building2,
+	Building,
+} from 'lucide-react-native'
+import { Input } from '@/components/ui/input'
+import { GroupedBarChart } from '@/components/GroupedBarChart'
+import GroupedLineChart from '@/components/GroupedLineChart'
+import { getReport } from '@/api/get-report'
 
-const periods = ['Mês', 'Trimestre', 'Ano', 'Todos'];
-const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+const periods = ['Mês', 'Trimestre', 'Ano', 'Todos']
+const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 
 interface statsData {
-	icon: React.ReactNode;
-	value: number | string;
-	label: string;
-	bg: string;
+	icon: React.ReactNode
+	value: number | string
+	label: string
+	bg: string
 }
 
 interface ProductivityChartData {
-	labels: string[];
+	labels: string[]
 	datasets: {
-		data: number[];
-		color: string;
-		label: string;
-		active: boolean;
-		floor: string;
-	}[];
-};
+		data: number[]
+		color: string
+		label: string
+		active: boolean
+		floor: string
+	}[]
+}
 
 const generateColor = (() => {
-	const usedColors = new Set<string>();
+	const usedColors = new Set<string>()
 	return () => {
-		let color;
+		let color
 		do {
-			const hue = Math.floor(Math.random() * 360);
-			color = `hsl(${hue}, 70%, 60%)`;
-		} while (usedColors.has(color));
-		usedColors.add(color);
-		return color;
-	};
-})();
+			const hue = Math.floor(Math.random() * 360)
+			color = `hsl(${hue}, 70%, 60%)`
+		} while (usedColors.has(color))
+		usedColors.add(color)
+		return color
+	}
+})()
 
-const calculateProductivity = (data: any[]) : ProductivityChartData => {
-	if (!data || !Array.isArray(data)) return { labels: [], datasets: [] };
+const calculateProductivity = (data: any[]): ProductivityChartData => {
+	if (!data || !Array.isArray(data)) return { labels: [], datasets: [] }
 
 	const aux = data.map((item: any) => {
-		const [ano, mes] = item.ano_mes.split('-');
-		const mesAbrev = meses[parseInt(mes, 10) - 1];
+		const [ano, mes] = item.ano_mes.split('-')
+		const mesAbrev = meses[parseInt(mes, 10) - 1]
 
 		return {
 			mes: mesAbrev,
 			floor: item.floor
 				.split(' ')
-				.map((m: string, index: number) =>  index === 0 ? '' : m )
+				.map((m: string, index: number) => (index === 0 ? '' : m))
 				.join(' '),
-			total: item.total_worker_quantity
+			total: item.total_worker_quantity,
 		}
-	});
+	})
 
 	const labels = aux
 		.map((item: any) => item.mes)
-		.filter((v: any, i: number, a: any[]) => a.indexOf(v) === i);
+		.filter((v: any, i: number, a: any[]) => a.indexOf(v) === i)
 
 	const floors = aux
 		.map((item: any) => item.floor)
-		.filter((v: any, i: number, a: any[]) => a.indexOf(v) === i);
+		.filter((v: any, i: number, a: any[]) => a.indexOf(v) === i)
 
 	const datasets = floors.map((floor: string) => {
-		const color = generateColor();
+		const color = generateColor()
 		const data = labels.map((mes: string) => {
-			const found = aux.find((item: any) => item.floor === floor && item.mes === mes);
-			return found ? Number(found.total) : 0;
-		});
-		return { floor, data, color };
-	});
+			const found = aux.find((item: any) => item.floor === floor && item.mes === mes)
+			return found ? Number(found.total) : 0
+		})
+		return { floor, data, color }
+	})
 
 	const chartData = {
 		labels,
-		datasets: datasets.map((ds: any) => ({
-			data: ds.data,
-			color: ds.color,
-			label: ds.floor,
-			active: true,
-			floor: ds.floor,
-		})).sort((a: any, b: any) => Number(a.label) - Number(b.label)),
-	};
+		datasets: datasets
+			.map((ds: any) => ({
+				data: ds.data,
+				color: ds.color,
+				label: ds.floor,
+				active: true,
+				floor: ds.floor,
+			}))
+			.sort((a: any, b: any) => Number(a.label) - Number(b.label)),
+	}
 
-	return chartData;
+	return chartData
 }
 
 const calculateProgressByFloor = (data: any[]) => {
-	if (!data || !Array.isArray(data)) return { labels: [], datasets: [] };
+	if (!data || !Array.isArray(data)) return { labels: [], datasets: [] }
 
 	// data.map(m => Number(m.porcentagem_acumulada) > 0 && console.log(m.floor.padEnd(7), m.semana, m.porcentagem_acumulada))
 
-	const datasets = data.map((item: any) => ({
-		floor: item.floor,
-		data: data
-			.filter(d => d.floor === item.floor)
-			.map(d => Number(d.porcentagem_acumulada)),
-		color: generateColor(),
-	})).reduce((acc: any[], curr: any) => {
-		if (!acc.find(a => a.floor === curr.floor)) {
-			acc.push(curr);
-		}
-		return acc;
-	}, []);
+	const datasets = data
+		.map((item: any) => ({
+			floor: item.floor,
+			data: data.filter((d) => d.floor === item.floor).map((d) => Number(d.porcentagem_acumulada)),
+			color: generateColor(),
+		}))
+		.reduce((acc: any[], curr: any) => {
+			if (!acc.find((a) => a.floor === curr.floor)) {
+				acc.push(curr)
+			}
+			return acc
+		}, [])
 
 	// datasets.forEach(m => console.log(m.data));
 
 	return {
-		labels: data.map(d => d.semana).filter((v: any, i: number, a: any[]) => a.indexOf(v) === i),
+		labels: data.map((d) => d.semana).filter((v: any, i: number, a: any[]) => a.indexOf(v) === i),
 		datasets,
-	};
-};
+	}
+}
 
 const defineResume = (data: any) => {
 	return [
@@ -138,36 +158,36 @@ const defineResume = (data: any) => {
 }
 
 const Dashboard = () => {
-  const [activePeriod, setActivePeriod] = useState('Todos');
-  const [search, setSearch] = useState('');
-	const [floor, setFloor] = useState(null);
+	const [activePeriod, setActivePeriod] = useState('Todos')
+	const [search, setSearch] = useState('')
+	const [floor, setFloor] = useState(null)
 
-  const [productivityData, setProductivityData] = useState<ProductivityChartData | null>(null);
-	const [progressData, setProgressData] = useState<ProductivityChartData | null>(null);
-	const [stats, setStats] = useState<statsData[]>([]);
+	const [productivityData, setProductivityData] = useState<ProductivityChartData | null>(null)
+	const [progressData, setProgressData] = useState<ProductivityChartData | null>(null)
+	const [stats, setStats] = useState<statsData[]>([])
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const data = await getReport();
+			const data = await getReport()
 
-			const productivity = calculateProductivity(data.produtivity);
-			const progressByFloor = calculateProgressByFloor(data.progressByFloor);
-			const resume = defineResume(data.resume);
+			const productivity = calculateProductivity(data.produtivity)
+			const progressByFloor = calculateProgressByFloor(data.progressByFloor)
+			const resume = defineResume(data.resume)
 
-			setStats(resume);
-			setProductivityData(productivity);
-			setProgressData(progressByFloor);
+			setStats(resume)
+			setProductivityData(productivity)
+			setProgressData(progressByFloor)
 		}
-		fetchData();
-	}, []);
+		fetchData()
+	}, [])
 
-  const selectProductivityData = (item: any) => {
-    if (!productivityData) return;
+	const selectProductivityData = (item: any) => {
+		if (!productivityData) return
 
-		const productivity = productivityData.datasets
-			.find(ds => ds.label === item.label);
+		const productivity = productivityData.datasets.find((ds) => ds.label === item.label)
 
-		const allActive = productivityData.datasets.filter(f => f.active).length === productivityData.datasets.length;
+		const allActive =
+			productivityData.datasets.filter((f) => f.active).length === productivityData.datasets.length
 
 		// console.log(productivity)
 
@@ -248,95 +268,101 @@ const Dashboard = () => {
 
           <View className="flex-row justify-center gap-4 mt-4">
 						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-							{
-								productivityData &&
-								productivityData.datasets.map(m =>
+							{productivityData &&
+								productivityData.datasets.map((m) => (
 									<Pressable
 										className="flex-row items-center gap-2 px-4"
 										key={m.label}
 										onPress={() => selectProductivityData(m)}
 									>
-										<View className="w-4 h-4 rounded-full" style={{ backgroundColor: m.color }} />
+										<View className="h-4 w-4 rounded-full" style={{ backgroundColor: m.color }} />
 										<Text className="text-sm">Andar {m.label}</Text>
 									</Pressable>
-								)
-							}
-						</ScrollView>
-          </View>
-        </View>
-
-        <View className="bg-white rounded-xl shadow p-4 mb-6">
-          <View className="flex-row items-center gap-3 mb-4">
-            <View className="p-3 rounded-full bg-green-100">
-              <Building2 color="#22c55e" size={24} />
-            </View>
-            <View>
-              <Text className="text-lg font-semibold">Andamento por Andar</Text>
-              <Text className="text-sm text-gray-500">Progresso ao longo do tempo</Text>
-            </View>
-          </View>
-
-          <View className="h-50 rounded-xl items-center justify-center">
-						{
-							progressData && (
-								<GroupedBarChart
-									data={progressData}
-									width={300}
-									height={120}
-									yAxisSuffix="%"
-									chartConfig={{
-										backgroundColor: '#fff',
-										backgroundGradientFrom: '#fff',
-										backgroundGradientTo: '#fff',
-										decimalPlaces: 0,
-										color: (opacity = 1) => `rgba(0,0,0,${opacity})`,
-										labelColor: (opacity = 1) => `rgba(0,0,0,${opacity})`,
-										barPercentage: 0.6,
-									}}
-								/>
-							)
-						}
-          </View>
-
-          <View className="mt-6 space-y-4">
-						<ScrollView
-							showsVerticalScrollIndicator={false}
-							style={{ maxHeight: 200 }}
-						>
-	            {progressData?.datasets
-								.filter(f => f.data.reduce((acc: number, val: number) => acc + val, 0) > 0)
-								.sort((a, b) => Number(a.floor.replace('PAV ', '')) - Number(b.floor.replace('PAV ', '')))
-								.map((dataset, idx) => { return (
-								<View key={idx} className="my-2 flex-row items-center justify-between">
-									<View className="flex-row items-center gap-3">
-										<View
-											className={`p-2 rounded-full ${dataset.color}`}
-											style={{ backgroundColor: dataset.color }}
-										>
-											<Building color="white" size={16} />
-										</View>
-										<Text className="font-medium">{dataset.floor.replace('PAV ', 'Andar ')}</Text>
-									</View>
-									<View className="flex-row items-center gap-3">
-										<View className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-											<View
-												style={{
-													width: `${dataset.data.reduce((acc: number, val: number) => acc + val, 0)}%`,
-													backgroundColor: dataset.color
-												}}
-												className={`h-full rounded-full`}
-											/>
-										</View>
-										<Text className="font-mono font-semibold text-sm">{dataset.data.reduce((acc: number, val: number) => acc + val, 0).toString().padStart(6)}%</Text>
-									</View>
-								</View>
-							)})}
+								))}
 						</ScrollView>
 					</View>
-        </View>
-      </ScrollView>
-    </View>
-  );
+				</View>
+
+				<View className="mb-6 rounded-xl bg-white p-4 shadow">
+					<View className="mb-4 flex-row items-center gap-3">
+						<View className="rounded-full bg-green-100 p-3">
+							<Building2 color="#22c55e" size={24} />
+						</View>
+						<View>
+							<Text className="text-lg font-semibold">Andamento por Andar</Text>
+							<Text className="text-sm text-gray-500">Progresso ao longo do tempo</Text>
+						</View>
+					</View>
+
+					<View className="h-50 items-center justify-center rounded-xl">
+						{progressData && (
+							<GroupedBarChart
+								data={progressData}
+								width={300}
+								height={120}
+								yAxisSuffix="%"
+								chartConfig={{
+									backgroundColor: '#fff',
+									backgroundGradientFrom: '#fff',
+									backgroundGradientTo: '#fff',
+									decimalPlaces: 0,
+									color: (opacity = 1) => `rgba(0,0,0,${opacity})`,
+									labelColor: (opacity = 1) => `rgba(0,0,0,${opacity})`,
+									barPercentage: 0.6,
+								}}
+							/>
+						)}
+					</View>
+
+					<View className="mb-5 mt-6 space-y-4">
+						<ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 400 }}>
+							{progressData?.datasets
+								.filter((f) => f.data.reduce((acc: number, val: number) => acc + val, 0) > 0)
+								.sort(
+									(a, b) =>
+										Number(a.floor.replace('PAV ', '')) - Number(b.floor.replace('PAV ', '')),
+								)
+								.map((dataset, idx) => {
+									return (
+										<View key={idx} className="my-2 flex-row items-center justify-between">
+											<View className="flex-row items-center gap-3">
+												<View
+													className={`rounded-full p-2 ${dataset.color}`}
+													style={{ backgroundColor: dataset.color }}
+												>
+													<Building color="white" size={16} />
+												</View>
+												<Text className="font-medium">
+													{dataset.floor.replace('PAV ', 'Andar ')}
+												</Text>
+											</View>
+											<View className="flex-row items-center gap-3">
+												<View className="h-2 w-32 overflow-hidden rounded-full bg-gray-200">
+													<View
+														style={{
+															width: `${dataset.data.reduce((acc: number, val: number) => acc + val, 0)}%`,
+															backgroundColor: dataset.color,
+														}}
+														className={`h-full rounded-full`}
+													/>
+												</View>
+												<Text className="font-mono text-sm font-semibold">
+													{dataset.data
+														.reduce((acc: number, val: number) => acc + val, 0)
+														.toString()
+														.padStart(6)}
+													%
+												</Text>
+											</View>
+										</View>
+									)
+								})}
+						</ScrollView>
+					</View>
+				</View>
+			</ScrollView>
+		</View>
+	)
 }
 
-export default Dashboard;
+export default Dashboard

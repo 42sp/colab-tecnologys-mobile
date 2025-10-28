@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "118610969755",
+    "project_id": "alvenatech",
+    "storage_bucket": "alvenatech.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:118610969755:android:1223ca40f67acf7fbe323e",
+        "android_client_info": {
+          "package_name": "com.quarentaedois.labs.tecnologys"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAFUxalO-l5jeF3UvURWLOombHhNnHs6Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
