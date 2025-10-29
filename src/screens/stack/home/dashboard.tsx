@@ -114,8 +114,6 @@ const calculateProgressByFloor = (data: any[]) => {
 			return acc
 		}, [])
 
-	console.log('--- progress by floor datasets ---')
-
 	// datasets.forEach(m => console.log(m.data));
 
 	return {
@@ -157,14 +155,10 @@ const Dashboard = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			const data = await getReport()
-			console.log('Dashboard report data ---------> ', data.progressByFloor)
 
 			const productivity = calculateProductivity(data.produtivity)
-			console.log('Dashboard productivity data:', productivity)
 			const progressByFloor = calculateProgressByFloor(data.progressByFloor)
-			console.log('Dashboard progress data:', progressByFloor)
 			const resume = defineResume(data.resume)
-			console.log('Dashboard resume data:', resume)
 
 			setStats(resume)
 			setProductivityData(productivity)
@@ -183,21 +177,21 @@ const Dashboard = () => {
 
 		// console.log(productivity)
 
-    const newDatasets = productivityData.datasets.map(ds => ({
-      ...ds,
-      active: !allActive && productivity?.active ? true : ds.label === item.label,
-    }));
+		const newDatasets = productivityData.datasets.map((ds) => ({
+			...ds,
+			active: !allActive && productivity?.active ? true : ds.label === item.label,
+		}))
 
-    setProductivityData({
-      ...productivityData,
-      datasets: newDatasets,
-    });
-  }
+		setProductivityData({
+			...productivityData,
+			datasets: newDatasets,
+		})
+	}
 
-  return (
-    <View className="flex-1 bg-gray-100">
-      <ScrollView className="flex-1 px-4 py-6" showsVerticalScrollIndicator={false}>
-        {/*
+	return (
+		<View className="flex-1 bg-gray-100">
+			<ScrollView className="flex-1 px-4 py-6" showsVerticalScrollIndicator={false}>
+				{/*
 				<View className="flex-row gap-3 mb-4 items-center">
           <View className="flex-1 relative m-2">
             <Input
@@ -213,7 +207,7 @@ const Dashboard = () => {
         </View>
 				*/}
 
-        {/*
+				{/*
 				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-3 pb-2 mb-4">
           {periods.map((p) => (
             <TouchableOpacity
@@ -227,38 +221,34 @@ const Dashboard = () => {
         </ScrollView>
 				*/}
 
-        <View className="flex-row justify-between mb-6">
-          {stats.map((stat, idx) => (
-            <View key={idx} className={`flex-1 mx-1 bg-white rounded-xl shadow p-4 items-center`}>
-              <View className={`mb-3 p-3 rounded-full ${stat.bg}`}>{stat.icon}</View>
-              <Text className="text-2xl font-bold">{stat.value}</Text>
-              <Text className="text-xs text-gray-500 mt-1 text-center">{stat.label}</Text>
-            </View>
-          ))}
-        </View>
+				<View className="mb-6 flex-row justify-between">
+					{stats.map((stat, idx) => (
+						<View key={idx} className={`mx-1 flex-1 items-center rounded-xl bg-white p-4 shadow`}>
+							<View className={`mb-3 rounded-full p-3 ${stat.bg}`}>{stat.icon}</View>
+							<Text className="text-2xl font-bold">{stat.value}</Text>
+							<Text className="mt-1 text-center text-xs text-gray-500">{stat.label}</Text>
+						</View>
+					))}
+				</View>
 
-        <View className="bg-white rounded-xl shadow p-4 mb-6">
-          <View className="flex-row items-center gap-3 mb-4">
-            <View className="p-3 rounded-full bg-blue-100">
-              <TrendingUp color="#2563eb" size={24} />
-            </View>
-            <View>
-              <Text className="text-lg font-semibold">Produtividade</Text>
-              <Text className="text-sm text-gray-500">Desempenho ao longo do tempo</Text>
-            </View>
-          </View>
+				<View className="mb-6 rounded-xl bg-white p-4 shadow">
+					<View className="mb-4 flex-row items-center gap-3">
+						<View className="rounded-full bg-blue-100 p-3">
+							<TrendingUp color="#2563eb" size={24} />
+						</View>
+						<View>
+							<Text className="text-lg font-semibold">Produtividade</Text>
+							<Text className="text-sm text-gray-500">Desempenho ao longo do tempo</Text>
+						</View>
+					</View>
 
-          <View className="h-75 rounded-xl items-center justify-center">
-            {productivityData && (
-              <GroupedLineChart
-                data={productivityData}
-                width={300}
-                height={150}
-              />
-            )}
-          </View>
+					<View className="h-75 items-center justify-center rounded-xl">
+						{productivityData && (
+							<GroupedLineChart data={productivityData} width={300} height={150} />
+						)}
+					</View>
 
-          <View className="flex-row justify-center gap-4 mt-4">
+					<View className="mt-4 flex-row justify-center gap-4">
 						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
 							{productivityData &&
 								productivityData.datasets.map((m) => (
