@@ -45,18 +45,7 @@ interface ProductivityChartData {
 	}[]
 }
 
-const generateColor = (() => {
-	const usedColors = new Set<string>()
-	return () => {
-		let color
-		do {
-			const hue = Math.floor(Math.random() * 360)
-			color = `hsl(${hue}, 70%, 60%)`
-		} while (usedColors.has(color))
-		usedColors.add(color)
-		return color
-	}
-})()
+const generateColor = () => 'hsl(' + Math.floor(Math.random() * 360) + ', 70%, 60%)'
 
 const calculateProductivity = (data: any[]): ProductivityChartData => {
 	if (!data || !Array.isArray(data)) return { labels: [], datasets: [] }
@@ -110,7 +99,6 @@ const calculateProductivity = (data: any[]): ProductivityChartData => {
 
 const calculateProgressByFloor = (data: any[]) => {
 	if (!data || !Array.isArray(data)) return { labels: [], datasets: [] }
-
 	// data.map(m => Number(m.porcentagem_acumulada) > 0 && console.log(m.floor.padEnd(7), m.semana, m.porcentagem_acumulada))
 
 	const datasets = data
@@ -125,6 +113,8 @@ const calculateProgressByFloor = (data: any[]) => {
 			}
 			return acc
 		}, [])
+
+	console.log('--- progress by floor datasets ---')
 
 	// datasets.forEach(m => console.log(m.data));
 
@@ -159,8 +149,6 @@ const defineResume = (data: any) => {
 
 const Dashboard = () => {
 	const [activePeriod, setActivePeriod] = useState('Todos')
-	const [search, setSearch] = useState('')
-	const [floor, setFloor] = useState(null)
 
 	const [productivityData, setProductivityData] = useState<ProductivityChartData | null>(null)
 	const [progressData, setProgressData] = useState<ProductivityChartData | null>(null)
@@ -169,10 +157,14 @@ const Dashboard = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			const data = await getReport()
+			console.log('Dashboard report data ---------> ', data.progressByFloor)
 
 			const productivity = calculateProductivity(data.produtivity)
+			console.log('Dashboard productivity data:', productivity)
 			const progressByFloor = calculateProgressByFloor(data.progressByFloor)
+			console.log('Dashboard progress data:', progressByFloor)
 			const resume = defineResume(data.resume)
+			console.log('Dashboard resume data:', resume)
 
 			setStats(resume)
 			setProductivityData(productivity)
