@@ -80,8 +80,9 @@ class GroupedLineChartComponent extends AbstractChart<any, any> {
 						contentSizeChange.contentWidth = contentWidth;
 						contentSizeChange.contentHeight = contentHeight;
 					}}
+					style={{ marginLeft: -25 }}
 				>
-					<Svg style={{ marginLeft: -20 }} width={dynamicWidth} height={chartHeight + 40}>
+					<Svg width={dynamicWidth} height={chartHeight + 40}>
 
 						{[0, 0.25, 0.5, 0.75, 1].map((p, idx) => (
 							<Rect

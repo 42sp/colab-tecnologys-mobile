@@ -16,7 +16,7 @@ class GroupedBarChartComponent extends AbstractChart<any, any> {
 		const groupSpacing = 16;
 		const maxValue = Math.max(...datasets.flatMap((ds: any) => ds.data));
     const totalGroups = labels.length;
-    const dynamicWidth = padding * 2 + totalGroups * ((datasets.filter((f: any) => f.data.reduce((acc: number, val: number) => acc + val, 0) > 0).length + 1)* (barWidth + barSpacing) + groupSpacing);
+    const dynamicWidth = padding * 2 + totalGroups * ((datasets.filter((f: any) => f.data.reduce((acc: number, val: number) => acc + val, 0) > 0).length + 2) * (barWidth + barSpacing) + groupSpacing);
 		const allValues = datasets.flatMap((ds: any) => ds.data);
 		const minValue = Math.min(...allValues);
 		const maxValueY = Math.max(...allValues);
@@ -42,74 +42,85 @@ class GroupedBarChartComponent extends AbstractChart<any, any> {
           >
             0%
           </SvgText>
-          {yTicks.map((p, idx) => (
-            <SvgText
-              key={idx}
-              x={0}
-              y={chartHeight - chartHeight * p.percent + 10}
-              fontSize={12}
-              fill="#888"
-              textAnchor="start"
-            >
-              {`${p.value}%`}
-            </SvgText>
-          ))}
+          {
+						yTicks.map((p, idx) => (
+							<SvgText
+								key={idx}
+								x={0}
+								y={chartHeight - chartHeight * p.percent + 10}
+								fontSize={12}
+								fill="#888"
+								textAnchor="start"
+							>
+								{`${p.value.toFixed(2)} %`}
+							</SvgText>
+						))
+					}
         </Svg>
-        <ScrollView style={{ marginLeft: 0 }} horizontal showsHorizontalScrollIndicator={false}>
-          <Svg style={{ marginLeft: -25 }} width={dynamicWidth} height={chartHeight + 40}>
+        <ScrollView
+					horizontal
+					showsHorizontalScrollIndicator={false}
+					style={{ marginLeft: 10 }}
+				>
+          <Svg width={dynamicWidth} height={chartHeight + 40}>
 						{this.renderHorizontalLines({
               count: 3,
               width: dynamicWidth,
               height: chartHeight,
               paddingTop: 10,
-              paddingRight: 0,
-							paddingLeft: 40,
             })}
             <Rect
-              x={padding}
+              x={0}
               y={chartHeight + 10}
-              width={dynamicWidth - padding * 2}
+              width={dynamicWidth * 2}
               height={2}
               fill="#e5e7eb"
             />
-            {labels.map((label: string, i: number) => {
-              const groupX = padding + i * ((datasets.filter((f: any) => f.data[i] > 0).length + 1)* (barWidth + barSpacing) + groupSpacing);
-              return (
-                <G key={label}>
-                  {datasets
-										.filter((f: any) => f.data[i] > 0)
-										.map((ds: any, j: number) => {
-											const value = ds.data[i];
-											const barHeight = (value / maxValue) * chartHeight;
-											const x = groupX + j * (barWidth + barSpacing);
-											const y = (chartHeight - barHeight + 10);
-											return (
-												<Rect
-													key={j}
-													x={x}
-													y={y}
-													width={barWidth}
-													height={barHeight}
-													fill={ds.color}
-													rx={2}
-													onPress={() => this.props.onBarPress && this.props.onBarPress(
-														{x, y, datasets, i}
-													)}
-												/>
-											);
-                  })}
-                  <SvgText
-                    x={groupX + (datasets.filter((f: any) => f.data[i] > 0).length * (barWidth + barSpacing)) / 2}
-                    y={chartHeight + 30}
-                    fontSize={12}
-                    fill="#222"
-                    textAnchor="middle"
-                  >
-                    {label}
-                  </SvgText>
-                </G>
-              );
-            })}
+            {
+							labels.map((label: string, i: number) => {
+								// datasets.map(m => console.log(i, m.data))
+								const groupX = padding + i * (
+											2
+										* (barWidth + barSpacing)
+										+ groupSpacing
+									);
+								// console.log(padding, i, (barWidth + barSpacing), groupSpacing, datasets.filter((f: any) => f.data[i] > 0).length + 2);
+								return (
+									<G key={label}>
+										{datasets
+											.filter((f: any) => f.data[i] > 0)
+											.map((ds: any, j: number) => {
+												const value = ds.data[i];
+												const barHeight = (value / maxValue) * chartHeight;
+												const x = groupX + j * (barWidth + barSpacing);
+												const y = (chartHeight - barHeight + 10);
+												return (
+													<Rect
+														key={j}
+														x={x}
+														y={y}
+														width={barWidth}
+														height={barHeight}
+														fill={ds.color}
+														rx={2}
+														onPress={() => this.props.onBarPress && this.props.onBarPress(
+															{x, y, datasets, i}
+														)}
+													/>
+												);
+										})}
+										<SvgText
+											x={groupX + (datasets.filter((f: any) => f.data[i] > 0).length * (barWidth + barSpacing)) / 2}
+											y={chartHeight + 30}
+											fontSize={12}
+											fill="#222"
+											textAnchor="middle"
+										>
+											{label}
+										</SvgText>
+									</G>
+								);
+            	})}
           </Svg>
         </ScrollView>
       </View>
@@ -158,7 +169,13 @@ const GroupedBarChart = (props: any) => {
 							visible: true,
 							x: info.x,
 							y: info.y,
-							value: info.datasets.map((item: any) => item.data[info.i]),
+							value: info.datasets.map((item: any) => {
+								// console.log(item);
+								return {
+									value: item.data[info.i],
+									label: item.floor
+								};
+							}),
 							ds: info.ds,
 							datasets: info.datasets
 						}
@@ -178,22 +195,27 @@ const GroupedBarChart = (props: any) => {
 					<ScrollView
 						style={{ maxHeight: 200 }}
 					>
-						{tooltip.value.filter(f => f > 0).map((value, index) => (
-							<View key={index} className="flex-row my-1">
-								<View style={
-									{
-										width: 18,
-										height: 18,
-										borderRadius: 4,
-										backgroundColor: tooltip.datasets[index] ? (tooltip.datasets[index].color + '22') : '',
-										borderWidth: 2,
-										borderColor: tooltip.datasets[index] ? (tooltip.datasets[index].color) : '',
-										marginRight: 8,
-										zIndex: 10
-									}}
-								/>
-								<Text key={index} style={{color: '#fff'}}>Andar {index + 1}: {value}%</Text>
-							</View>
+						{tooltip.value.map((m: any, index) => (
+							(
+								(
+									m.value > 0 &&
+									<View key={index} className="flex-row my-1">
+										<View style={
+											{
+												width: 18,
+												height: 18,
+												borderRadius: 4,
+												backgroundColor: tooltip.datasets[index] ? (tooltip.datasets[index].color + '22') : '',
+												borderWidth: 2,
+												borderColor: tooltip.datasets[index] ? (tooltip.datasets[index].color) : '',
+												marginRight: 8,
+												zIndex: 10
+											}}
+										/>
+										<Text key={index} style={{color: '#fff'}}>{m.label.replace('PAV', 'Andar')} {m.value}%</Text>
+									</View>
+								)
+							)
 						))}
 					</ScrollView>
         </View>

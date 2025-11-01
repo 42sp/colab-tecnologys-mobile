@@ -12,14 +12,24 @@ class GroupedLineChartComponent extends AbstractChart<any, any> {
 		const chartHeight = this.props.height || 220;
 		const padding = 32;
 		const pointRadius = 6;
-		const maxValue = Math.max(...datasets.flatMap((ds: any) => ds.data));
-		const minValue = Math.min(...datasets.flatMap((ds: any) => ds.data));
+		let maxValue = Math.max(...datasets.flatMap((ds: any) => ds.data));
+		let minValue = Math.min(...datasets.flatMap((ds: any) => ds.data));
+
+		// Evita divisão por zero quando min e max são iguais
+		if (maxValue === minValue) {
+			maxValue = minValue + 1;
+			minValue = minValue > 0 ? minValue - 1 : 0;
+		}
+
 		const totalPoints = labels.length;
 		const dynamicWidth = padding * 2 + (totalPoints - 1) * 60;
 
 		const getPoint = (i: number, value: number) => {
 			const x = padding + i * 60;
-			const y = chartHeight - ((value - minValue) / (maxValue - minValue)) * chartHeight + 10;
+			const range = maxValue - minValue;
+			const y = range > 0
+				? chartHeight - ((value - minValue) / range) * chartHeight + 10
+				: chartHeight / 2 + 10;
 			return { x, y };
 		};
 
@@ -71,15 +81,16 @@ class GroupedLineChartComponent extends AbstractChart<any, any> {
 						contentSizeChange.contentWidth = contentWidth;
 						contentSizeChange.contentHeight = contentHeight;
 					}}
+					style={{ marginLeft: -25 }}
 				>
-					<Svg style={{ marginLeft: -25 }} width={dynamicWidth} height={chartHeight + 40}>
+					<Svg width={dynamicWidth} height={chartHeight + 40}>
 
 						{[0, 0.25, 0.5, 0.75, 1].map((p, idx) => (
 							<Rect
 								key={idx}
-								x={40}
+								x={25}
 								y={chartHeight - chartHeight * p + 10}
-								width={dynamicWidth - 40}
+								width={dynamicWidth}
 								height={1}
 								fill="#e5e7eb"
 								onPress={() => this.props.onBarPress && this.props.onBarPress({x: 40, y: chartHeight - chartHeight * p + 10, datasets, i: idx})}
@@ -114,32 +125,36 @@ class GroupedLineChartComponent extends AbstractChart<any, any> {
 							.map((ds: any, idx: number) => {
 							// console.log(ds);
 							return (
-							ds.data.map((value: number, i: number) => {
+							ds.data
+							.map((value: number, i: number) => {
 								const { x, y } = getPoint(i, value);
 								return (
-									<Circle
-										key={idx + '-' + i}
-										cx={x}
-										cy={y}
-										r={pointRadius}
-										fill="#fff"
-										stroke={ds.color}
-										strokeWidth={3}
-										onPress={(evt) => {
-											if (this.props.onMonthPress) {
-												const { locationX, locationY, pageX, pageY } = evt.nativeEvent;
+									value > 0 &&
+									(
+										<Circle
+											key={idx + '-' + i}
+											cx={x}
+											cy={y}
+											r={pointRadius}
+											fill="#fff"
+											stroke={ds.color}
+											strokeWidth={3}
+											onPress={(evt) => {
+												if (this.props.onMonthPress) {
+													const { locationX, locationY, pageX, pageY } = evt.nativeEvent;
 
-												this.props.onMonthPress({
-													label: labels[i],
-													i,
-													x: (screenWidth / 2) - 90,
-													y: chartHeight + 30,
-													values: this.props.data.datasets.map((ds: any) => ds.data[i]),
-													datasets: this.props.data.datasets
-												});
-											}
-										}}
-									/>
+													this.props.onMonthPress({
+														label: labels[i],
+														i,
+														x: (screenWidth / 2) - 90,
+														y: chartHeight + 30,
+														values: this.props.data.datasets.map((ds: any) => ds.data[i]),
+														datasets: this.props.data.datasets
+													});
+												}
+											}}
+										/>
+									)
 								);
 							})
 						)})}
@@ -213,15 +228,20 @@ const GroupedLineChart = (props: any) => {
 					shadowOpacity: 0.2,
 					shadowRadius: 8,
 				}}>
-					<Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16, marginBottom: 8 }}>{tooltip.label}</Text>
-					{tooltip.datasets
-						// .sort((a, b) =>  Number(a.label) - Number(b.label))
-						.map((ds, idx) => (
-						<View key={idx} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-							<View style={{ width: 18, height: 18, borderRadius: 4, backgroundColor: ds.color + '22', borderWidth: 2, borderColor: ds.color, marginRight: 8 }} />
-							<Text style={{ color: '#fff', fontSize: 15 }}>Andar {ds.label || `Executor ${idx + 1}`}: {tooltip.values[idx]}%</Text>
-						</View>
-					))}
+					<ScrollView
+						style={{ maxHeight: 150 }}
+					>
+						<Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16, marginBottom: 8 }}>{tooltip.label}</Text>
+						{tooltip.datasets
+							.filter((f: any, idx: number) => tooltip.values[idx] > 0)
+							// .sort((a, b) =>  Number(a.label) - Number(b.label))
+							.map((ds, idx) => (
+							<View key={idx} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+								<View style={{ width: 18, height: 18, borderRadius: 4, backgroundColor: ds.color + '22', borderWidth: 2, borderColor: ds.color, marginRight: 8 }} />
+								<Text style={{ color: '#fff', fontSize: 15 }}>Andar {ds.label || `Executor ${idx + 1}`}: {tooltip.values[idx]} m²</Text>
+							</View>
+						))}
+					</ScrollView>
 				</View>
 			)}
 		</View>
