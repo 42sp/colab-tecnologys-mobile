@@ -41,6 +41,7 @@ interface DropdownProps extends TextInputProps {
 	variant?: DropdownVariant
 	value?: string
 	onChangeText?: (text: string) => void
+	onChangeItem?: (item: ItemType) => void
 	hasError?: boolean
 	disabled?: boolean
 }
@@ -55,6 +56,7 @@ export function Dropdown({
 	variant = 'default',
 	value,
 	onChangeText,
+	onChangeItem,
 	hasError = false,
 	disabled
 }: DropdownProps) {
@@ -97,6 +99,7 @@ export function Dropdown({
 							className="w-full bg-white px-4 py-3 hover:bg-neutral-100"
 							onPress={() => {
 								onChangeText?.(item.label)
+								onChangeItem?.(item)
 								setOpen(false)
 							}}
 						>

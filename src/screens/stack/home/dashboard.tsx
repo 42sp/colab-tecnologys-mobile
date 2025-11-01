@@ -23,8 +23,13 @@ import { Input } from '@/components/ui/input'
 import { GroupedBarChart } from '@/components/GroupedBarChart'
 import GroupedLineChart from '@/components/GroupedLineChart'
 import { getReport } from '@/api/get-report'
+import { Dropdown, ItemType } from '@/components/ui/dropdown'
+import { getProfiles } from '@/api/get-profiles'
+import { set } from 'zod'
+import GroupedLineChartUser from '@/components/GroupedLineChartUser'
+import { setProfile } from '@/libs/redux/user-profile/user-profile-slice'
 
-const periods = ['Mês', 'Trimestre', 'Ano', 'Todos']
+const periods : { value: 'day' | 'week' | 'month'; label: string }[] = [{ value: 'day', label: 'Dia' }, { value: 'week', label: 'Semana' }, { value: 'month', label: 'Mês' }]
 const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 
 interface statsData {
@@ -73,7 +78,7 @@ const calculateProductivity = (data: any[]): ProductivityChartData => {
 		.filter((v: any, i: number, a: any[]) => a.indexOf(v) === i)
 
 	const datasets = floors.map((floor: string) => {
-		const color = generateColor()
+		const color = '#2563eb'
 		const data = labels.map((mes: string) => {
 			const found = aux.find((item: any) => item.floor === floor && item.mes === mes)
 			return found ? Number(found.total) : 0
@@ -146,26 +151,51 @@ const defineResume = (data: any) => {
 }
 
 const Dashboard = () => {
-	const [activePeriod, setActivePeriod] = useState('Todos')
+	const [activePeriod, setActivePeriod] = useState<'day' | 'week' | 'month'>('day')
 
 	const [productivityData, setProductivityData] = useState<ProductivityChartData | null>(null)
 	const [progressData, setProgressData] = useState<ProductivityChartData | null>(null)
+	const [productivityByUserData, setProductivityByUserData] = useState<ProductivityChartData | null>(null)
 	const [stats, setStats] = useState<statsData[]>([])
+
+	const [search, setSearch] = useState('')
+	const [profiles, setProfiles] = useState<any[]>([])
+	const [profileSelected, setProfileSelected] = useState<ItemType | null>(null)
+
+	useEffect(() => {
+		const fetchProfiles = async () => {
+			const profiles = await getProfiles()
+			setProfiles(profiles.data)
+		}
+		fetchProfiles()
+	}, []);
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const data = await getReport()
+			const data = await getReport({
+				period: activePeriod,
+				worker_id: profileSelected?.value,
+			})
 
 			const productivity = calculateProductivity(data.produtivity)
 			const progressByFloor = calculateProgressByFloor(data.progressByFloor)
 			const resume = defineResume(data.resume)
 
+			data.productivityByUser.datasets = data.productivityByUser.datasets.map((m: any) => ({...m, color: generateColor()}));
+			// console.log(data.productivityByUser)
+
 			setStats(resume)
 			setProductivityData(productivity)
 			setProgressData(progressByFloor)
+			setProductivityByUserData(data.productivityByUser)
+			// console.log(productivityByUserData);
 		}
 		fetchData()
-	}, [])
+	}, [activePeriod, profileSelected]);
+
+	useEffect(() => {
+		setProfileSelected(profiles.length > 0 ? { label: profiles[0].name, value: profiles[0].id } : null);
+	}, [profiles]);
 
 	const selectProductivityData = (item: any) => {
 		if (!productivityData) return
@@ -191,8 +221,8 @@ const Dashboard = () => {
 	return (
 		<View className="flex-1 bg-gray-100">
 			<ScrollView className="flex-1 px-4 py-6" showsVerticalScrollIndicator={false}>
-				{/*
-				<View className="flex-row gap-3 mb-4 items-center">
+
+				{/* <View className="flex-row gap-3 mb-4 items-center">
           <View className="flex-1 relative m-2">
             <Input
 							IconLeft='search'
@@ -204,8 +234,8 @@ const Dashboard = () => {
           <TouchableOpacity className="bg-black rounded-full items-center justify-center h-[40px] w-[40px]">
             <BarChart3 color="white" size={18} />
           </TouchableOpacity>
-        </View>
-				*/}
+        </View> */}
+
 
 				{/*
 				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-3 pb-2 mb-4">
@@ -232,23 +262,62 @@ const Dashboard = () => {
 				</View>
 
 				<View className="mb-6 rounded-xl bg-white p-4 shadow">
-					<View className="mb-4 flex-row items-center gap-3">
+					<Dropdown
+						IconLeft={'user'}
+						IconRight={'chevron-down'}
+						options={profiles.map((m) => ({ label: m.name, value: m.id }))}
+						variant="default"
+						placeholder="Selecione um usuário"
+						value={profileSelected?.label || ''}
+						onChangeItem={(item) => setProfileSelected(item)}
+					/>
+					<ScrollView
+						horizontal
+						showsHorizontalScrollIndicator={false}
+						className="flex-row gap-3 pb-2 my-4"
+					>
+						{periods.map((p) => (
+							<TouchableOpacity
+								key={p.value}
+								className={`mx-2 px-4 py-2 rounded-full ${activePeriod === p.value ? 'bg-black' : 'bg-gray-200'} `}
+								onPress={() => setActivePeriod(p.value)}
+							>
+								<Text className={`font-medium ${activePeriod === p.value ? 'text-white' : 'text-black'}`}>{p.label}</Text>
+							</TouchableOpacity>
+						))}
+					</ScrollView>
+					<View className="my-4 flex-row items-center gap-3">
 						<View className="rounded-full bg-blue-100 p-3">
 							<TrendingUp color="#2563eb" size={24} />
 						</View>
 						<View>
 							<Text className="text-lg font-semibold">Produtividade</Text>
-							<Text className="text-sm text-gray-500">Desempenho ao longo do tempo</Text>
+							<Text className="text-sm text-gray-500">Desempenho por usuário</Text>
 						</View>
 					</View>
 
 					<View className="h-75 items-center justify-center rounded-xl">
-						{productivityData && (
-							<GroupedLineChart data={productivityData} width={300} height={150} />
-						)}
+						{
+							productivityByUserData
+							&& productivityByUserData.labels.length > 0
+							&& productivityByUserData.datasets.length > 0
+							?
+							(
+								<GroupedLineChartUser
+									data={productivityByUserData}
+									width={300}
+									height={150}
+									profiles={profiles}
+								/>
+							)
+							:
+							(
+								<Text className="text-gray-500">Nenhum dado disponível para o usuário selecionado.</Text>
+							)
+						}
 					</View>
 
-					<View className="mt-4 flex-row justify-center gap-4">
+					{/* <View className="mt-4 flex-row justify-center gap-4">
 						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
 							{productivityData &&
 								productivityData.datasets.map((m) => (
@@ -262,7 +331,41 @@ const Dashboard = () => {
 									</Pressable>
 								))}
 						</ScrollView>
+					</View> */}
+				</View>
+
+				<View className="mb-6 rounded-xl bg-white p-4 shadow">
+					<View className="mb-4 flex-row items-center gap-3">
+						<View className="rounded-full bg-blue-100 p-3">
+							<TrendingUp color="#2563eb" size={24} />
+						</View>
+						<View>
+							<Text className="text-lg font-semibold">Produção</Text>
+							<Text className="text-sm text-gray-500">Desempenho ao longo do tempo</Text>
+						</View>
 					</View>
+
+					<View className="h-75 items-center justify-center rounded-xl">
+						{productivityData && (
+							<GroupedLineChart data={productivityData} width={300} height={150} />
+						)}
+					</View>
+
+					{/* <View className="mt-4 flex-row justify-center gap-4">
+						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+							{productivityData &&
+								productivityData.datasets.map((m) => (
+									<Pressable
+										className="flex-row items-center gap-2 px-4"
+										key={m.label}
+										onPress={() => selectProductivityData(m)}
+									>
+										<View className="h-4 w-4 rounded-full" style={{ backgroundColor: m.color }} />
+										<Text className="text-sm">Andar {m.label}</Text>
+									</Pressable>
+								))}
+						</ScrollView>
+					</View> */}
 				</View>
 
 				<View className="mb-6 rounded-xl bg-white p-4 shadow">

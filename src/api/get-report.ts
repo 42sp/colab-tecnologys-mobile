@@ -1,6 +1,11 @@
 import { api } from '@/libs/axios/axios'
 
-export const getReport = async () => {
-  const response = await api.get('/tasks/report')
+export interface GetReportParams {
+	period?: 'day' | 'week' | 'month',
+	worker_id?: string,
+}
+
+export const getReport = async (params: GetReportParams) => {
+  const response = await api.get('/tasks/report', { params })
   return response.data
 }
